@@ -6,7 +6,7 @@ namespace UTCClassSupport.API.Models
   public class Bulletin
   {
     [Column("id")]
-    public int Id { get; set; }
+    public string Id { get; set; }
     [Column("content")]
     public string Content { get; set; }
     [Column("created_date")]
@@ -18,7 +18,9 @@ namespace UTCClassSupport.API.Models
     [Column("last_modified_by")]
     public string? LastModifiedBy { get; set; }
     [Column("group_id")]
-    public int GroupId { get; set; }
+    public string GroupId { get; set; }
+    [Column("approved")]
+    public int Approved { get; set; }
     public virtual Group Group { get; set; }
   }
 }

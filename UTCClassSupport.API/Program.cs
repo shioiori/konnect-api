@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
+using UTCClassSupport.API;
 using UTCClassSupport.API.Infrustructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,12 +18,10 @@ var serverVersion = new MySqlServerVersion(new Version());
 builder.Services.AddDbContext<EFContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(builder.Configuration.GetConnectionString("UTCClassSupportDB"), serverVersion)
-        // The following three options help with debugging, but should
-        // be changed or removed for production.
-        .LogTo(Console.WriteLine, LogLevel.Information)
-        .EnableSensitiveDataLogging()
-        .EnableDetailedErrors()
 );
+
+builder.Services.AddInfrustructure();
+builder.Services.AddAuthenticatedConfiguration(builder.Configuration);
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

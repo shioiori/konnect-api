@@ -6,11 +6,11 @@ namespace UTCClassSupport.API.Models
   public class Message
   {
     [Column("id")]
-    public int Id { get; set; }
+    public string Id { get; set; }
     [Column("content")]
     public string Content { get; set; }
     [Column("file_id")]
-    public int? FileId { get; set; }
+    public string? FileId { get; set; }
 
     [Column("receiver")]
     public string Receiver { get; set; }

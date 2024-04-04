@@ -6,10 +6,10 @@ namespace UTCClassSupport.API.Models
   public class Group
   {
     [Column("id")]
-    public int Id { get; set; }
+    public string Id { get; set; }
     [Column("name")]
     public string Name { get; set; }
     public virtual ICollection<Bulletin> Bulletins { get; set; }
-
+    public virtual ICollection<ShareFolder> Folders { get; set; }
   }
 }

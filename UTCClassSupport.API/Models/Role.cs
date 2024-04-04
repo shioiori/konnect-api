@@ -6,7 +6,7 @@ namespace UTCClassSupport.API.Models
   [Table("roles")]
   public class Role : IdentityRole
   {
-    [Column("is_global_role")]
-    public bool IsGlobalRole { get; set; }
+    public virtual ICollection<Permission> Permissions { get; set; }
+    public virtual ICollection<User> Users { get; set; }
   }
 }
