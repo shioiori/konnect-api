@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UTCClassSupport.API.Models
 {
-  public class File
+  public class Folder
   {
     [Column("id")]
     public string Id { get; set; }

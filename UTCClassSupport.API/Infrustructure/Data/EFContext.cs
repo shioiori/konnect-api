@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using UTCClassSupport.API.Models;
+using File = UTCClassSupport.API.Models.File;
 
 namespace UTCClassSupport.API.Infrustructure.Data
 {
-  public class EFContext : DbContext
+  public class EFContext : IdentityDbContext
   {
     public EFContext(DbContextOptions<EFContext> options)
     : base(options)
@@ -16,10 +18,12 @@ namespace UTCClassSupport.API.Infrustructure.Data
     public DbSet<MessageFile> MessagesFile { get; set; }
     public DbSet<Schedule> Schedules { get; set; }
     public DbSet<ShareFile> ShareFiles { get; set; }
+    public DbSet<ShareFolder> ShareFolders { get; set; }
     public DbSet<Shift> Shifts { get; set; }
     public DbSet<Timetable> Timetables { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
+    public DbSet<UserGroupRole> UserGroupRoles { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
@@ -42,13 +46,19 @@ namespace UTCClassSupport.API.Infrustructure.Data
       {
         e.HasKey(e => e.Id);
       });
-      modelBuilder.Entity<Schedule>(e =>
-      {
-        e.HasKey(e => e.Id);
-      });
       modelBuilder.Entity<ShareFile>(e =>
       {
         e.HasKey(e => e.Id);
+        e.HasOne(e => e.Folder)
+        .WithMany(e => e.Files)
+        .HasForeignKey(e => e.FolderId);
+      });
+      modelBuilder.Entity<ShareFolder>(e =>
+      {
+        e.HasKey(e => e.Id);
+        e.HasOne(e => e.Group)
+        .WithMany(e => e.Folders)
+        .HasForeignKey(e => e.GroupId);
       });
       modelBuilder.Entity<Shift>(e =>
       {
@@ -61,6 +71,19 @@ namespace UTCClassSupport.API.Infrustructure.Data
       {
         e.HasKey(e => e.Id);
       });
+      modelBuilder.Entity<Schedule>(e =>
+      {
+        e.HasKey(e => e.Id);
+        e.HasOne(e => e.Shift)
+        .WithOne(e => e.Schedule)
+        .HasForeignKey<Schedule>(e => e.ShiftId)
+        .IsRequired();
+      });
+      modelBuilder.Entity<UserGroupRole>(e =>
+      {
+        e.HasKey(e => new { e.UserId, e.GroupId, e.RoleId });
+      });
+      base.OnModelCreating(modelBuilder);
     }
   }
 }
