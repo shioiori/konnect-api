@@ -23,8 +23,8 @@ namespace UTCClassSupport.API.Application.UploadNewsToBulletin
     public async Task<UploadNewsToBulletinResponse> Handle(UploadNewsToBulletinCommand request, CancellationToken cancellationToken)
     {
       // check if user or manager
-      var role = _dbContext.UserGroupRoles.Where(x => x.UserName == request.UserName && x.GroupId == request.GroupId)
-        .First().RoleName;
+      var role = _dbContext.UserGroupRoles.Where(x => x.UserId == request.UserId && x.GroupId == request.GroupId)
+        .First().RoleId;
       var news = new Bulletin()
       {
         Content = request.Content,

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -37,32 +38,20 @@ namespace UTCClassSupport.API.Authorize
       _dbContext = dbContext;
     }
 
-    [HttpGet("login")]
+    [HttpPost("login")]
     public async Task<AuthenticationResponse> LoginAsync(LoginRequest request)
     {
       var user = await _userManager.FindByNameAsync(request.Username);
       if (user != null)
       {
-        if (user.EmailConfirmed == false)
+        if (await _userManager.CheckPasswordAsync(user, request.Password))
         {
-          return new AuthenticationResponse()
-          {
-            Success = false,
-            Message = "Email is not confirmed",
-            StatusCode = StatusCodes.Status200OK,
-          };
-        }
-        else if (await _userManager.CheckPasswordAsync(user, request.Password))
-        {
-          var userRoles = await _userManager.GetRolesAsync(user);
           var claims = new List<Claim>();
-          claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-          claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+          claims.Add(new Claim(ClaimData.UserID, user.Id));
+          claims.Add(new Claim(ClaimData.UserName, user.UserName));
+          claims.Add(new Claim(ClaimData.Email, user.Email));
+          claims.Add(new Claim(ClaimData.Tel, user.PhoneNumber));
           claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-          foreach (var userRole in userRoles)
-          {
-            claims.Add(new Claim(ClaimTypes.Role, userRole));
-          }
 
           var token = GetToken(claims);
 
@@ -92,26 +81,38 @@ namespace UTCClassSupport.API.Authorize
       };
     }
 
-    [HttpPost("register/{id}")]
-    public async Task<AuthenticationResponse> RegisterByGroupAsync(string id, RegisterRequest request)
+    [HttpPost("login/{id}")]
+    public async Task<AuthenticationResponse> LoginWithGroup(string groupId)
     {
-      //check if group id has in db
-      if (_dbContext.Groups.FirstOrDefault(x => x.Id == id) != default)
-      {
-        return await RegisterAsync(request, id, GroupRole.User);
-      }
+      var identity = HttpContext.User.Identity as ClaimsIdentity;
+      var userId = identity.FindFirst(ClaimData.UserID).Value;
+      var userName = identity.FindFirst(ClaimData.UserName).Value;
+      var data = _dbContext.UserGroupRoles.First(x => x.UserId == userId && x.GroupId == groupId);
+      var claims = identity.Claims.ToList();
+      claims.Add(new Claim(ClaimData.GroupID, data.GroupId));
+      var role = await _roleManager.FindByIdAsync(data.RoleId);
+      claims.Add(new Claim(ClaimData.RoleID, data.RoleId));
+      claims.Add(new Claim(ClaimData.RoleName, role.Name));
+      claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+      var token = GetToken(claims);
+
       return new AuthenticationResponse()
       {
-        Success = false,
-        Message = "Group id not valid",
-        StatusCode = StatusCodes.Status400BadRequest
+        Success = true,
+        Message = "Redirect to group",
+        AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+        StatusCode = StatusCodes.Status200OK,
       };
     }
 
     [HttpPost("register")]
-    public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest request, string groupId = "",
-      GroupRole role = GroupRole.Manager)
+    public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest request, string? groupId = "")
     {
+      GroupRole groupRole = GroupRole.Manager;
+      if (_dbContext.Groups.FirstOrDefault(x => x.Id == groupId) != default)
+      {
+        groupRole = GroupRole.User;
+      }
       var userExists = await _userManager.FindByNameAsync(request.Username);
       if (userExists != null)
       {
@@ -124,36 +125,6 @@ namespace UTCClassSupport.API.Authorize
       }
       var user = _mapper.Map<RegisterRequest, User>(request);
       var result = await _userManager.CreateAsync(user, request.Password);
-      if (!await _roleManager.RoleExistsAsync(role.ToString()))
-      {
-        await _roleManager.CreateAsync(new Role()
-        {
-          Name = role.ToString(),
-        });
-      }
-      if (!await _roleManager.RoleExistsAsync(role.ToString()))
-      {
-        await _roleManager.CreateAsync(new Role()
-        {
-          Name = role.ToString(),
-        });
-      }
-      await _userManager.AddToRoleAsync(user, role.ToString());
-      var group = new Group()
-      {
-        Name = Guid.NewGuid().ToString(),
-      };
-      if (string.IsNullOrEmpty(groupId))
-      {
-        _dbContext.Groups.Add(group);
-        groupId = group.Id;
-      }
-      _dbContext.UserGroupRoles.Add(new UserGroupRole()
-      {
-        UserId = user.Id,
-        GroupId = groupId,
-        RoleId = (await _roleManager.FindByNameAsync(role.ToString())).Id
-      });
       if (!result.Succeeded)
       {
         return new AuthenticationResponse()
@@ -163,6 +134,32 @@ namespace UTCClassSupport.API.Authorize
           StatusCode = StatusCodes.Status500InternalServerError
         };
       }
+      if (!await _roleManager.RoleExistsAsync(groupRole.ToString()))
+      {
+        await _roleManager.CreateAsync(new Role()
+        {
+          Name = groupRole.ToString(),
+        });
+      }
+      await _userManager.AddToRoleAsync(user, groupRole.ToString());
+      if (string.IsNullOrEmpty(groupId))
+      {
+        var group = new Group()
+        {
+          Name = Guid.NewGuid().ToString(),
+        };
+        _dbContext.Groups.Add(group);
+        _dbContext.SaveChanges();
+        groupId = group.Id;
+      }
+      var role = await _roleManager.FindByNameAsync(groupRole.ToString());
+      _dbContext.UserGroupRoles.Add(new UserGroupRole()
+      {
+        UserId = user.Id,
+        GroupId = groupId,
+        RoleId = role.Id
+      }); ;
+      _dbContext.SaveChanges();
       return new AuthenticationResponse()
       {
         Success = true,

@@ -23,7 +23,7 @@ namespace UTCClassSupport.API.Application.ImportTimetable
     }
     public async Task<ImportTimetableResponse> Handle(ImportTimetableCommand request, CancellationToken cancellationToken)
     {
-      var datatable = ExcelHelper.ConvertExcelToDataTable(request.FilePath);
+      var datatable = ExcelHelper.ConvertExcelToDataTable(request.File);
       var timetable = _dbContext.Timetables
         .Where(x => x.GroupId == request.GroupId && x.CreatedBy == "current user")
         .FirstOrDefault();

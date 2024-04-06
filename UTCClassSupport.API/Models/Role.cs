@@ -7,6 +7,5 @@ namespace UTCClassSupport.API.Models
   public class Role : IdentityRole
   {
     public virtual ICollection<Permission> Permissions { get; set; }
-    public virtual ICollection<User> Users { get; set; }
   }
 }

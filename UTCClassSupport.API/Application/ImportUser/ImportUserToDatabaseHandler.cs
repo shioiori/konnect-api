@@ -25,7 +25,12 @@ namespace UTCClassSupport.API.Application.ImportExcel
     // template: Id - Name - Email - Tel
     public async Task<ImportUserToDatabaseResponse> Handle(ImportUserToDatabaseCommand request, CancellationToken cancellationToken)
     {
-      var dataTable = ExcelHelper.ConvertExcelToDataTable(request.FilePath);
+      if (ExcelHelper.IsExcelFile(request.File.FileName))
+      {
+        return new ImportUserToDatabaseResponse();
+      }
+      var dataTable = ExcelHelper.ConvertExcelToDataTable(request.File);
+      var role = await _roleManager.FindByNameAsync(GroupRole.User.ToString());
       foreach (DataRow row in dataTable.Rows)
       {
         var user = new User()
@@ -39,8 +44,8 @@ namespace UTCClassSupport.API.Application.ImportExcel
         _userManager.AddPasswordAsync(user, row[0].ToString());
         _dbContext.UserGroupRoles.Add(new UserGroupRole()
         {
-          UserName = user.UserName,
-          RoleName = GroupRole.User.ToString(),
+          UserId = user.Id,
+          RoleId = role.Id,
           GroupId = request.GroupId
         });
       }

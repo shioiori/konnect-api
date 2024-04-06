@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.Vml.Office;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using UTCClassSupport.API.Models;
@@ -6,7 +7,7 @@ using File = UTCClassSupport.API.Models.File;
 
 namespace UTCClassSupport.API.Infrustructure.Data
 {
-  public class EFContext : IdentityDbContext
+  public class EFContext : IdentityDbContext<User, Role, string>
   {
     public EFContext(DbContextOptions<EFContext> options)
     : base(options)
@@ -37,6 +38,7 @@ namespace UTCClassSupport.API.Infrustructure.Data
       modelBuilder.Entity<Group>(e =>
       {
         e.HasKey(e => e.Id);
+        e.Property(x => x.Id).HasDefaultValueSql("UUID()");
       });
       modelBuilder.Entity<Message>(e =>
       {
@@ -84,6 +86,14 @@ namespace UTCClassSupport.API.Infrustructure.Data
         e.HasKey(e => new { e.UserId, e.GroupId, e.RoleId });
       });
       base.OnModelCreating(modelBuilder);
+      foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+      {
+        var tableName = entityType.GetTableName();
+        if (tableName.StartsWith("AspNet"))
+        {
+          entityType.SetTableName(tableName.Substring(6));
+        }
+      }
     }
   }
 }
