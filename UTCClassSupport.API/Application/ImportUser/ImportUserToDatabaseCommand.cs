@@ -6,6 +6,6 @@ namespace UTCClassSupport.API.Application.ImportExcel
     public class ImportUserToDatabaseCommand : IRequest<ImportUserToDatabaseResponse>
   {
     public string GroupId { get; set; }
-    public string FilePath { get; set; }
+    public IFormFile File { get; set; }
   }
 }

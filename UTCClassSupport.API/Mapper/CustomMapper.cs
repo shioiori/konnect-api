@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.Office.Interop.Excel;
 using UTCClassSupport.API.Application.ImportExcel;
+using UTCClassSupport.API.Application.ImportTimetable;
 using UTCClassSupport.API.Application.UploadNewsToBulletin;
+using UTCClassSupport.API.Authorize.Requests;
+using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Requests;
 
 namespace UTCClassSupport.API.Mapper
@@ -14,6 +17,7 @@ namespace UTCClassSupport.API.Mapper
       {
         cfg.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
         cfg.AddProfile<BulletinProfile>();
+        cfg.AddProfile<ImportProfile>();
       });
 
       var mapper = config.CreateMapper();
@@ -23,11 +27,21 @@ namespace UTCClassSupport.API.Mapper
     public static IMapper Mapper => Lazy.Value;
   }
 
+  public class UserProfile : Profile
+  {
+    public UserProfile()
+    {
+      CreateMap<RegisterRequest, User>().ReverseMap();
+
+    }
+  }
+
   public class BulletinProfile : Profile
   {
     public BulletinProfile()
     {
       CreateMap<BulletinDTO, UploadNewsToBulletinCommand>().ReverseMap();
+      CreateMap<BaseRequest, UploadNewsToBulletinCommand>().ReverseMap();
     }
   }
 
@@ -36,6 +50,8 @@ namespace UTCClassSupport.API.Mapper
     public ImportProfile()
     {
       CreateMap<ImportUserDTO, ImportUserToDatabaseCommand>().ReverseMap();
+      CreateMap<ImportTimetableDTO, ImportTimetableCommand>().ReverseMap();
+      CreateMap<BaseRequest, ImportTimetableCommand>().ReverseMap();
     }
   }
 }

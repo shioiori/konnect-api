@@ -2,7 +2,10 @@
 {
   public class ImportUserDTO
   {
-    public string GroupId { get; set; }
+    public IFormFile File { get; set; }
+  }
+  public class ImportTimetableDTO
+  {
     public IFormFile File { get; set; }
   }
 }

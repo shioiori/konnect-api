@@ -1,55 +1,90 @@
-﻿using System.Data;
+﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Data;
+using UTCClassSupport.API.Models;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace UTCClassSupport.API.Common
 {
   public class ExcelHelper
   {
-    public static System.Data.DataTable ConvertExcelToDataTable(string filePath)
+    public static System.Data.DataTable ConvertExcelToDataTable(IFormFile file)
     {
-      Excel.Application excelApp = new Excel.Application();
-      Excel.Workbook excelWorkbook = null;
-      try
+      if (file == null || file.Length == 0)
       {
-        System.Data.DataTable dt = new System.Data.DataTable();
-        excelWorkbook = excelApp.Workbooks.Open(filePath);
-        Excel.Worksheet worksheet = (Excel.Worksheet)excelWorkbook.Sheets[1];
+        return null;
+      }
+      using (var memoryStream = new MemoryStream())
+      {
+        file.CopyToAsync(memoryStream);
 
-        int rowCount = worksheet.UsedRange.Rows.Count;
-        int columnCount = worksheet.UsedRange.Columns.Count;
-
-        // Tạo các cột cho DataTable dựa trên số lượng cột trong Worksheet
-        for (int i = 1; i <= columnCount; i++)
+        using (var document = SpreadsheetDocument.Open(memoryStream, false))
         {
-          var columnName = (worksheet.Cells[1, i] as Excel.Range).Value2.ToString();
-          dt.Columns.Add(columnName);
-        }
+          WorkbookPart workbookPart = document.WorkbookPart;
+          WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+          SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
 
-        // Đọc dữ liệu từ Worksheet và thêm vào DataTable
-        for (int row = 2; row <= rowCount; row++)
-        {
-          DataRow dataRow = dt.NewRow();
-          for (int col = 1; col <= columnCount; col++)
+          DataTable dataTable = new DataTable();
+
+          // Assume the first row is the header row
+          var headerRow = sheetData.Elements<Row>().First();
+          foreach (Cell headerCell in headerRow)
           {
-            var cellValue = (worksheet.Cells[row, col] as Excel.Range).Value2;
-            dataRow[col - 1] = cellValue;
+            dataTable.Columns.Add(GetCellValue(document, headerCell));
           }
-          dt.Rows.Add(dataRow);
-        }
 
-        // Đóng workbook và giải phóng tài nguyên
-        excelWorkbook.Close();
-        excelApp.Quit();
-        File.Delete(filePath);
-        return dt;
+          // Iterate through each row in the worksheet
+          foreach (Row row in sheetData.Elements<Row>().Skip(1)) // Skip header row
+          {
+            DataRow dataRow = dataTable.NewRow();
+
+            // Iterate through each cell in the row
+            for (int i = 0; i < row.Elements<Cell>().Count(); i++)
+            {
+              Cell cell = row.Elements<Cell>().ElementAt(i);
+              int actualCellIndex = GetColumnIndex(cell.CellReference);
+              dataRow[actualCellIndex] = GetCellValue(document, cell);
+            }
+
+            dataTable.Rows.Add(dataRow);
+          }
+
+          return dataTable;
+        }
       }
-      catch (Exception ex)
+    }
+    private static string GetCellValue(SpreadsheetDocument document, Cell cell)
+    {
+      SharedStringTablePart stringTablePart = document.WorkbookPart.SharedStringTablePart;
+      string value = cell.CellValue?.InnerText;
+
+      if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
       {
-        excelWorkbook.Close();
-        excelApp.Quit();
-        File.Delete(filePath);
-        throw ex;
+        return stringTablePart.SharedStringTable.ChildElements[Int32.Parse(value)].InnerText;
       }
+      else
+      {
+        return value;
+      }
+    }
+
+    // Convert cell reference to column index, e.g., "C2" to 2
+    private static int GetColumnIndex(string cellReference)
+    {
+      int columnIndex = 0;
+      foreach (char ch in cellReference)
+      {
+        if (Char.IsLetter(ch))
+        {
+          int value = Char.ToUpper(ch) - 'A';
+          columnIndex = columnIndex * 26 + value;
+        }
+        else
+        {
+          return columnIndex;
+        }
+      }
+      return columnIndex;
     }
     public static bool IsExcelFile(string filePath)
     {
