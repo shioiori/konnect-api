@@ -5,6 +5,7 @@ namespace UTCClassSupport.API.Models
 {
   public class File
   {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("id")]
     public string Id { get; set; }
     [Column("url")]

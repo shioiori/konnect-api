@@ -1,6 +1,6 @@
 ﻿namespace UTCClassSupport.API.Responses
 {
-    public class ImportUserToDatabaseResponse
+    public class ImportUserToDatabaseResponse : Response
     {
     }
 }

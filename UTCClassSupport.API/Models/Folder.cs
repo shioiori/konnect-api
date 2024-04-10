@@ -5,6 +5,8 @@ namespace UTCClassSupport.API.Models
 {
   public class Folder
   {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
     [Column("id")]
     public string Id { get; set; }
     [Column("url")]

@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using DocumentFormat.OpenXml.InkML;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
@@ -25,31 +27,66 @@ namespace UTCClassSupport.API.Application.ImportExcel
     // template: Id - Name - Email - Tel
     public async Task<ImportUserToDatabaseResponse> Handle(ImportUserToDatabaseCommand request, CancellationToken cancellationToken)
     {
-      if (ExcelHelper.IsExcelFile(request.File.FileName))
+      if (!ExcelHelper.IsExcelFile(request.File.FileName))
       {
-        return new ImportUserToDatabaseResponse();
+        return new ImportUserToDatabaseResponse()
+        {
+          Success = false,
+          Message = "Your file is not excel"
+        };
       }
       var dataTable = ExcelHelper.ConvertExcelToDataTable(request.File);
       var role = await _roleManager.FindByNameAsync(GroupRole.User.ToString());
-      foreach (DataRow row in dataTable.Rows)
+      if (role == null)
       {
-        var user = new User()
+        role = new Role()
         {
-          UserName = row[0].ToString(),
-          NormalizedUserName = row[1].ToString(),
-          Email = row[2].ToString(),
-          PhoneNumber = row[3].ToString(),
+          Name = GroupRole.User.ToString()
         };
-        await _userManager.CreateAsync(user);
-        _userManager.AddPasswordAsync(user, row[0].ToString());
-        _dbContext.UserGroupRoles.Add(new UserGroupRole()
-        {
-          UserId = user.Id,
-          RoleId = role.Id,
-          GroupId = request.GroupId
-        });
+        await _roleManager.CreateAsync(role);
       }
-      return new ImportUserToDatabaseResponse();
+      using (var transaction = _dbContext.Database.BeginTransaction())
+      {
+        try
+        {
+
+          foreach (DataRow row in dataTable.Rows)
+          {
+            var user = new User()
+            {
+              UserName = row[0].ToString(),
+              Name = row[1].ToString(),
+              Email = row[2].ToString(),
+              PhoneNumber = row[3].ToString(),
+            };
+            await _userManager.CreateAsync(user);
+            await _userManager.AddToRoleAsync(user, role.Name);
+            await _userManager.AddPasswordAsync(user, row[0].ToString());
+            _dbContext.UserGroupRoles.Add(new UserGroupRole()
+            {
+              UserId = user.Id,
+              RoleId = role.Id,
+              GroupId = request.GroupId
+            });
+            _dbContext.SaveChanges();
+          }
+          transaction.Commit();
+        }
+        catch (Exception ex)
+        {
+          transaction.Rollback();
+          return new ImportUserToDatabaseResponse()
+          {
+            Success = false,
+            Message = "There's some error in the import process. Please check again your file"
+        };
+      }
+      }
+      return new ImportUserToDatabaseResponse()
+      {
+        Success = true,
+        Message = "Import success"
+      };
     }
   }
 }

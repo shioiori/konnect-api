@@ -22,9 +22,6 @@ namespace UTCClassSupport.API.Application.UploadNewsToBulletin
     }
     public async Task<UploadNewsToBulletinResponse> Handle(UploadNewsToBulletinCommand request, CancellationToken cancellationToken)
     {
-      // check if user or manager
-      var role = _dbContext.UserGroupRoles.Where(x => x.UserId == request.UserId && x.GroupId == request.GroupId)
-        .First().RoleId;
       var news = new Bulletin()
       {
         Content = request.Content,
@@ -32,18 +29,25 @@ namespace UTCClassSupport.API.Application.UploadNewsToBulletin
         CreatedDate = DateTime.UtcNow,
         CreatedBy = request.UserName
       };
-      if (role == GroupRole.User.ToString())
+      if (request.RoleName == GroupRole.User.ToString())
       {
         news.Approved = (int)ApproveProcess.OnHold;
+        // need send notify to manager (send mail/tel/notify in web)
       }
-      if (role == GroupRole.Manager.ToString())
+      if (request.RoleName == GroupRole.Manager.ToString())
       {
         news.Approved = (int)ApproveProcess.Accept;
-        // need send notify to manager (send mail/tel/notify in web)
+        // need send notify to everyone in group
       }
       _dbContext.Bulletins.Add(news);
       await _dbContext.SaveChangesAsync();
-      return new UploadNewsToBulletinResponse();
+      return new UploadNewsToBulletinResponse()
+      {
+        Success = true,
+        Message = request.RoleName == GroupRole.Manager.ToString() 
+                  ? "Your news is posted" 
+                  : "Your news will be posted when group manager accepts"
+      };
     }
   }
 }

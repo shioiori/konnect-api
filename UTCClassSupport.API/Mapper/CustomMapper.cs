@@ -50,6 +50,8 @@ namespace UTCClassSupport.API.Mapper
     public ImportProfile()
     {
       CreateMap<ImportUserDTO, ImportUserToDatabaseCommand>().ReverseMap();
+      CreateMap<BaseRequest, ImportUserToDatabaseCommand>().ReverseMap();
+
       CreateMap<ImportTimetableDTO, ImportTimetableCommand>().ReverseMap();
       CreateMap<BaseRequest, ImportTimetableCommand>().ReverseMap();
     }

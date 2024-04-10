@@ -5,6 +5,8 @@ namespace UTCClassSupport.API.Models
   [Table("messages")]
   public class Message
   {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
     [Column("id")]
     public string Id { get; set; }
     [Column("content")]
