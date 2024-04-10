@@ -1,5 +1,8 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using System.Data;
 using UTCClassSupport.API.Models;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -14,86 +17,55 @@ namespace UTCClassSupport.API.Common
       {
         return null;
       }
-      using (var memoryStream = new MemoryStream())
+      DataTable dt = new DataTable();
+
+      using (var stream = file.OpenReadStream())
       {
-        file.CopyToAsync(memoryStream);
+        IWorkbook workbook;
 
-        using (var document = SpreadsheetDocument.Open(memoryStream, false))
-        {
-          WorkbookPart workbookPart = document.WorkbookPart;
-          WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
-          SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
-
-          DataTable dataTable = new DataTable();
-
-          // Assume the first row is the header row
-          var headerRow = sheetData.Elements<Row>().First();
-          foreach (Cell headerCell in headerRow)
-          {
-            dataTable.Columns.Add(GetCellValue(document, headerCell));
-          }
-
-          // Iterate through each row in the worksheet
-          foreach (Row row in sheetData.Elements<Row>().Skip(1)) // Skip header row
-          {
-            DataRow dataRow = dataTable.NewRow();
-
-            // Iterate through each cell in the row
-            for (int i = 0; i < row.Elements<Cell>().Count(); i++)
-            {
-              Cell cell = row.Elements<Cell>().ElementAt(i);
-              int actualCellIndex = GetColumnIndex(cell.CellReference);
-              dataRow[actualCellIndex] = GetCellValue(document, cell);
-            }
-
-            dataTable.Rows.Add(dataRow);
-          }
-
-          return dataTable;
-        }
-      }
-    }
-    private static string GetCellValue(SpreadsheetDocument document, Cell cell)
-    {
-      SharedStringTablePart stringTablePart = document.WorkbookPart.SharedStringTablePart;
-      string value = cell.CellValue?.InnerText;
-
-      if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
-      {
-        return stringTablePart.SharedStringTable.ChildElements[Int32.Parse(value)].InnerText;
-      }
-      else
-      {
-        return value;
-      }
-    }
-
-    // Convert cell reference to column index, e.g., "C2" to 2
-    private static int GetColumnIndex(string cellReference)
-    {
-      int columnIndex = 0;
-      foreach (char ch in cellReference)
-      {
-        if (Char.IsLetter(ch))
-        {
-          int value = Char.ToUpper(ch) - 'A';
-          columnIndex = columnIndex * 26 + value;
-        }
+        // Determine the appropriate workbook format based on the file extension
+        if (Path.GetExtension(file.FileName).Equals(".xls"))
+          workbook = new HSSFWorkbook(stream); // For Excel 97-2003 (*.xls) files
+        else if (Path.GetExtension(file.FileName).Equals(".xlsx"))
+          workbook = new XSSFWorkbook(stream); // For Excel 2007 or newer (*.xlsx) files
         else
+          throw new Exception("Invalid file format");
+
+        ISheet sheet = workbook.GetSheetAt(0); // Assuming the data is on the first sheet
+
+        var dataTable = new DataTable(sheet.SheetName);
+
+        // write the header row
+        var headerRow = sheet.GetRow(0);
+        foreach (var headerCell in headerRow)
         {
-          return columnIndex;
+          dataTable.Columns.Add(headerCell.ToString());
         }
+
+        // write the rest
+        for (int i = 1; i < sheet.PhysicalNumberOfRows; i++)
+        {
+          var sheetRow = sheet.GetRow(i);
+          if (sheetRow == null) continue;
+          var dtRow = dataTable.NewRow();
+          dtRow.ItemArray = dataTable.Columns
+              .Cast<DataColumn>()
+              .Select(c => sheetRow.GetCell(c.Ordinal, MissingCellPolicy.CREATE_NULL_AS_BLANK)?.ToString() ?? String.Empty)
+              ?.ToArray();
+          dataTable.Rows.Add(dtRow);
+        }
+        return dataTable;
       }
-      return columnIndex;
     }
+
+
     public static bool IsExcelFile(string filePath)
     {
-      string fileName = Path.GetFileName(filePath);
-      if (String.IsNullOrEmpty(fileName))
+      if (String.IsNullOrEmpty(filePath))
       {
         return false;
       }
-      string ext = Path.GetExtension(fileName);
+      string ext = Path.GetExtension(filePath);
       if (ext != ".xls" && ext != ".xlsx")
       {
         return false;

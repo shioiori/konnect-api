@@ -5,6 +5,7 @@ namespace UTCClassSupport.API.Models
   [Table("shifts")]
   public class Shift
   {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("id")]
     public int Id { get; set; }
     /// <summary>

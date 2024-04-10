@@ -5,6 +5,8 @@ namespace UTCClassSupport.API.Models
   [Table("schedules")]
   public class Schedule
   {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
     [Column("id")]
     public string Id { get; set; }
     [Column("send_before_minutes")]

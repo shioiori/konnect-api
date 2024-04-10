@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Data.Common;
 using System.Text;
@@ -13,7 +14,9 @@ namespace UTCClassSupport.API
   {
     public static IServiceCollection AddInfrustructure(this IServiceCollection services)
     {
-      services.AddIdentity<User, Role>()
+      services.AddIdentity<User, Role>(config => {
+        config.SignIn.RequireConfirmedEmail = false;
+      })
               .AddEntityFrameworkStores<EFContext>()
               .AddDefaultTokenProviders();
 
@@ -41,11 +44,44 @@ namespace UTCClassSupport.API
         options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
       });
 
+      services.AddMediatR(configuration =>
+      {
+        configuration.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+      });
+
       return services;
     }
 
     public static IServiceCollection AddAuthenticatedConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
+      services.AddSwaggerGen(options => {
+        options.SwaggerDoc("V1", new OpenApiInfo
+        {
+          Version = "V1",
+          Title = "WebAPI",
+          Description = "WebAPI"
+        });
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+          Scheme = "Bearer",
+          BearerFormat = "JWT",
+          In = ParameterLocation.Header,
+          Name = "Authorization",
+          Description = "Bearer Authentication with JWT Token",
+          Type = SecuritySchemeType.Http
+        });
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Id = "Bearer",
+                        Type = ReferenceType.SecurityScheme
+                }
+            },
+            new List < string > ()
+        }
+    });
+      });
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {

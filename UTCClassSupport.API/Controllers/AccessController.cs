@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -49,8 +50,9 @@ namespace UTCClassSupport.API.Authorize
           var claims = new List<Claim>();
           claims.Add(new Claim(ClaimData.UserID, user.Id));
           claims.Add(new Claim(ClaimData.UserName, user.UserName));
+          claims.Add(new Claim(ClaimData.DisplayName, user.Name));
           claims.Add(new Claim(ClaimData.Email, user.Email));
-          claims.Add(new Claim(ClaimData.Tel, user.PhoneNumber));
+          claims.Add(new Claim(ClaimData.Tel, user.PhoneNumber ?? String.Empty));
           claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
           var token = GetToken(claims);
@@ -81,19 +83,28 @@ namespace UTCClassSupport.API.Authorize
       };
     }
 
-    [HttpPost("login/{id}")]
+    [HttpPost("login/{groupId}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<AuthenticationResponse> LoginWithGroup(string groupId)
     {
       var identity = HttpContext.User.Identity as ClaimsIdentity;
       var userId = identity.FindFirst(ClaimData.UserID).Value;
       var userName = identity.FindFirst(ClaimData.UserName).Value;
-      var data = _dbContext.UserGroupRoles.First(x => x.UserId == userId && x.GroupId == groupId);
+      var data = _dbContext.UserGroupRoles.FirstOrDefault(x => x.UserId == userId && x.GroupId == groupId);
+      if (data == default)
+      {
+        return new AuthenticationResponse()
+        {
+          Success = false,
+          Message = "Group is not valid",
+          StatusCode = StatusCodes.Status400BadRequest
+        };
+      }
       var claims = identity.Claims.ToList();
       claims.Add(new Claim(ClaimData.GroupID, data.GroupId));
       var role = await _roleManager.FindByIdAsync(data.RoleId);
       claims.Add(new Claim(ClaimData.RoleID, data.RoleId));
       claims.Add(new Claim(ClaimData.RoleName, role.Name));
-      claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
       var token = GetToken(claims);
 
       return new AuthenticationResponse()
@@ -173,7 +184,7 @@ namespace UTCClassSupport.API.Authorize
 
       var token = new JwtSecurityToken(
           issuer: _configuration["JWT:Issuer"],
-          audience: _configuration["JWT:Audience"],
+          audience: _configuration["JWT:Issuer"],
           expires: DateTime.Now.AddHours(3),
           claims: authClaims,
           signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)

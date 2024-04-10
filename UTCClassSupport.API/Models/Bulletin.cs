@@ -5,6 +5,7 @@ namespace UTCClassSupport.API.Models
   [Table("bulletins")]
   public class Bulletin
   {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("id")]
     public string Id { get; set; }
     [Column("content")]

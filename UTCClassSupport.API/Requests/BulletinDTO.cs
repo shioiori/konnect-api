@@ -2,7 +2,6 @@
 {
   public class BulletinDTO
   {
-    public string Context {  get; set; }
-    public string GroupId { get; set; }
+    public string Content {  get; set; }
   }
 }

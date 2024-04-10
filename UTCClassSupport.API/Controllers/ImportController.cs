@@ -23,14 +23,18 @@ namespace UTCClassSupport.API.Controllers
     }
 
     [HttpPost("user")]
-    public async Task<ImportUserToDatabaseResponse> ImportUser([FromBody]ImportUserDTO dto)
+    public async Task<ImportUserToDatabaseResponse> ImportUser([FromForm]ImportUserDTO dto)
     {
-      var import = CustomMapper.Mapper.Map<ImportUserToDatabaseCommand>(dto);
-      return await _mediator.Send(import);
+
+      var data = ReadJWTToken();
+      var command = new ImportUserToDatabaseCommand();
+      CustomMapper.Mapper.Map<BaseRequest, ImportUserToDatabaseCommand>(data, command);
+      CustomMapper.Mapper.Map<ImportUserDTO, ImportUserToDatabaseCommand>(dto, command);
+      return await _mediator.Send(command);
     }
 
     [HttpPost("timetable")]
-    public async Task<ImportTimetableResponse> ImportTimetable([FromBody]ImportTimetableDTO dto)
+    public async Task<ImportTimetableResponse> ImportTimetable([FromForm] ImportTimetableDTO dto)
     {
       var data = ReadJWTToken();
       var command = new ImportTimetableCommand();
