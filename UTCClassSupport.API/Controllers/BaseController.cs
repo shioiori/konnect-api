@@ -8,10 +8,10 @@ namespace UTCClassSupport.API.Controllers
   public class BaseController : ControllerBase
   {
     [NonAction]
-    public BaseRequest ReadJWTToken()
+    public UserData ReadJWTToken()
     {
       var identity = HttpContext.User.Identity as ClaimsIdentity;
-      return new BaseRequest
+      return new UserData
       {
         UserId = identity.FindFirst(ClaimData.UserID).Value,
         UserName = identity.FindFirst(ClaimData.UserName).Value,

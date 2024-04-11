@@ -1,6 +1,6 @@
 ﻿namespace UTCClassSupport.API.Responses
 {
-  public class ChangeNewsStateResponse
+  public class ChangeNewsStateResponse : Response
   {
   }
 }

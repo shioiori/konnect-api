@@ -4,7 +4,7 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.ImportExcel
 {
-    public class ImportUserToDatabaseCommand : BaseRequest, IRequest<ImportUserToDatabaseResponse>
+    public class ImportUserToDatabaseCommand : UserData, IRequest<ImportUserToDatabaseResponse>
   {
     public IFormFile File { get; set; }
   }

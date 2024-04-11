@@ -1,10 +1,10 @@
 ﻿namespace UTCClassSupport.API.Requests
 {
-  public class ImportUserDTO
+  public class ImportUserRequest
   {
     public IFormFile File { get; set; }
   }
-  public class ImportTimetableDTO
+  public class ImportTimetableRequest
   {
     public IFormFile File { get; set; }
   }
