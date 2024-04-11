@@ -5,7 +5,7 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.UploadNewsToBulletin
 {
-  public class UploadNewsToBulletinCommand : BaseRequest, IRequest<UploadNewsToBulletinResponse>
+  public class UploadNewsToBulletinCommand : UserData, IRequest<UploadNewsToBulletinResponse>
   {
     public string Content { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace UTCClassSupport.API.Requests
 {
-  public class BulletinDTO
+  public class BulletinRequest
   {
     public string Content {  get; set; }
   }

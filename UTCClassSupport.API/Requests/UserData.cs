@@ -1,6 +1,6 @@
 ﻿namespace UTCClassSupport.API.Requests
 {
-  public class BaseRequest
+  public class UserData
   {
     public string UserId { get; set; }
     public string UserName { get; set; }

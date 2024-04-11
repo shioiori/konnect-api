@@ -26,11 +26,24 @@ namespace UTCClassSupport.API.Application.ChangeNewsState
       var news = _dbContext.Bulletins.Find(request.PostId);
       if (news == null)
       {
-
+        return new ChangeNewsStateResponse()
+        {
+          Success = false,
+          Message = "Can't find news with current id"
+        };
       }
+      var alert = news.Approved != (int)ApproveProcess.Accept ? true : false; 
       news.Approved = (int)request.State;
       await _dbContext.SaveChangesAsync();
-      return new ChangeNewsStateResponse();
+      if (request.State == ApproveProcess.Accept && alert)
+      {
+        // notify to other
+      }
+      return new ChangeNewsStateResponse()
+      {
+        Success = true,
+        Message = "You news' state has change"
+      };
     }
   }
 }

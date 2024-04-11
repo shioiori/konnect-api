@@ -11,9 +11,9 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Controllers
 {
-    [ApiController]
+  [ApiController]
   [Authorize(AuthenticationSchemes = "Bearer")]
-  [Route("import")]  
+  [Route("import")]
   public class ImportController : BaseController
   {
     private readonly IMediator _mediator;
@@ -23,23 +23,23 @@ namespace UTCClassSupport.API.Controllers
     }
 
     [HttpPost("user")]
-    public async Task<ImportUserToDatabaseResponse> ImportUser([FromForm]ImportUserDTO dto)
+    public async Task<ImportUserToDatabaseResponse> ImportUser([FromForm] ImportUserRequest dto)
     {
 
       var data = ReadJWTToken();
       var command = new ImportUserToDatabaseCommand();
-      CustomMapper.Mapper.Map<BaseRequest, ImportUserToDatabaseCommand>(data, command);
-      CustomMapper.Mapper.Map<ImportUserDTO, ImportUserToDatabaseCommand>(dto, command);
+      CustomMapper.Mapper.Map<UserData, ImportUserToDatabaseCommand>(data, command);
+      CustomMapper.Mapper.Map<ImportUserRequest, ImportUserToDatabaseCommand>(dto, command);
       return await _mediator.Send(command);
     }
 
     [HttpPost("timetable")]
-    public async Task<ImportTimetableResponse> ImportTimetable([FromForm] ImportTimetableDTO dto)
+    public async Task<ImportTimetableResponse> ImportTimetable([FromForm] ImportTimetableRequest dto)
     {
       var data = ReadJWTToken();
       var command = new ImportTimetableCommand();
-      CustomMapper.Mapper.Map<BaseRequest, ImportTimetableCommand>(data, command);
-      CustomMapper.Mapper.Map<ImportTimetableDTO, ImportTimetableCommand>(dto, command);
+      CustomMapper.Mapper.Map<UserData, ImportTimetableCommand>(data, command);
+      CustomMapper.Mapper.Map<ImportTimetableRequest, ImportTimetableCommand>(dto, command);
       return await _mediator.Send(command);
     }
   }

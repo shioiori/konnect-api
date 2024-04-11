@@ -40,8 +40,10 @@ namespace UTCClassSupport.API.Mapper
   {
     public BulletinProfile()
     {
-      CreateMap<BulletinDTO, UploadNewsToBulletinCommand>().ReverseMap();
-      CreateMap<BaseRequest, UploadNewsToBulletinCommand>().ReverseMap();
+      CreateMap<BulletinRequest, UploadNewsToBulletinCommand>().ReverseMap();
+      CreateMap<UserData, UploadNewsToBulletinCommand>().ReverseMap();
+
+      CreateMap<BulletinRequest, BulletinRequest>().ReverseMap();
     }
   }
 
@@ -49,11 +51,11 @@ namespace UTCClassSupport.API.Mapper
   {
     public ImportProfile()
     {
-      CreateMap<ImportUserDTO, ImportUserToDatabaseCommand>().ReverseMap();
-      CreateMap<BaseRequest, ImportUserToDatabaseCommand>().ReverseMap();
+      CreateMap<ImportUserRequest, ImportUserToDatabaseCommand>().ReverseMap();
+      CreateMap<UserData, ImportUserToDatabaseCommand>().ReverseMap();
 
-      CreateMap<ImportTimetableDTO, ImportTimetableCommand>().ReverseMap();
-      CreateMap<BaseRequest, ImportTimetableCommand>().ReverseMap();
+      CreateMap<ImportTimetableRequest, ImportTimetableCommand>().ReverseMap();
+      CreateMap<UserData, ImportTimetableCommand>().ReverseMap();
     }
   }
 }
