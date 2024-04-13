@@ -35,7 +35,7 @@ namespace UTCClassSupport.API.Application.ImportExcel
           Message = "Your file is not excel"
         };
       }
-      var dataTable = ExcelHelper.ConvertExcelToDataTable(request.File);
+      var dataTable = ExcelHelper.ConvertExcelToDataTable(request.File, FileTemplate.User);
       var role = await _roleManager.FindByNameAsync(GroupRole.User.ToString());
       if (role == null)
       {

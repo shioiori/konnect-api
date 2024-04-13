@@ -23,17 +23,18 @@ namespace UTCClassSupport.API.Application.ImportTimetable
     }
     public async Task<ImportTimetableResponse> Handle(ImportTimetableCommand request, CancellationToken cancellationToken)
     {
-      var datatable = ExcelHelper.ConvertExcelToDataTable(request.File);
+      var datatable = ExcelHelper.ConvertExcelToDataTable(request.File, FileTemplate.Timetable);
       var timetable = _dbContext.Timetables
-        .Where(x => x.GroupId == request.GroupId && x.CreatedBy == "current user")
+        .Where(x => x.GroupId == request.GroupId && x.CreatedBy == request.UserName)
         .FirstOrDefault();
       if (timetable == null)
       {
         timetable = new Timetable()
         {
           GroupId = request.GroupId,
+          Url = "temp",
           CreatedDate = DateTime.Now,
-          CreatedBy = "current user"
+          CreatedBy = request.UserName
         };
         _dbContext.Timetables.Add(timetable);
       }
@@ -52,24 +53,36 @@ namespace UTCClassSupport.API.Application.ImportTimetable
         var index = 0;
         while (text.Length > index)
         {
-          var date = text[index].Split(new string[] { "Từ ", " đến " }, StringSplitOptions.None);
-          if (index >= text.Length - 1) break;
-          var local = text[index + 1].Split(new string[] { " Thứ ", " tiết ", " tại " }, StringSplitOptions.None);
-          var shift = new Shift()
-          {
-            TimetableId = timetable.Id,
-            Subject = row[2].ToString(),
-            SubjectCode = row[1].ToString(),
-            SubjectClass = row[4].ToString(),
-            Credit = int.Parse(row[3].ToString()),
-            From = DateTime.Parse(date[0]),
-            To = DateTime.Parse(date[1]),
-            Code = ShiftHelper.ConvertPeriodToShiftCode(local[1]),
-            Day = int.Parse(local[0]),
-            Location = local[2]
-          };
-          _dbContext.Shifts.AddAsync(shift);
+          var date = text[index].Split(new string[] { "Từ ", " đến ", ":" }, StringSplitOptions.RemoveEmptyEntries);
           index++;
+          if (text.Length <= index) break;
+          while (text[index][0] == ' ')
+          {
+            var local = text[index].Split(new string[] { " Thứ ", " tiết ", " tại " }, StringSplitOptions.RemoveEmptyEntries);
+
+            var shift = new Shift()
+            {
+              TimetableId = timetable.Id,
+              Subject = row[2].ToString(),
+              SubjectCode = row[1].ToString(),
+              SubjectClass = row[4].ToString(),
+              Credit = int.Parse(row[3].ToString()),
+              From = DateTime.ParseExact(date[0], "dd/MM/yyyy", null),
+              To = DateTime.ParseExact(date[1], "dd/MM/yyyy", null),
+              Code = ShiftHelper.ConvertPeriodToShiftCode(local[1]),
+              Day = int.Parse(local[0]),
+              Location = local[2]
+            };
+            var availableShift = _dbContext.Shifts.FirstOrDefault(x => x.Code == shift.Code && x.Day == shift.Day
+                                                && ((x.From >= shift.From && x.From <= shift.To)
+                                                || (x.To >= shift.From && x.To <= shift.To)));
+            if (availableShift != null)
+            {
+              _dbContext.Shifts.Remove(availableShift);
+            }
+            _dbContext.Shifts.AddAsync(shift);
+            index++;
+          }
         }
       }
       await _dbContext.SaveChangesAsync();

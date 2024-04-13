@@ -12,4 +12,10 @@
     Deny = 0,
     Accept = 1,
   }
+
+  public enum FileTemplate
+  {
+    User,
+    Timetable
+  }
 }
