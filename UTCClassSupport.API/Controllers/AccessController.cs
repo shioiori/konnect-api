@@ -178,6 +178,15 @@ namespace UTCClassSupport.API.Authorize
         StatusCode = StatusCodes.Status200OK,
        };
     }
+
+    [HttpPost("forgot/password")]
+    public async Task<AuthenticationResponse> ForgotPassword()
+    {
+      throw new NotImplementedException();
+    }
+
+
+    [NonAction]
     private JwtSecurityToken GetToken(List<Claim> authClaims)
     {
       var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
