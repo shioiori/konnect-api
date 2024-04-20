@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using UTCClassSupport.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using UTCClassSupport.API.Infrustructure.Data;
 
 namespace UTCClassSupport.API.Hubs
 {
@@ -12,14 +13,11 @@ namespace UTCClassSupport.API.Hubs
   {
     // check user on off
     private static Dictionary<string, string> userStateConnections;
-    private readonly IMessage _messageService;
-    private readonly UserManager<User> _userService;
+    private readonly UserManager<User> _userManager;
 
-    public ChatHub(IMessage messageService, IUser userService, IChat chatService)
+    public ChatHub(UserManager<User> userManager)
     {
-      _messageService = messageService;
-      _userService = userService;
-      _chatService = chatService;
+      _userManager = userManager;
       if (userStateConnections == null)
       {
         userStateConnections = new Dictionary<string, string>();
@@ -107,18 +105,18 @@ namespace UTCClassSupport.API.Hubs
       }
     }
 
-    public async Task AddToGroup(string groupName, string userId)
+    public async Task AddToGroup(string groupName, string username)
     {
       await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-      var user = await _userService.GetAsync(userId);
-      await Clients.Group(groupName).SendAsync("AddToGroup", $"{user.Username} has joined the group {groupName}");
+      var user = await _userManager.FindByNameAsync(username);
+      await Clients.Group(groupName).SendAsync("AddToGroup", $"{user.UserName} has joined the group {groupName}");
     }
 
-    public async Task RemoveFromGroup(string groupName, string userId)
+    public async Task RemoveFromGroup(string groupName, string username)
     {
       await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
-      var user = await _userService.GetAsync(userId);
-      await Clients.Group(groupName).SendAsync("RemoveFromGroup", $"{user.Username} has left the group {groupName}");
+      var user = await _userManager.FindByNameAsync(username);
+      await Clients.Group(groupName).SendAsync("RemoveFromGroup", $"{user.UserName} has left the group {groupName}");
     }
   }
 }
