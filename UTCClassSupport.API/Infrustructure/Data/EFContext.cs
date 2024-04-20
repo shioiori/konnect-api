@@ -38,7 +38,6 @@ namespace UTCClassSupport.API.Infrustructure.Data
       modelBuilder.Entity<Group>(e =>
       {
         e.HasKey(e => e.Id);
-        e.Property(x => x.Id).HasDefaultValueSql("UUID()");
       });
       modelBuilder.Entity<Message>(e =>
       {

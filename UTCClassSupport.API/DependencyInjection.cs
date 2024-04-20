@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -49,6 +50,16 @@ namespace UTCClassSupport.API
         configuration.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
       });
 
+      return services;
+    }
+
+    public static IServiceCollection AddHangfireConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+      services.AddHangfire(x =>
+      {
+        x.UseSqlServerStorage(configuration.GetConnectionString("DBConnection"));
+      });
+      services.AddHangfireServer();
       return services;
     }
 

@@ -1,6 +1,23 @@
-﻿namespace UTCClassSupport.API.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace UTCClassSupport.API.Controllers
 {
-  public class ScheduleController
+  [ApiController]
+  [Authorize(AuthenticationSchemes = "Bearer")]
+  [Route("schedule")]
+  public class ScheduleController : BaseController
   {
+    [HttpPost]
+    public async Task<> SetSchedule(int minutes)
+    {
+
+    }
+
+    [HttpPost]
+    public async Task<> StopSchedule()
+    {
+
+    }
   }
 }
