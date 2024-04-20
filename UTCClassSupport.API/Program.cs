@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using UTCClassSupport.API;
+using UTCClassSupport.API.Hub;
 using UTCClassSupport.API.Infrustructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,7 @@ builder.Services.AddDbContext<EFContext>(
 
 builder.Services.AddInfrustructure();
 builder.Services.AddAuthenticatedConfiguration(builder.Configuration);
-
+builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var cors = "UTC_ClassSupport_CORS";
@@ -55,5 +56,6 @@ app.UseCors(cors);
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chat-hub");
 
 app.Run();
