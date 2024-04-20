@@ -1,6 +1,8 @@
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using UTCClassSupport.API;
+using UTCClassSupport.API.Common.Mail;
 using UTCClassSupport.API.Infrustructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,13 +16,16 @@ builder.Services.AddSwaggerGen();
 
 var serverVersion = new MySqlServerVersion(new Version());
 
-// Replace 'YourDbContext' with the name of your own DbContext derived class.
 builder.Services.AddDbContext<EFContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(builder.Configuration.GetConnectionString("UTCClassSupportDB"), serverVersion)
 );
 
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+
 builder.Services.AddInfrustructure();
+builder.Services.AddHangfireConfiguration(builder.Configuration);
 builder.Services.AddAuthenticatedConfiguration(builder.Configuration);
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -53,6 +58,8 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors(cors);
 app.UseAuthorization();
+
+app.UseHangfireDashboard();
 
 app.MapControllers();
 
