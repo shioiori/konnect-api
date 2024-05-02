@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Controllers
 {
@@ -8,16 +9,21 @@ namespace UTCClassSupport.API.Controllers
   [Route("schedule")]
   public class ScheduleController : BaseController
   {
-    [HttpPost]
-    public async Task<> SetSchedule(int minutes)
+    [HttpPost("start")]
+    public async Task<ScheduleResponse> SetSchedule(int minutes)
     {
-
+      throw new NotImplementedException();
     }
 
     [HttpPost]
-    public async Task<> StopSchedule()
+    public async Task<ScheduleResponse> StopSchedule()
     {
-
+      throw new NotImplementedException();
     }
+  }
+
+  public class ScheduleResponse : Response
+  {
+
   }
 }

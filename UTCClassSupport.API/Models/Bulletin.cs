@@ -23,5 +23,6 @@ namespace UTCClassSupport.API.Models
     [Column("approved")]
     public int Approved { get; set; }
     public virtual Group Group { get; set; }
+    public virtual ICollection<Comment> Comments { get; set; }
   }
 }

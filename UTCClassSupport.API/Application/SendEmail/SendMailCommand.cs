@@ -5,7 +5,7 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.SendEmail
 {
-  public class SendMailCommand : BaseRequest, IRequest<SendMailResponse>
+  public class SendMailCommand : UserData, IRequest<SendMailResponse>
   {
     public MailContent Content { get; set; }
   }

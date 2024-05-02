@@ -1,15 +1,21 @@
 ﻿using AutoMapper;
-using Microsoft.Office.Interop.Excel;
+using UTCClassSupport.API.Application.AddPostComment;
+using UTCClassSupport.API.Application.ClearTimetable;
+using UTCClassSupport.API.Application.DeleteTimetable;
+using UTCClassSupport.API.Application.GetGroupByUser;
+using UTCClassSupport.API.Application.GetUserTimetable;
 using UTCClassSupport.API.Application.ImportExcel;
 using UTCClassSupport.API.Application.ImportTimetable;
+using UTCClassSupport.API.Application.UpdateTimetable;
 using UTCClassSupport.API.Application.UploadNewsToBulletin;
 using UTCClassSupport.API.Authorize.Requests;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Requests;
+using UTCClassSupport.API.Responses.DTOs;
 
 namespace UTCClassSupport.API.Mapper
 {
-  public class CustomMapper
+    public class CustomMapper
   {
     private static readonly Lazy<IMapper> Lazy = new Lazy<IMapper>(() =>
     {
@@ -18,6 +24,9 @@ namespace UTCClassSupport.API.Mapper
         cfg.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
         cfg.AddProfile<BulletinProfile>();
         cfg.AddProfile<ImportProfile>();
+        cfg.AddProfile<UserProfile>();
+        cfg.AddProfile<GroupProfile>();
+        cfg.AddProfile<TimetableProfile>();
       });
 
       var mapper = config.CreateMapper();
@@ -36,14 +45,26 @@ namespace UTCClassSupport.API.Mapper
     }
   }
 
+  public class GroupProfile : Profile
+  {
+    public GroupProfile()
+    {
+      CreateMap<Group, GroupDTO>().ReverseMap();
+      CreateMap<UserData, GetGroupByUserQuery>().ReverseMap();
+    }
+  }
+
   public class BulletinProfile : Profile
   {
     public BulletinProfile()
     {
       CreateMap<BulletinRequest, UploadNewsToBulletinCommand>().ReverseMap();
       CreateMap<UserData, UploadNewsToBulletinCommand>().ReverseMap();
+      CreateMap<UserData, AddPostCommentCommand>().ReverseMap();
+      CreateMap<CommentRequest, AddPostCommentCommand>().ReverseMap();
 
-      CreateMap<BulletinRequest, BulletinRequest>().ReverseMap();
+      CreateMap<Comment, CommentDTO>().ReverseMap();
+      CreateMap<Bulletin, PostDTO>().ReverseMap();
     }
   }
 
@@ -56,6 +77,18 @@ namespace UTCClassSupport.API.Mapper
 
       CreateMap<ImportTimetableRequest, ImportTimetableCommand>().ReverseMap();
       CreateMap<UserData, ImportTimetableCommand>().ReverseMap();
+    }
+  }
+
+  public class TimetableProfile : Profile
+  {
+    public TimetableProfile()
+    {
+      CreateMap<ShiftDTO, Shift>().ReverseMap();
+      CreateMap<UserData, GetUserTimetableQuery>().ReverseMap();
+      CreateMap<UserData, DeleteTimetableCommand>().ReverseMap();
+      CreateMap<UserData, SynchronizeTimetableWithGoogleCalendarCommand>().ReverseMap();
+      CreateMap<UserData, UpdateRemindTimetableCommand>().ReverseMap();
     }
   }
 }

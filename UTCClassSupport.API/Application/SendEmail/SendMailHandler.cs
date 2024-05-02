@@ -66,5 +66,4 @@ namespace UTCClassSupport.API.Application.SendEmail
       }
     }
   }
-  }
 }

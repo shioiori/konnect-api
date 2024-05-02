@@ -19,6 +19,21 @@ namespace UTCClassSupport.API.Migrations
                 .HasAnnotation("ProductVersion", "6.0.24")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("ChatUser", b =>
+                {
+                    b.Property<string>("ChatsId")
+                        .HasColumnType("varchar(95)");
+
+                    b.Property<string>("JoinnersId")
+                        .HasColumnType("varchar(95)");
+
+                    b.HasKey("ChatsId", "JoinnersId");
+
+                    b.HasIndex("JoinnersId");
+
+                    b.ToTable("ChatUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -181,13 +196,25 @@ namespace UTCClassSupport.API.Migrations
                     b.ToTable("bulletins");
                 });
 
-            modelBuilder.Entity("UTCClassSupport.API.Models.Group", b =>
+            modelBuilder.Entity("UTCClassSupport.API.Models.Chat", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(95)")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnName("id");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("longtext")
+                        .HasColumnName("content");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_date");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -196,10 +223,10 @@ namespace UTCClassSupport.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("groups");
+                    b.ToTable("chats");
                 });
 
-            modelBuilder.Entity("UTCClassSupport.API.Models.Message", b =>
+            modelBuilder.Entity("UTCClassSupport.API.Models.Comment", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -220,16 +247,68 @@ namespace UTCClassSupport.API.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("created_date");
 
+                    b.Property<string>("PostId")
+                        .IsRequired()
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("post_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("comments");
+                });
+
+            modelBuilder.Entity("UTCClassSupport.API.Models.Group", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("groups");
+                });
+
+            modelBuilder.Entity("UTCClassSupport.API.Models.Message", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ChatId")
+                        .IsRequired()
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("chat_id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("content");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_date");
+
                     b.Property<string>("FileId")
                         .HasColumnType("varchar(95)")
                         .HasColumnName("file_id");
 
-                    b.Property<string>("Receiver")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("receiver");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
 
                     b.HasIndex("FileId");
 
@@ -477,7 +556,16 @@ namespace UTCClassSupport.API.Migrations
 
                     b.Property<string>("GroupId")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("group_id");
+
+                    b.Property<bool>("IsSynchronize")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_synchronize");
+
+                    b.Property<int>("Remind")
+                        .HasColumnType("int")
+                        .HasColumnName("remind_time");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -580,6 +668,21 @@ namespace UTCClassSupport.API.Migrations
                     b.ToTable("users_groups_roles");
                 });
 
+            modelBuilder.Entity("ChatUser", b =>
+                {
+                    b.HasOne("UTCClassSupport.API.Models.Chat", null)
+                        .WithMany()
+                        .HasForeignKey("ChatsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UTCClassSupport.API.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("JoinnersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("UTCClassSupport.API.Models.Role", null)
@@ -657,11 +760,30 @@ namespace UTCClassSupport.API.Migrations
                     b.Navigation("Group");
                 });
 
+            modelBuilder.Entity("UTCClassSupport.API.Models.Comment", b =>
+                {
+                    b.HasOne("UTCClassSupport.API.Models.Bulletin", "Post")
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("UTCClassSupport.API.Models.Message", b =>
                 {
+                    b.HasOne("UTCClassSupport.API.Models.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("UTCClassSupport.API.Models.MessageFile", "File")
                         .WithMany()
                         .HasForeignKey("FileId");
+
+                    b.Navigation("Chat");
 
                     b.Navigation("File");
                 });
@@ -735,6 +857,16 @@ namespace UTCClassSupport.API.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UTCClassSupport.API.Models.Bulletin", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("UTCClassSupport.API.Models.Chat", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.Group", b =>

@@ -59,7 +59,7 @@ app.UseRouting();
 app.UseCors(cors);
 app.UseAuthorization();
 
-app.UseHangfireDashboard();
+//app.UseHangfireDashboard();
 
 app.MapControllers();
 

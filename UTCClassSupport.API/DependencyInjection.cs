@@ -55,11 +55,11 @@ namespace UTCClassSupport.API
 
     public static IServiceCollection AddHangfireConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-      services.AddHangfire(x =>
-      {
-        x.UseSqlServerStorage(configuration.GetConnectionString("DBConnection"));
-      });
-      services.AddHangfireServer();
+      //services.AddHangfire(x =>
+      //{
+      //  x.UseSqlServerStorage(configuration.GetConnectionString("DBConnection"));
+      //});
+      //services.AddHangfireServer();
       return services;
     }
 
