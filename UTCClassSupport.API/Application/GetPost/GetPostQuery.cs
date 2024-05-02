@@ -5,7 +5,7 @@ using UTCClassSupport.API.Common;
 
 namespace UTCClassSupport.API.Application.GetNews
 {
-  public class GetNewsQuery : UserData, IRequest<GetNewsResponse>
+  public class GetPostQuery : UserData, IRequest<GetPostResponse>
   {
     public ApproveProcess? State { get; set; }
   }

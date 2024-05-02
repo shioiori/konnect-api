@@ -7,12 +7,12 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.ChangeNewsState
 {
-  public class ChangeNewsStateHandler : IRequestHandler<ChangeNewsStateCommand, ChangeNewsStateResponse>
+  public class ChangePostStateHandler : IRequestHandler<ChangePostStateCommand, ChangePostStateResponse>
   {
     private readonly EFContext _dbContext;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
-    public ChangeNewsStateHandler(EFContext dbContext,
+    public ChangePostStateHandler(EFContext dbContext,
       UserManager<User> userManager,
         RoleManager<Role> roleManager)
     {
@@ -21,12 +21,12 @@ namespace UTCClassSupport.API.Application.ChangeNewsState
       _roleManager = roleManager;
     }
 
-    public async Task<ChangeNewsStateResponse> Handle(ChangeNewsStateCommand request, CancellationToken cancellationToken)
+    public async Task<ChangePostStateResponse> Handle(ChangePostStateCommand request, CancellationToken cancellationToken)
     {
       var news = _dbContext.Bulletins.Find(request.PostId);
       if (news == null)
       {
-        return new ChangeNewsStateResponse()
+        return new ChangePostStateResponse()
         {
           Success = false,
           Message = "Can't find news with current id"
@@ -39,7 +39,7 @@ namespace UTCClassSupport.API.Application.ChangeNewsState
       {
         // notify to other
       }
-      return new ChangeNewsStateResponse()
+      return new ChangePostStateResponse()
       {
         Success = true,
         Message = "You news' state has change"

@@ -60,6 +60,7 @@ namespace UTCClassSupport.API.Application.ImportExcel
               PhoneNumber = row[3].ToString(),
             };
             await _userManager.CreateAsync(user);
+            _dbContext.SaveChanges();
             await _userManager.AddToRoleAsync(user, role.Name);
             await _userManager.AddPasswordAsync(user, row[0].ToString());
             _dbContext.UserGroupRoles.Add(new UserGroupRole()

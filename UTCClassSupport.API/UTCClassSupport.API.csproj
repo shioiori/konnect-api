@@ -24,14 +24,11 @@
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.2" />
     <PackageReference Include="DocumentFormat.OpenXml.Framework" Version="3.0.2" />
-<<<<<<< HEAD
     <PackageReference Include="EPPlus" Version="7.1.1" />
     <PackageReference Include="Google.Apis.Auth" Version="1.67.0" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.67.0.3373" />
-=======
     <PackageReference Include="Hangfire" Version="1.8.12" />
     <PackageReference Include="MailKit" Version="4.4.0" />
->>>>>>> 05e4f262675e116d39364b11d55150917ae57893
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.24" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.24" />
