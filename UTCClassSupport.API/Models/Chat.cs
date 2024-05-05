@@ -10,7 +10,7 @@ namespace UTCClassSupport.API.Models
     public string Id { get; set; }
     [Column("name")] 
     public string Name { get; set; }
-    [Column("content")]
+    [Column("avatar")]
     public string? Avatar { get; set; }
     [Column("created_date")]
     public DateTime CreatedDate { get; set; }

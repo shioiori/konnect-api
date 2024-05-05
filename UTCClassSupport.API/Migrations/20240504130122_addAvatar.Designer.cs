@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UTCClassSupport.API.Infrustructure.Data;
 
@@ -10,9 +11,10 @@ using UTCClassSupport.API.Infrustructure.Data;
 namespace UTCClassSupport.API.Migrations
 {
     [DbContext(typeof(EFContext))]
-    partial class EFContextModelSnapshot : ModelSnapshot
+    [Migration("20240504130122_addAvatar")]
+    partial class addAvatar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -205,7 +207,7 @@ namespace UTCClassSupport.API.Migrations
 
                     b.Property<string>("Avatar")
                         .HasColumnType("longtext")
-                        .HasColumnName("avatar");
+                        .HasColumnName("content");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()

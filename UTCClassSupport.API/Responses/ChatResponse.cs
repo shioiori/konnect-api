@@ -4,10 +4,11 @@ namespace UTCClassSupport.API.Responses
 {
   public class ChatResponse : Response
   {
+    public string CurrentUser { get; set; }
     public string RoomId { get; set; }
     public string RoomName { get; set; }
     public string? Avatar { get; set; }
-    public List<UserDTO> Users { get; set; }
+    public List<string> Users { get; set; }
     //public List<User>
   }
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Mapper;
 using UTCClassSupport.API.Models;
@@ -11,7 +12,7 @@ namespace UTCClassSupport.API.Controllers
 {
   [Authorize(AuthenticationSchemes = "Bearer")]
   [Route("/chat")]
-  public class ChatController
+  public class ChatController : BaseController
   {
     private readonly EFContext _dbContext;
     private readonly UserManager<User> _userManager;
@@ -28,25 +29,71 @@ namespace UTCClassSupport.API.Controllers
     [HttpGet("search/{name?}")]
     public List<Chat> GetChats(string? name)
     {
-      var chats = _dbContext.Chats.Where(x => string.IsNullOrEmpty(name) || x.Name.ToLower().Contains(name.ToLower()))
-                            .Include(x => x.Messages).ToList();
+      var userData = ReadJWTToken();
+      var chats = _dbContext.Chats
+        .Where(x => (string.IsNullOrEmpty(name) 
+            || x.Name.ToLower().Contains(name.ToLower()))
+            && x.Joinners.Select(x => x.UserName).Contains(userData.UserName))
+        .Include(x => x.Messages).ToList();
       return chats;
     }
 
-    [HttpGet]
+    [HttpGet("{id}")]
     public Chat GetChat(string id)
     {
       var chat = _dbContext.Chats.FirstOrDefault(x => x.Id == id);
       return chat;
     }
 
-    [HttpPost]
-    public Chat AddChat(string[] users)
+    [HttpGet]
+    public async Task<Chat> GetChatAsync(string[] users)
     {
-      throw new NotImplementedException();
-      //_dbContext.Chats.Add(chat);
-      //_dbContext.SaveChanges();
-      //return chat;
+      var userData = ReadJWTToken();
+      var chats = _dbContext.Chats.Include(x => x.Joinners).ToList();
+      foreach (var room in chats)
+      {
+        if (room != default && room.Joinners.Count() == users.Length)
+        {
+          bool isExist = true;
+          if (!room.Joinners.Select(x => x.UserName).Contains(userData.UserName)) continue;
+          foreach (var join in room.Joinners)
+          {
+              if (!users.Contains(join.UserName))
+              {
+                isExist = false;
+                break;
+              }
+          }
+          if (isExist)
+          {
+            return _dbContext.Chats.Where(x => x.Id == room.Id)
+              .Include(x => x.Messages).First();
+          }
+        }
+      }
+      var data = ReadJWTToken();
+      string name = "";
+      foreach (var user in users)
+      {
+        name += user + ", ";
+      }
+      name = name.Remove(name.Length - 2);
+      var chat = new Chat()
+      {
+        Name = name,
+        Avatar = default,
+        CreatedDate = DateTime.Now,
+        CreatedBy = data.UserName,
+        Joinners = new Collection<User>()
+      };
+      foreach (var username in users)
+      {
+        var user = await _userManager.FindByNameAsync(username);
+        chat.Joinners.Add(user);
+      }
+      _dbContext.Chats.Add(chat);
+      _dbContext.SaveChanges();
+      return chat;
     }
 
     [HttpPost("/message")]
@@ -55,6 +102,19 @@ namespace UTCClassSupport.API.Controllers
       _dbContext.Messages.Add(message);
       _dbContext.SaveChanges();
       return message;
+    }
+
+    [NonAction]
+    public ChatResponse MapChatToPluginStructure(Chat chat)
+    {
+      var chatResponse = new ChatResponse()
+      {
+        RoomId = chat.Id,
+        RoomName = chat.Name,
+        Avatar = chat.Avatar,
+        Users = chat.Joinners.Select(x => x.UserName).ToList()
+      };
+      return chatResponse;
     }
   }
 }

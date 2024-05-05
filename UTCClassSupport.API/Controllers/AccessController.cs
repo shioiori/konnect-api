@@ -52,6 +52,7 @@ namespace UTCClassSupport.API.Authorize
           claims.Add(new Claim(ClaimData.UserName, user.UserName));
           claims.Add(new Claim(ClaimData.DisplayName, user.Name));
           claims.Add(new Claim(ClaimData.Email, user.Email));
+          claims.Add(new Claim(ClaimData.Avatar, user.Avatar));
           claims.Add(new Claim(ClaimData.Tel, user.PhoneNumber ?? String.Empty));
           claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
