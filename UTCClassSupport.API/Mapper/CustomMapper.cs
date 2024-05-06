@@ -6,6 +6,7 @@ using UTCClassSupport.API.Application.GetGroupByUser;
 using UTCClassSupport.API.Application.GetUserTimetable;
 using UTCClassSupport.API.Application.ImportExcel;
 using UTCClassSupport.API.Application.ImportTimetable;
+using UTCClassSupport.API.Application.ScheduleTimetableRemind;
 using UTCClassSupport.API.Application.UpdateTimetable;
 using UTCClassSupport.API.Application.UploadNewsToBulletin;
 using UTCClassSupport.API.Authorize.Requests;
@@ -89,6 +90,8 @@ namespace UTCClassSupport.API.Mapper
       CreateMap<UserData, DeleteTimetableCommand>().ReverseMap();
       CreateMap<UserData, SynchronizeTimetableWithGoogleCalendarCommand>().ReverseMap();
       CreateMap<UserData, UpdateRemindTimetableCommand>().ReverseMap();
+      CreateMap<UserData, AddEventCommand>().ReverseMap();
+      CreateMap<EventRequest, AddEventCommand>().ReverseMap();
     }
   }
 }

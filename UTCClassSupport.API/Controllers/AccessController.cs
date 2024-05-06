@@ -13,6 +13,7 @@ using UTCClassSupport.API.Authorize.Responses;
 using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Models;
+using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Authorize
 {
@@ -40,7 +41,7 @@ namespace UTCClassSupport.API.Authorize
     }
 
     [HttpPost("login")]
-    public async Task<AuthenticationResponse> LoginAsync(LoginRequest request)
+    public async Task<Response> LoginAsync(LoginRequest request)
     {
       var user = await _userManager.FindByNameAsync(request.Username);
       if (user != null)
@@ -55,7 +56,6 @@ namespace UTCClassSupport.API.Authorize
           claims.Add(new Claim(ClaimData.Avatar, user.Avatar));
           claims.Add(new Claim(ClaimData.Tel, user.PhoneNumber ?? String.Empty));
           claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-
           var token = GetToken(claims);
 
           return new AuthenticationResponse()
@@ -86,7 +86,7 @@ namespace UTCClassSupport.API.Authorize
 
     [HttpPost("login/{groupId}")]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<AuthenticationResponse> LoginWithGroup(string groupId)
+    public async Task<Response> LoginWithGroup(string groupId)
     {
       var identity = HttpContext.User.Identity as ClaimsIdentity;
       var userId = identity.FindFirst(ClaimData.UserID).Value;
@@ -106,6 +106,7 @@ namespace UTCClassSupport.API.Authorize
       var role = await _roleManager.FindByIdAsync(data.RoleId);
       claims.Add(new Claim(ClaimData.RoleID, data.RoleId));
       claims.Add(new Claim(ClaimData.RoleName, role.Name));
+      claims.Add(new Claim(ClaimTypes.Role, role.Name));
       var token = GetToken(claims);
 
       return new AuthenticationResponse()
@@ -118,7 +119,7 @@ namespace UTCClassSupport.API.Authorize
     }
 
     [HttpPost("register")]
-    public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest request, string? groupId = "")
+    public async Task<Response> RegisterAsync(RegisterRequest request, string? groupId = "")
     {
       GroupRole groupRole = GroupRole.Manager;
       if (_dbContext.Groups.FirstOrDefault(x => x.Id == groupId) != default)
@@ -181,7 +182,7 @@ namespace UTCClassSupport.API.Authorize
     }
 
     [HttpPost("forgot/password")]
-    public async Task<AuthenticationResponse> ForgotPassword()
+    public async Task<Response> ForgotPassword()
     {
       throw new NotImplementedException();
     }

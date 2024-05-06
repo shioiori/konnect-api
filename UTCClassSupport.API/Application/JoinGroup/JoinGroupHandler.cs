@@ -5,14 +5,14 @@ using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Responses;
 
-namespace UTCClassSupport.API.Application.DeleteTimetable
+namespace UTCClassSupport.API.Application.JoinGroup
 {
-  public class DeleteTimetableHandler : IRequestHandler<DeleteTimetableCommand, DeleteTimetableResponse>
+  public class JoinGroupHandler : IRequestHandler<JoinGroupCommand, JoinGroupResponse>
   {
     private readonly EFContext _dbContext;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
-    public DeleteTimetableHandler(EFContext dbContext,
+    public JoinGroupHandler(EFContext dbContext,
       UserManager<User> userManager,
         RoleManager<Role> roleManager)
     {
@@ -20,18 +20,22 @@ namespace UTCClassSupport.API.Application.DeleteTimetable
       _userManager = userManager;
       _roleManager = roleManager;
     }
-
-    public Task<DeleteTimetableResponse> Handle(DeleteTimetableCommand request, CancellationToken cancellationToken)
+    public async Task<JoinGroupResponse> Handle(JoinGroupCommand request, CancellationToken cancellationToken)
     {
-      var timetable = _dbContext.Timetables.Where(x => x.GroupId == request.GroupId && x.CreatedBy == request.UserName);
-      _dbContext.Timetables.RemoveRange(timetable);
+      var role = await _roleManager.FindByNameAsync(GroupRole.User.ToString());
+      _dbContext.UserGroupRoles.Add(new UserGroupRole()
+      {
+        UserId = request.UserId,
+        GroupId = request.GroupId,
+        RoleId = role.Id
+      });
       _dbContext.SaveChanges();
-      return Task.FromResult(new DeleteTimetableResponse()
+      return new JoinGroupResponse()
       {
         Success = true,
         Type = ResponseType.Success,
-        Message = "Xóa thành công"
-      });
+        Message = "Bạn đã tham gia vào group " + request.GroupId
+      };
     }
   }
 }

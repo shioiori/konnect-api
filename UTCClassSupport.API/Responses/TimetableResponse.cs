@@ -24,7 +24,13 @@ namespace UTCClassSupport.API.Responses
     public List<ShiftDTO> Events { get; set; }
   }
 
-  public class SetScheduleTimetableResponse : Response
+  public class AddEventResponse : Response
   {
+  }
+
+
+  public class ScheduleResponse : Response
+  {
+
   }
 }

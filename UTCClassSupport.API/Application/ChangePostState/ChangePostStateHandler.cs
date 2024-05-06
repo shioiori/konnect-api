@@ -29,7 +29,8 @@ namespace UTCClassSupport.API.Application.ChangeNewsState
         return new ChangePostStateResponse()
         {
           Success = false,
-          Message = "Can't find news with current id"
+          Type = ResponseType.Error,
+          Message = "Không tìm thấy tin"
         };
       }
       var alert = news.Approved != (int)ApproveProcess.Accept ? true : false; 
@@ -42,7 +43,8 @@ namespace UTCClassSupport.API.Application.ChangeNewsState
       return new ChangePostStateResponse()
       {
         Success = true,
-        Message = "You news' state has change"
+        Type = ResponseType.Success,
+        Message = "Đã thay đổi trạng thái tin"
       };
     }
   }

@@ -5,14 +5,15 @@ using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Responses;
 
-namespace UTCClassSupport.API.Application.DeleteTimetable
+namespace UTCClassSupport.API.Application.OutGroup
 {
-  public class DeleteTimetableHandler : IRequestHandler<DeleteTimetableCommand, DeleteTimetableResponse>
+  public class OutGroupHandler : IRequestHandler<OutGroupCommand, OutGroupResponse>
   {
     private readonly EFContext _dbContext;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
-    public DeleteTimetableHandler(EFContext dbContext,
+
+    public OutGroupHandler(EFContext dbContext,
       UserManager<User> userManager,
         RoleManager<Role> roleManager)
     {
@@ -20,17 +21,20 @@ namespace UTCClassSupport.API.Application.DeleteTimetable
       _userManager = userManager;
       _roleManager = roleManager;
     }
-
-    public Task<DeleteTimetableResponse> Handle(DeleteTimetableCommand request, CancellationToken cancellationToken)
+    public Task<OutGroupResponse> Handle(OutGroupCommand request, CancellationToken cancellationToken)
     {
-      var timetable = _dbContext.Timetables.Where(x => x.GroupId == request.GroupId && x.CreatedBy == request.UserName);
-      _dbContext.Timetables.RemoveRange(timetable);
+      if (request.CurrentGroupId == null)
+      {
+        request.CurrentGroupId = request.GroupId;
+      }
+      var link = _dbContext.UserGroupRoles.First(x => x.GroupId == request.GroupId && x.UserId == request.UserId);
+      _dbContext.UserGroupRoles.Remove(link);
       _dbContext.SaveChanges();
-      return Task.FromResult(new DeleteTimetableResponse()
+      return Task.FromResult(new OutGroupResponse()
       {
         Success = true,
         Type = ResponseType.Success,
-        Message = "Xóa thành công"
+        Message = "Bạn đã rời khỏi group"
       });
     }
   }
