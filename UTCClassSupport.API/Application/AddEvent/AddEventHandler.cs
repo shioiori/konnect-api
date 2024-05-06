@@ -1,19 +1,19 @@
-﻿using MediatR;
+﻿using Hangfire;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
-using UTCClassSupport.API.Application.UpdateTimetable;
 using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Responses;
 
-namespace UTCClassSupport.API.Application.UpdateRemindTimetable
+namespace UTCClassSupport.API.Application.ScheduleTimetableRemind
 {
-  public class UpdateRemindTimetableHandler : IRequestHandler<UpdateRemindTimetableCommand, UpdateRemindTimetableResponse>
+  public class AddEventHandler : IRequestHandler<AddEventCommand, AddEventResponse>
   {
     private readonly EFContext _dbContext;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
-    public UpdateRemindTimetableHandler(EFContext dbContext,
+    public AddEventHandler(EFContext dbContext,
       UserManager<User> userManager,
         RoleManager<Role> roleManager)
     {
@@ -21,25 +21,35 @@ namespace UTCClassSupport.API.Application.UpdateRemindTimetable
       _userManager = userManager;
       _roleManager = roleManager;
     }
-    public Task<UpdateRemindTimetableResponse> Handle(UpdateRemindTimetableCommand request, CancellationToken cancellationToken)
+    public Task<AddEventResponse> Handle(AddEventCommand request, CancellationToken cancellationToken)
     {
       var timetable = _dbContext.Timetables.FirstOrDefault(x => x.GroupId == request.GroupId && x.CreatedBy == request.UserName);
       if (timetable == null)
       {
-        return Task.FromResult(new UpdateRemindTimetableResponse()
+        return Task.FromResult(new AddEventResponse()
         {
           Success = false,
           Type = ResponseType.Error,
-          Message = "Người dùng này không có thời khoá biểu"
+          Message = "Người dùng không có thời khóa biểu"
         });
       }
-      timetable.Remind = request.RemindTime;
+      var shift = new Shift()
+      {
+        From = request.From,
+        To = request.To,
+        Title = request.Title,
+        Description = request.Description,
+        Location = request.Location,
+        IsLoopPerDay = false,
+        TimetableId = timetable.Id,
+      };
+      _dbContext.Shifts.Add(shift);
       _dbContext.SaveChanges();
-      return Task.FromResult(new UpdateRemindTimetableResponse()
+      return Task.FromResult(new AddEventResponse()
       {
         Success = true,
         Type = ResponseType.Success,
-        Message = "Cập nhật thành công"
+        Message = "Thêm sự kiện thành công"
       });
     }
   }

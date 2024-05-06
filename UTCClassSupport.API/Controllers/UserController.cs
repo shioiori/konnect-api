@@ -2,14 +2,17 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using UTCClassSupport.API.Authorize.Requests;
+using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
+using UTCClassSupport.API.Mapper;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Requests;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Controllers
 {
-  [Authorize(AuthenticationSchemes = "Bearer")]
+  [Authorize(AuthenticationSchemes = "Bearer", Roles = "Manager")]
   [Route("user")]
   public class UserController : BaseController
   {
@@ -50,7 +53,39 @@ namespace UTCClassSupport.API.Controllers
                               GroupId = x.GroupId,
                             }).ToList();
       return users;
-      
+    }
+
+    [HttpPost]
+    public Response AddUser(RegisterRequest request)
+    {
+      var user = CustomMapper.Mapper.Map<User>(request);
+      _userManager.CreateAsync(user);
+      _userManager.AddPasswordAsync(user, request.Password);
+      return new Response()
+      {
+        Success = true,
+        Message = "Thêm người dùng thành công",
+        Type = ResponseType.Success,
+      };
+    }
+
+    [HttpPost]
+    public Response EditUser(UserRequest request)
+    {
+      throw new NotImplementedException();
+    }
+
+    [HttpDelete]
+    public async Task<Response> DeleteUserAsync(string userName)
+    {
+      var user = await _userManager.FindByNameAsync(userName);
+      _userManager.DeleteAsync(user);
+      return new Response()
+      {
+        Success = true,
+        Message = "Xóa người dùng thành công",
+        Type = ResponseType.Success,
+      };
     }
   }
 }

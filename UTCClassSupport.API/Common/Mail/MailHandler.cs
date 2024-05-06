@@ -1,36 +1,21 @@
 ﻿using MailKit.Security;
-using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using UTCClassSupport.API.Common;
-using UTCClassSupport.API.Common.Mail;
-using UTCClassSupport.API.Infrustructure.Data;
-using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Responses;
 
-namespace UTCClassSupport.API.Application.SendEmail
+namespace UTCClassSupport.API.Common.Mail
 {
-  public class SendMailHandler : IRequestHandler<SendMailCommand, SendMailResponse>
+  public class MailHandler
   {
     private readonly MailSettings _mailSettings;
-    private readonly EFContext _dbContext;
-    private readonly UserManager<User> _userManager;
-    private readonly RoleManager<Role> _roleManager;
 
-    public SendMailHandler(IOptions<MailSettings> mailSettings,
-      EFContext dbContext,
-      UserManager<User> userManager,
-        RoleManager<Role> roleManager)
+    public MailHandler(MailSettings mailSettings)
     {
-      _mailSettings = mailSettings.Value;
-      _dbContext = dbContext;
-      _userManager = userManager;
-      _roleManager = roleManager;
+      _mailSettings = mailSettings;
     }
-    public async Task<SendMailResponse> Handle(SendMailCommand request, CancellationToken cancellationToken)
+
+    public async Task<SendMailResponse> Send(MailContent mailContent)
     {
-      var mailContent = request.Content;
       var email = new MimeMessage();
       email.Sender = new MailboxAddress(_mailSettings.DisplayName, _mailSettings.Mail);
       email.From.Add(new MailboxAddress(_mailSettings.DisplayName, _mailSettings.Mail));
@@ -56,12 +41,7 @@ namespace UTCClassSupport.API.Application.SendEmail
       }
       catch (Exception ex)
       {
-        return new SendMailResponse()
-        {
-          Success = false,
-          Type = ResponseType.Error,
-          Message = ex.Message,
-        };
+        throw ex;
       }
       finally
       {

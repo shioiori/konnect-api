@@ -53,7 +53,7 @@ namespace UTCClassSupport.API.Application.ImportTimetable
           while (text.Length > index && text[index][0] == ' ')
           {
             var local = text[index].Split(new string[] { " Thứ ", " tiết ", " tại " }, StringSplitOptions.RemoveEmptyEntries);
-
+            var periodTime = ShiftHelper.ConvertPeriodToTime(DateTime.Parse(date[0]), DateTime.Parse(date[1]), local[1]);
             var shift = new Shift()
             {
               TimetableId = timetable.Id,
@@ -63,9 +63,13 @@ namespace UTCClassSupport.API.Application.ImportTimetable
               Credit = int.Parse(row[3].ToString()),
               From = DateTime.ParseExact(date[0], "dd/MM/yyyy", null),
               To = DateTime.ParseExact(date[1], "dd/MM/yyyy", null),
-              Code = ShiftHelper.ConvertPeriodToShiftCode(local[1]),
+              PeriodStart = periodTime.StartTime.TimeOfDay,
+              PeriodEnd = periodTime.EndTime.TimeOfDay,
+              IsLoopPerDay = true,
               Day = int.Parse(local[0]),
-              Location = local[2]
+              Location = local[2],
+              Title = row[2].ToString(),
+              Description = local[2],
             };
             //var availableShift = _dbContext.Shifts.FirstOrDefault(x => x.Code == shift.Code && x.Day == shift.Day
             //                                    && ((x.From >= shift.From && x.From <= shift.To)
@@ -80,7 +84,12 @@ namespace UTCClassSupport.API.Application.ImportTimetable
         }
       }
       await _dbContext.SaveChangesAsync();
-      return new ImportResponse();
+      return new ImportResponse()
+      {
+        Success = true,
+        Type = ResponseType.Success,
+        Message = "Import thành công"
+      };
     }
   }
 }
