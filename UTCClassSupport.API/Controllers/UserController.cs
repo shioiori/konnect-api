@@ -69,8 +69,8 @@ namespace UTCClassSupport.API.Controllers
       };
     }
 
-    [HttpPost]
-    public Response EditUser(UserRequest request)
+    [HttpPost("{username}")]
+    public Response EditUser(string username, UserRequest request)
     {
       throw new NotImplementedException();
     }

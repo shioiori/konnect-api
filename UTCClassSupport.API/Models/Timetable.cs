@@ -11,6 +11,6 @@ namespace UTCClassSupport.API.Models
     public bool IsSynchronize { get; set; }
     [Column("remind_time")]
     public int Remind { get; set; }
-    public virtual ICollection<Shift> Shifts { get; set; }
+    public virtual ICollection<Event> Shifts { get; set; }
   }
 }

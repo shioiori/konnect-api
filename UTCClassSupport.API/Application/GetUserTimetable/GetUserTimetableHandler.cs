@@ -25,7 +25,7 @@ namespace UTCClassSupport.API.Application.GetUserTimetable
     {
       var timetable = _dbContext.Timetables.FirstOrDefault(x => x.CreatedBy == request.UserName
                                                             && x.GroupId == request.GroupId);
-      var shifts = _dbContext.Shifts.Where(x => x.TimetableId == timetable.Id).ToList();
+      var shifts = _dbContext.Events.Where(x => x.TimetableId == timetable.Id).ToList();
       DateTime start = DateTime.MaxValue, end = DateTime.MinValue;
       foreach (var shift in shifts)
       {

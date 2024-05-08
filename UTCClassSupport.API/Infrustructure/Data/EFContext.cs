@@ -22,7 +22,7 @@ namespace UTCClassSupport.API.Infrustructure.Data
     public DbSet<Schedule> Schedules { get; set; }
     public DbSet<ShareFile> ShareFiles { get; set; }
     public DbSet<ShareFolder> ShareFolders { get; set; }
-    public DbSet<Shift> Shifts { get; set; }
+    public DbSet<Event> Events { get; set; }
     public DbSet<Timetable> Timetables { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
@@ -79,7 +79,7 @@ namespace UTCClassSupport.API.Infrustructure.Data
         .WithMany(e => e.Folders)
         .HasForeignKey(e => e.GroupId);
       });
-      modelBuilder.Entity<Shift>(e =>
+      modelBuilder.Entity<Event>(e =>
       {
         e.HasKey(e => e.Id);
         e.HasOne(e => e.Timetable)
