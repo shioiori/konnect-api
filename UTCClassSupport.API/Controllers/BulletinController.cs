@@ -56,13 +56,14 @@ namespace UTCClassSupport.API.Controllers
       return await _mediator.Send(bulletin);
     }
 
-    [HttpPost("comment")]
-    public async Task<AddPostCommentResponse> AddPostCommentAsync([FromBody] CommentRequest comment)
+    [HttpPost("{id}/comment")]
+    public async Task<AddPostCommentResponse> AddPostCommentAsync(string id, [FromBody] CommentRequest comment)
     {
       var data = ReadJWTToken();
       var command = new AddPostCommentCommand();
       CustomMapper.Mapper.Map<UserData, AddPostCommentCommand>(data, command);
       CustomMapper.Mapper.Map<CommentRequest, AddPostCommentCommand>(comment, command);
+      command.PostId = id;
       return await _mediator.Send(command);
     }
   }

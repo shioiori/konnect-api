@@ -33,7 +33,7 @@ namespace UTCClassSupport.API.Application.ScheduleTimetableRemind
           Message = "Người dùng không có thời khóa biểu"
         });
       }
-      var shift = new Shift()
+      var shift = new Event()
       {
         From = request.From,
         To = request.To,
@@ -43,7 +43,7 @@ namespace UTCClassSupport.API.Application.ScheduleTimetableRemind
         IsLoopPerDay = false,
         TimetableId = timetable.Id,
       };
-      _dbContext.Shifts.Add(shift);
+      _dbContext.Events.Add(shift);
       _dbContext.SaveChanges();
       return Task.FromResult(new AddEventResponse()
       {

@@ -24,18 +24,22 @@ namespace UTCClassSupport.API.Application.AddPostComment
 
     public Task<AddPostCommentResponse> Handle(AddPostCommentCommand request, CancellationToken cancellationToken)
     {
-      var comment = _dbContext.Comments.Add(new Comment()
+      var comment = new Comment()
       {
         PostId = request.PostId,
         Content = request.Content,
         CreatedDate = DateTime.UtcNow,
         CreatedBy = request.UserName,
-      });
+      };
+      _dbContext.Comments.Add(comment);
+      _dbContext.SaveChanges();
+      var cmt = CustomMapper.Mapper.Map<CommentDTO>(comment);
+      cmt.DisplayName = request.DisplayName;
       return Task.FromResult(new AddPostCommentResponse()
       {
         Success = true,
         Message = "Add user success",
-        Comment = CustomMapper.Mapper.Map<CommentDTO>(comment),
+        Comment = cmt
       });
     }
   }

@@ -54,7 +54,7 @@ namespace UTCClassSupport.API.Application.ImportTimetable
           {
             var local = text[index].Split(new string[] { " Thứ ", " tiết ", " tại " }, StringSplitOptions.RemoveEmptyEntries);
             var periodTime = ShiftHelper.ConvertPeriodToTime(DateTime.Parse(date[0]), DateTime.Parse(date[1]), local[1]);
-            var shift = new Shift()
+            var shift = new Event()
             {
               TimetableId = timetable.Id,
               Subject = row[2].ToString(),
@@ -78,7 +78,7 @@ namespace UTCClassSupport.API.Application.ImportTimetable
             //{
             //  _dbContext.Shifts.Remove(availableShift);
             //}
-            _dbContext.Shifts.AddAsync(shift);
+            _dbContext.Events.AddAsync(shift);
             index++;
           }
         }

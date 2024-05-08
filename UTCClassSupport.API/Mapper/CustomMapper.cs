@@ -85,7 +85,7 @@ namespace UTCClassSupport.API.Mapper
   {
     public TimetableProfile()
     {
-      CreateMap<ShiftDTO, Shift>().ReverseMap();
+      CreateMap<ShiftDTO, Event>().ReverseMap();
       CreateMap<UserData, GetUserTimetableQuery>().ReverseMap();
       CreateMap<UserData, DeleteTimetableCommand>().ReverseMap();
       CreateMap<UserData, SynchronizeTimetableWithGoogleCalendarCommand>().ReverseMap();

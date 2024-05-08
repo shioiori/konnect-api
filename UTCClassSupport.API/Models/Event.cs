@@ -2,8 +2,8 @@
 
 namespace UTCClassSupport.API.Models
 {
-  [Table("shifts")]
-  public class Shift
+  [Table("events")]
+  public class Event
   {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("id")]

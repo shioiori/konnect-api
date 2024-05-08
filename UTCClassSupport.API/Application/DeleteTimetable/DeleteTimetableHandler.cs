@@ -23,8 +23,18 @@ namespace UTCClassSupport.API.Application.DeleteTimetable
 
     public Task<DeleteTimetableResponse> Handle(DeleteTimetableCommand request, CancellationToken cancellationToken)
     {
-      var timetable = _dbContext.Timetables.Where(x => x.GroupId == request.GroupId && x.CreatedBy == request.UserName);
-      _dbContext.Timetables.RemoveRange(timetable);
+      var timetable = _dbContext.Timetables.FirstOrDefault(x => x.GroupId == request.GroupId && x.CreatedBy == request.UserName);
+      if (timetable == null)
+      {
+        return Task.FromResult(new DeleteTimetableResponse()
+        {
+          Success = true,
+          Type = ResponseType.Success,
+          Message = "Không tồn tại thời khoá biểu"
+        });
+      }
+      var events = _dbContext.Events.Where(x => x.TimetableId == timetable.Id);
+      _dbContext.Events.RemoveRange(events);
       _dbContext.SaveChanges();
       return Task.FromResult(new DeleteTimetableResponse()
       {

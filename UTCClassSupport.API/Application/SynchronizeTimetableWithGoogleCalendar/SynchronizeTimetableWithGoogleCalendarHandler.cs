@@ -36,8 +36,8 @@ namespace UTCClassSupport.API.Application.ClearTimetable
         }
         request.TimetableId = timetable.Id;
       }
-      var shifts = _dbContext.Shifts.Where(x => x.TimetableId == request.TimetableId);
-      _dbContext.Shifts.RemoveRange(shifts);
+      var shifts = _dbContext.Events.Where(x => x.TimetableId == request.TimetableId);
+      _dbContext.Events.RemoveRange(shifts);
 
       var timetable2 = _dbContext.Timetables.First(x => x.Id == request.TimetableId);
       timetable2.IsSynchronize = true;
