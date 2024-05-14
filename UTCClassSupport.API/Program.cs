@@ -29,6 +29,7 @@ builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailS
 
 
 builder.Services.AddInfrustructure();
+builder.Services.AddServices();
 builder.Services.AddHangfireConfiguration(builder.Configuration);
 builder.Services.AddAuthenticatedConfiguration(builder.Configuration);
 

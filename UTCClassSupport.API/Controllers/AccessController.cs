@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,7 +14,9 @@ using UTCClassSupport.API.Authorize.Responses;
 using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Models;
+using UTCClassSupport.API.Requests;
 using UTCClassSupport.API.Responses;
+using UTCClassSupport.API.Utilities;
 
 namespace UTCClassSupport.API.Authorize
 {
@@ -171,7 +174,7 @@ namespace UTCClassSupport.API.Authorize
         UserId = user.Id,
         GroupId = groupId,
         RoleId = role.Id
-      }); ;
+      }); 
       _dbContext.SaveChanges();
       return new AuthenticationResponse()
       {
@@ -185,6 +188,23 @@ namespace UTCClassSupport.API.Authorize
     public async Task<Response> ForgotPassword()
     {
       throw new NotImplementedException();
+    }
+
+    [HttpPost("join/{token}")]
+    public async Task<Response> JoinByGroup(string token)
+    {
+      var key = AesOperation.GetKey(token);
+      var encryptText = AesOperation.GetEncryptText(token);
+      var decryptText = AesOperation.DecryptString(key, encryptText);
+      var request = JsonConvert.DeserializeObject<JoinRequest>(decryptText);
+      return new JoinGroupResponse()
+      {
+        Message = "Thực hiện đăng ký trước khi vào group",
+        Success = true,
+        Type = ResponseType.Success,
+        GroupId = request.GroupId,
+        Email = request.Email,
+      };
     }
 
 

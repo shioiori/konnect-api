@@ -9,5 +9,10 @@ namespace UTCClassSupport.API.Responses
 
   public class OutGroupResponse : Response { }
 
-  public class JoinGroupResponse : Response { }
+  public class JoinGroupResponse : Response { 
+    public string Email { get; set; }
+    public string GroupId { get; set; }
+  }
+
+  public class InviteToGroupResponse : Response { }
 }
