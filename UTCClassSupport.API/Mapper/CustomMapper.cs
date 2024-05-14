@@ -6,6 +6,8 @@ using UTCClassSupport.API.Application.GetGroupByUser;
 using UTCClassSupport.API.Application.GetUserTimetable;
 using UTCClassSupport.API.Application.ImportExcel;
 using UTCClassSupport.API.Application.ImportTimetable;
+using UTCClassSupport.API.Application.InviteToGroup;
+using UTCClassSupport.API.Application.OutGroup;
 using UTCClassSupport.API.Application.ScheduleTimetableRemind;
 using UTCClassSupport.API.Application.UpdateTimetable;
 using UTCClassSupport.API.Application.UploadNewsToBulletin;
@@ -52,6 +54,11 @@ namespace UTCClassSupport.API.Mapper
     {
       CreateMap<Group, GroupDTO>().ReverseMap();
       CreateMap<UserData, GetGroupByUserQuery>().ReverseMap();
+
+      CreateMap<UserData, InviteToGroupCommand>().ReverseMap();
+      CreateMap<InviteToGroupRequest, InviteToGroupCommand>().ReverseMap();
+
+      CreateMap<UserData, OutGroupCommand>().ReverseMap();
     }
   }
 

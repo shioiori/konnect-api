@@ -9,4 +9,10 @@
     public string? Role { get; set; }
     public string? Password { get; set; }
   }
+
+  public class JoinRequest
+  {
+    public string GroupId { get; set; }
+    public string Email { get; set; }
+  }
 }

@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UTCClassSupport.API.Application.GetGroupByUser;
+using UTCClassSupport.API.Application.InviteToGroup;
 using UTCClassSupport.API.Application.JoinGroup;
 using UTCClassSupport.API.Application.OutGroup;
 using UTCClassSupport.API.Common;
@@ -38,21 +40,30 @@ namespace UTCClassSupport.API.Controllers
     public async Task<Response> JoinGroup(string id)
     {
       var identity = HttpContext.User.Identity as ClaimsIdentity;
-      var userId = identity.FindFirst(ClaimData.UserID).Value;
       return await _mediator.Send(new JoinGroupCommand()
       {
-        UserId = userId,
         GroupId = id,
+        ClaimsIdentity = identity
       });
     }
 
-    [HttpDelete("{id?}/out")]
+    [HttpDelete("out/{id?}")]
     public async Task<Response> OutGroup(string? id)
     {
       var data = ReadJWTToken();
       var command = new OutGroupCommand();
       CustomMapper.Mapper.Map<UserData, OutGroupCommand>(data, command);
       command.CurrentGroupId = id;
+      return await _mediator.Send(command);
+    }
+
+    [HttpPost("invite")]
+    public async Task<Response> InvitePeople(InviteToGroupRequest request)
+    {
+      var data = ReadJWTToken();
+      var command = new InviteToGroupCommand();
+      CustomMapper.Mapper.Map<UserData, InviteToGroupCommand>(data, command);
+      CustomMapper.Mapper.Map<InviteToGroupRequest, InviteToGroupCommand>(request, command);
       return await _mediator.Send(command);
     }
   }

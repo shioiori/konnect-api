@@ -1,11 +1,12 @@
 ﻿using MediatR;
+using System.Security.Claims;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.JoinGroup
 {
-  public class JoinGroupCommand : IRequest<JoinGroupResponse>
+  public class JoinGroupCommand : IRequest<Response>
   {
-    public string UserId { get; set; }
     public string GroupId { get; set; }
+    public ClaimsIdentity ClaimsIdentity { get; set; }
   }
 }

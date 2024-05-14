@@ -7,6 +7,7 @@ using System;
 using System.Data.Common;
 using System.Text;
 using UTCClassSupport.API.Infrustructure.Data;
+using UTCClassSupport.API.Infrustructure.Repositories;
 using UTCClassSupport.API.Models;
 
 namespace UTCClassSupport.API
@@ -15,13 +16,15 @@ namespace UTCClassSupport.API
   {
     public static IServiceCollection AddInfrustructure(this IServiceCollection services)
     {
-      services.AddIdentity<User, Role>(config => {
+      services.AddIdentity<User, Role>(config =>
+      {
         config.SignIn.RequireConfirmedEmail = false;
       })
               .AddEntityFrameworkStores<EFContext>()
               .AddDefaultTokenProviders();
 
-      services.Configure<IdentityOptions>(options => {
+      services.Configure<IdentityOptions>(options =>
+      {
         // Thiết lập về Password
         options.Password.RequireDigit = false; // Không bắt phải có số
         options.Password.RequireLowercase = false; // Không bắt phải có chữ thường
@@ -41,7 +44,7 @@ namespace UTCClassSupport.API
         options.User.RequireUniqueEmail = true;  // Email là duy nhất
 
         // Cấu hình đăng nhập.
-        options.SignIn.RequireConfirmedEmail = false;           
+        options.SignIn.RequireConfirmedEmail = false;
         options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
       });
 
@@ -65,7 +68,8 @@ namespace UTCClassSupport.API
 
     public static IServiceCollection AddAuthenticatedConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-      services.AddSwaggerGen(options => {
+      services.AddSwaggerGen(options =>
+      {
         options.SwaggerDoc("V1", new OpenApiInfo
         {
           Version = "V1",
@@ -107,6 +111,12 @@ namespace UTCClassSupport.API
                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
                 };
               });
+      return services;
+    }
+
+    public static IServiceCollection AddServices(this IServiceCollection services)
+    {
+      services.AddScoped<AccessManager>();
       return services;
     }
   }
