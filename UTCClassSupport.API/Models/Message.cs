@@ -13,13 +13,13 @@ namespace UTCClassSupport.API.Models
     public string Content { get; set; }
     [Column("file_id")]
     public string? FileId { get; set; }
-
-    [Column("receiver")]
-    public string Receiver { get; set; }
+    [Column("chat_id")]
+    public string ChatId { get; set; }
     [Column("created_date")]
     public DateTime CreatedDate { get; set; }
     [Column("created_by")]
     public string CreatedBy { get; set; }
     public virtual MessageFile File { get; set; }
+    public virtual Chat Chat { get; set; }
   }
 }

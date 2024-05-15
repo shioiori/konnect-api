@@ -8,7 +8,7 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.ImportTimetable
 {
-  public class ImportTimetableHandler : IRequestHandler<ImportTimetableCommand, ImportTimetableResponse>
+  public class ImportTimetableHandler : IRequestHandler<ImportTimetableCommand, ImportResponse>
   {
     private readonly EFContext _dbContext;
     private readonly UserManager<User> _userManager;
@@ -21,7 +21,7 @@ namespace UTCClassSupport.API.Application.ImportTimetable
       _userManager = userManager;
       _roleManager = roleManager;
     }
-    public async Task<ImportTimetableResponse> Handle(ImportTimetableCommand request, CancellationToken cancellationToken)
+    public async Task<ImportResponse> Handle(ImportTimetableCommand request, CancellationToken cancellationToken)
     {
       var datatable = ExcelHelper.ConvertExcelToDataTable(request.File, FileTemplate.Timetable);
       var timetable = _dbContext.Timetables
@@ -38,12 +38,7 @@ namespace UTCClassSupport.API.Application.ImportTimetable
         };
         _dbContext.Timetables.Add(timetable);
       }
-      else
-      {
-        // delete all timetable and shift (reference: cascade)
-        var shifts = _dbContext.Shifts.Where(x => x.TimetableId == timetable.Id);
-        _dbContext.Shifts.RemoveRange(shifts);
-      }
+      timetable.IsSynchronize = false;
 
       // datatable: stt - mahocphan - tenhocphan - so tinchi - lophocphan - ghe - thoigiandiadiem - hocphi
 
@@ -55,12 +50,11 @@ namespace UTCClassSupport.API.Application.ImportTimetable
         {
           var date = text[index].Split(new string[] { "Từ ", " đến ", ":" }, StringSplitOptions.RemoveEmptyEntries);
           index++;
-          if (text.Length <= index) break;
-          while (text[index][0] == ' ')
+          while (text.Length > index && text[index][0] == ' ')
           {
             var local = text[index].Split(new string[] { " Thứ ", " tiết ", " tại " }, StringSplitOptions.RemoveEmptyEntries);
-
-            var shift = new Shift()
+            var periodTime = ShiftHelper.ConvertPeriodToTime(DateTime.Parse(date[0]), DateTime.Parse(date[1]), local[1]);
+            var shift = new Event()
             {
               TimetableId = timetable.Id,
               Subject = row[2].ToString(),
@@ -69,24 +63,33 @@ namespace UTCClassSupport.API.Application.ImportTimetable
               Credit = int.Parse(row[3].ToString()),
               From = DateTime.ParseExact(date[0], "dd/MM/yyyy", null),
               To = DateTime.ParseExact(date[1], "dd/MM/yyyy", null),
-              Code = ShiftHelper.ConvertPeriodToShiftCode(local[1]),
+              PeriodStart = periodTime.StartTime.TimeOfDay,
+              PeriodEnd = periodTime.EndTime.TimeOfDay,
+              IsLoopPerDay = true,
               Day = int.Parse(local[0]),
-              Location = local[2]
+              Location = local[2],
+              Title = row[2].ToString(),
+              Description = local[2],
             };
-            var availableShift = _dbContext.Shifts.FirstOrDefault(x => x.Code == shift.Code && x.Day == shift.Day
-                                                && ((x.From >= shift.From && x.From <= shift.To)
-                                                || (x.To >= shift.From && x.To <= shift.To)));
-            if (availableShift != null)
-            {
-              _dbContext.Shifts.Remove(availableShift);
-            }
-            _dbContext.Shifts.AddAsync(shift);
+            //var availableShift = _dbContext.Shifts.FirstOrDefault(x => x.Code == shift.Code && x.Day == shift.Day
+            //                                    && ((x.From >= shift.From && x.From <= shift.To)
+            //                                    || (x.To >= shift.From && x.To <= shift.To)));
+            //if (availableShift != null)
+            //{
+            //  _dbContext.Shifts.Remove(availableShift);
+            //}
+            _dbContext.Events.AddAsync(shift);
             index++;
           }
         }
       }
       await _dbContext.SaveChangesAsync();
-      return new ImportTimetableResponse();
+      return new ImportResponse()
+      {
+        Success = true,
+        Type = ResponseType.Success,
+        Message = "Import thành công"
+      };
     }
   }
 }

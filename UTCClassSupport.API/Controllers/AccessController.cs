@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,6 +14,9 @@ using UTCClassSupport.API.Authorize.Responses;
 using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Models;
+using UTCClassSupport.API.Requests;
+using UTCClassSupport.API.Responses;
+using UTCClassSupport.API.Utilities;
 
 namespace UTCClassSupport.API.Authorize
 {
@@ -40,7 +44,7 @@ namespace UTCClassSupport.API.Authorize
     }
 
     [HttpPost("login")]
-    public async Task<AuthenticationResponse> LoginAsync(LoginRequest request)
+    public async Task<Response> LoginAsync(LoginRequest request)
     {
       var user = await _userManager.FindByNameAsync(request.Username);
       if (user != null)
@@ -52,9 +56,9 @@ namespace UTCClassSupport.API.Authorize
           claims.Add(new Claim(ClaimData.UserName, user.UserName));
           claims.Add(new Claim(ClaimData.DisplayName, user.Name));
           claims.Add(new Claim(ClaimData.Email, user.Email));
+          claims.Add(new Claim(ClaimData.Avatar, user.Avatar));
           claims.Add(new Claim(ClaimData.Tel, user.PhoneNumber ?? String.Empty));
           claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-
           var token = GetToken(claims);
 
           return new AuthenticationResponse()
@@ -85,7 +89,7 @@ namespace UTCClassSupport.API.Authorize
 
     [HttpPost("login/{groupId}")]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<AuthenticationResponse> LoginWithGroup(string groupId)
+    public async Task<Response> LoginWithGroup(string groupId)
     {
       var identity = HttpContext.User.Identity as ClaimsIdentity;
       var userId = identity.FindFirst(ClaimData.UserID).Value;
@@ -105,6 +109,7 @@ namespace UTCClassSupport.API.Authorize
       var role = await _roleManager.FindByIdAsync(data.RoleId);
       claims.Add(new Claim(ClaimData.RoleID, data.RoleId));
       claims.Add(new Claim(ClaimData.RoleName, role.Name));
+      claims.Add(new Claim(ClaimTypes.Role, role.Name));
       var token = GetToken(claims);
 
       return new AuthenticationResponse()
@@ -117,7 +122,7 @@ namespace UTCClassSupport.API.Authorize
     }
 
     [HttpPost("register")]
-    public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest request, string? groupId = "")
+    public async Task<Response> RegisterAsync(RegisterRequest request, string? groupId = "")
     {
       GroupRole groupRole = GroupRole.Manager;
       if (_dbContext.Groups.FirstOrDefault(x => x.Id == groupId) != default)
@@ -169,7 +174,7 @@ namespace UTCClassSupport.API.Authorize
         UserId = user.Id,
         GroupId = groupId,
         RoleId = role.Id
-      }); ;
+      }); 
       _dbContext.SaveChanges();
       return new AuthenticationResponse()
       {
@@ -178,6 +183,32 @@ namespace UTCClassSupport.API.Authorize
         StatusCode = StatusCodes.Status200OK,
        };
     }
+
+    [HttpPost("forgot/password")]
+    public async Task<Response> ForgotPassword()
+    {
+      throw new NotImplementedException();
+    }
+
+    [HttpPost("join/{token}")]
+    public async Task<Response> JoinByGroup(string token)
+    {
+      var key = AesOperation.GetKey(token);
+      var encryptText = AesOperation.GetEncryptText(token);
+      var decryptText = AesOperation.DecryptString(key, encryptText);
+      var request = JsonConvert.DeserializeObject<JoinRequest>(decryptText);
+      return new JoinGroupResponse()
+      {
+        Message = "Thực hiện đăng ký trước khi vào group",
+        Success = true,
+        Type = ResponseType.Success,
+        GroupId = request.GroupId,
+        Email = request.Email,
+      };
+    }
+
+
+    [NonAction]
     private JwtSecurityToken GetToken(List<Claim> authClaims)
     {
       var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));

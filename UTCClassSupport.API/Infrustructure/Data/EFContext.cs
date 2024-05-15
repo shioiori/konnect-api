@@ -14,13 +14,15 @@ namespace UTCClassSupport.API.Infrustructure.Data
     { }
 
     public DbSet<Bulletin> Bulletins { get; set; }
+    public DbSet<Comment> Comments { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Message> Messages { get; set; }
+    public DbSet<Chat> Chats { get; set; }
     public DbSet<MessageFile> MessagesFile { get; set; }
     public DbSet<Schedule> Schedules { get; set; }
     public DbSet<ShareFile> ShareFiles { get; set; }
     public DbSet<ShareFolder> ShareFolders { get; set; }
-    public DbSet<Shift> Shifts { get; set; }
+    public DbSet<Event> Events { get; set; }
     public DbSet<Timetable> Timetables { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
@@ -35,14 +37,29 @@ namespace UTCClassSupport.API.Infrustructure.Data
         .WithMany(e => e.Bulletins)
         .HasForeignKey(e => e.GroupId);
       });
+      modelBuilder.Entity<Comment>(e =>
+      {
+        e.HasKey(e => e.Id);
+        e.HasOne(e => e.Post)
+        .WithMany(e => e.Comments)
+        .HasForeignKey(e => e.PostId);
+      });
       modelBuilder.Entity<Group>(e =>
       {
         e.HasKey(e => e.Id);
-        e.Property(x => x.Id).HasDefaultValueSql("UUID()");
       });
       modelBuilder.Entity<Message>(e =>
       {
         e.HasKey(e => e.Id);
+        e.HasOne(e => e.Chat)
+        .WithMany(e => e.Messages)
+        .HasForeignKey(e => e.ChatId);
+      });
+      modelBuilder.Entity<Chat>(e =>
+      {
+        e.HasKey(e => e.Id);
+        e.HasMany(e => e.Joinners)
+        .WithMany(e => e.Chats);
       });
       modelBuilder.Entity<MessageFile>(e =>
       {
@@ -62,7 +79,7 @@ namespace UTCClassSupport.API.Infrustructure.Data
         .WithMany(e => e.Folders)
         .HasForeignKey(e => e.GroupId);
       });
-      modelBuilder.Entity<Shift>(e =>
+      modelBuilder.Entity<Event>(e =>
       {
         e.HasKey(e => e.Id);
         e.HasOne(e => e.Timetable)
