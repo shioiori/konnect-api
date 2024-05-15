@@ -60,6 +60,7 @@ namespace UTCClassSupport.API.Application.ImportExcel
               PhoneNumber = row[3].ToString(),
             };
             await _userManager.CreateAsync(user);
+            _dbContext.SaveChanges();
             await _userManager.AddToRoleAsync(user, role.Name);
             await _userManager.AddPasswordAsync(user, row[0].ToString());
             _dbContext.UserGroupRoles.Add(new UserGroupRole()
@@ -78,14 +79,16 @@ namespace UTCClassSupport.API.Application.ImportExcel
           return new ImportUserToDatabaseResponse()
           {
             Success = false,
-            Message = "There's some error in the import process. Please check again your file"
+            Type = ResponseType.Error,
+            Message = "Có lỗi trong quá trình import, hãy kiểm tra lại file"
         };
       }
       }
       return new ImportUserToDatabaseResponse()
       {
         Success = true,
-        Message = "Import success"
+        Type = ResponseType.Success,
+        Message = "Import thành công"
       };
     }
   }

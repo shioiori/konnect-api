@@ -15,6 +15,6 @@ namespace UTCClassSupport.API.Models
     public int ShiftId { get; set; }
     [Column("created_by")]
     public string CreatedBy { get; set; }
-    public virtual Shift Shift { get; set; }
+    public virtual Event Shift { get; set; }
   }
 }

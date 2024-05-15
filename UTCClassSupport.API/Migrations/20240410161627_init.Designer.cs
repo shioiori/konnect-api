@@ -14,7 +14,7 @@ namespace UTCClassSupport.API.Migrations
     [Migration("20240410161627_init")]
     partial class init
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected  void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,7 +163,7 @@ namespace UTCClassSupport.API.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("created_date");
 
-                    b.Property<string>("GroupId")
+                    b.Property<string>("text")
                         .IsRequired()
                         .HasColumnType("varchar(95)")
                         .HasColumnName("group_id");
@@ -479,7 +479,8 @@ namespace UTCClassSupport.API.Migrations
 
                     b.Property<string>("GroupId")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("group_id"); ;
 
                     b.Property<string>("Url")
                         .IsRequired()

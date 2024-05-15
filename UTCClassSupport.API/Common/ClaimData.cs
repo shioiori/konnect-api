@@ -2,6 +2,7 @@
 {
   public class ClaimData
   {
+    public const string Avatar = "Avatar";
     public const string GroupID = "GroupID";
     public const string UserID = "UserID";
     public const string UserName = "UserName";

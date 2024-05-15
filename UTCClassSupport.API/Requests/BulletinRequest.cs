@@ -4,4 +4,9 @@
   {
     public string Content {  get; set; }
   }
+
+  public class CommentRequest
+  {
+    public string Content { get; set; }
+  }
 }

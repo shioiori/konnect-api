@@ -1,27 +1,36 @@
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using UTCClassSupport.API;
-using UTCClassSupport.API.Hub;
+using UTCClassSupport.API.Common.Mail;
 using UTCClassSupport.API.Infrustructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var serverVersion = new MySqlServerVersion(new Version());
 
-// Replace 'YourDbContext' with the name of your own DbContext derived class.
 builder.Services.AddDbContext<EFContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(builder.Configuration.GetConnectionString("UTCClassSupportDB"), serverVersion)
 );
 
+
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+
 builder.Services.AddInfrustructure();
+builder.Services.AddServices();
+builder.Services.AddHangfireConfiguration(builder.Configuration);
 builder.Services.AddAuthenticatedConfiguration(builder.Configuration);
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -55,7 +64,8 @@ app.UseRouting();
 app.UseCors(cors);
 app.UseAuthorization();
 
+//app.UseHangfireDashboard();
+
 app.MapControllers();
-app.MapHub<ChatHub>("/chat-hub");
 
 app.Run();

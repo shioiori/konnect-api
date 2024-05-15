@@ -34,7 +34,7 @@ namespace UTCClassSupport.API.Controllers
     }
 
     [HttpPost("timetable")]
-    public async Task<ImportTimetableResponse> ImportTimetable([FromForm] ImportTimetableRequest dto)
+    public async Task<ImportResponse> ImportTimetable([FromForm] ImportTimetableRequest dto)
     {
       var data = ReadJWTToken();
       var command = new ImportTimetableCommand();

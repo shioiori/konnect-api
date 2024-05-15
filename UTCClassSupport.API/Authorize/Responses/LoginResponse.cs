@@ -1,13 +1,13 @@
-﻿namespace UTCClassSupport.API.Authorize.Responses
+﻿using UTCClassSupport.API.Responses;
+
+namespace UTCClassSupport.API.Authorize.Responses
 {
   public class LoginResponse
   {
   }
 
-  public class AuthenticationResponse
+  public class AuthenticationResponse : Response
   {
-    public bool Success { get; set; }
-    public string Message { get; set; }
     public int StatusCode { get; set; }
     public string AccessToken { get; set; }
   }
