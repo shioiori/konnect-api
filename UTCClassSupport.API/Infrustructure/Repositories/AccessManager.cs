@@ -77,7 +77,7 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
           var claims = new List<Claim>();
           claims.Add(new Claim(ClaimData.UserID, user.Id));
           claims.Add(new Claim(ClaimData.UserName, user.UserName));
-          claims.Add(new Claim(ClaimData.DisplayName, user.Name));
+          claims.Add(new Claim(ClaimData.DisplayName, user.DisplayName));
           claims.Add(new Claim(ClaimData.Email, user.Email));
           claims.Add(new Claim(ClaimData.Avatar, user.Avatar));
           claims.Add(new Claim(ClaimData.Tel, user.PhoneNumber ?? String.Empty));

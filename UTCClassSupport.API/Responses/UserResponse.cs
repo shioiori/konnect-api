@@ -1,14 +1,26 @@
-﻿namespace UTCClassSupport.API.Responses
+﻿using UTCClassSupport.API.Responses.DTOs;
+
+namespace UTCClassSupport.API.Responses
 {
-  public class UserResponse
+  public class GetUserResponse : Response
   {
-    public string Id { get; set; }
-    public string Email { get; set; }
-    public string Phone { get; set; }
-    public string DisplayName { get; set; }
-    public string UserName { get; set; }
-    public string Avatar { get; set; }
-    public string RoleName { get; set; }
-    public string? GroupId { get; set; }
+    public UserDTO User { get; set; }
   }
+
+  public class GetUsersResponse : Response
+  {
+    public List<UserDTO> Users { get; set; }
+  }
+
+  public class AddUserResponse : Response
+  {
+    public UserDTO User { get; set; }
+  }
+
+  public class UpdateUserResponse : Response { public UserDTO User { get; set;} }
+  public class DeleteUserResponse : Response
+  {
+  }
+
+  public class ChangeRoleResponse : Response { }
 }
