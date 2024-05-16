@@ -55,7 +55,7 @@ namespace UTCClassSupport.API.Application.ImportExcel
             var user = new User()
             {
               UserName = row[0].ToString(),
-              Name = row[1].ToString(),
+              DisplayName = row[1].ToString(),
               Email = row[2].ToString(),
               PhoneNumber = row[3].ToString(),
             };

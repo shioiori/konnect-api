@@ -22,7 +22,7 @@ namespace UTCClassSupport.API.Application.AddPostComment
       _roleManager = roleManager;
     }
 
-    public Task<AddPostCommentResponse> Handle(AddPostCommentCommand request, CancellationToken cancellationToken)
+    public async Task<AddPostCommentResponse> Handle(AddPostCommentCommand request, CancellationToken cancellationToken)
     {
       var comment = new Comment()
       {
@@ -34,13 +34,13 @@ namespace UTCClassSupport.API.Application.AddPostComment
       _dbContext.Comments.Add(comment);
       _dbContext.SaveChanges();
       var cmt = CustomMapper.Mapper.Map<CommentDTO>(comment);
-      cmt.DisplayName = request.DisplayName;
-      return Task.FromResult(new AddPostCommentResponse()
+      cmt.User = CustomMapper.Mapper.Map<UserDTO>(await _userManager.FindByNameAsync(comment.CreatedBy));
+      return new AddPostCommentResponse()
       {
         Success = true,
         Message = "Add user success",
         Comment = cmt
-      });
+      };
     }
   }
 }

@@ -40,10 +40,10 @@ namespace UTCClassSupport.API.Application.GetNews
       var posts = CustomMapper.Mapper.Map<IEnumerable<PostDTO>>(res);
       foreach (var post in posts)
       {
-        post.DisplayName = (await _userManager.FindByNameAsync(post.CreatedBy))?.Name;
+        post.User = CustomMapper.Mapper.Map<UserDTO>(await _userManager.FindByNameAsync(post.CreatedBy));
         foreach (var comment in post.Comments)
         {
-          comment.DisplayName = (await _userManager.FindByNameAsync(comment.CreatedBy))?.Name;
+          comment.User = CustomMapper.Mapper.Map<UserDTO>(await _userManager.FindByNameAsync(comment.CreatedBy));
         }
       }
       return new GetPostResponse()

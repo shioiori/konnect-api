@@ -44,6 +44,9 @@ namespace UTCClassSupport.API.Mapper
     public UserProfile()
     {
       CreateMap<RegisterRequest, User>().ReverseMap();
+      CreateMap<UserDTO, User>().ReverseMap();
+      CreateMap<AddUserRequest, User>().ReverseMap();
+      CreateMap<UpdateUserRequest, User>().ReverseMap();
 
     }
   }

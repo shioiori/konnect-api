@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using UTCClassSupport.API.Authorize.Requests;
 using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
+using UTCClassSupport.API.Infrustructure.Repositories;
 using UTCClassSupport.API.Mapper;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Requests;
 using UTCClassSupport.API.Responses;
+using UTCClassSupport.API.Responses.DTOs;
 
 namespace UTCClassSupport.API.Controllers
 {
@@ -16,16 +18,10 @@ namespace UTCClassSupport.API.Controllers
   [Route("user")]
   public class UserController : BaseController
   {
-    private readonly EFContext _dbContext;
-    private readonly UserManager<User> _userManager;
-    private readonly RoleManager<Role> _roleManager;
-    public UserController(EFContext dbContext,
-      UserManager<User> userManager,
-        RoleManager<Role> roleManager)
+    private readonly UserRepository _userRepository;
+    public UserController(UserRepository userRepository)
     {
-      _dbContext = dbContext;
-      _userManager = userManager;
-      _roleManager = roleManager;
+      _userRepository = userRepository;
     }
 
     [HttpGet]
@@ -34,58 +30,122 @@ namespace UTCClassSupport.API.Controllers
       return ReadJWTToken();
     }
 
-    [HttpGet("group")]
-    public List<UserResponse> GetUsers()
+    [HttpGet("/{username}")]
+    public async Task<Response> GetUserDataAsync(string username)
     {
-      var data = ReadJWTToken();
-      var users = _dbContext.UserGroupRoles.Where(x => x.GroupId == data.GroupId)
-                            .Include(x => x.User)
-                            .Include(x => x.Role)
-                            .Select(x => new UserResponse()
-                            {
-                              Id = x.UserId,
-                              Email = x.User.Email,
-                              Phone = x.User.PhoneNumber,
-                              DisplayName = x.User.Name,
-                              UserName = x.User.UserName,
-                              Avatar = x.User.Avatar,
-                              RoleName = x.Role.Name,
-                              GroupId = x.GroupId,
-                            }).ToList();
-      return users;
+      var data = await _userRepository.GetUserAsync(username);
+      return new GetUserResponse()
+      {
+        Success = true,
+        Type = ResponseType.Success,
+        User = data,
+      };
+    }
+
+    [HttpGet("group")]
+    public Response GetUsers(string? groupId)
+    {
+      var userData = ReadJWTToken();
+      if (groupId == null)
+      {
+        groupId = userData.GroupId;
+      }
+      var data = _userRepository.GetUsers(groupId);
+      return new GetUsersResponse()
+      {
+        Success = true,
+        Type = ResponseType.Success,
+        Users = data,
+      };
     }
 
     [HttpPost]
-    public Response AddUser(RegisterRequest request)
+    public async Task<Response> AddUserAsync([FromBody] AddUserRequest request)
     {
-      var user = CustomMapper.Mapper.Map<User>(request);
-      _userManager.CreateAsync(user);
-      _userManager.AddPasswordAsync(user, request.Password);
-      return new Response()
+      var userData = ReadJWTToken();
+      if (request.UserGroupData == null)
+      {
+        request.UserGroupData = new UserGroupData()
+        {
+          UserName = request.UserName,
+          GroupId = userData.GroupId,
+          RoleName = GroupRole.User.ToString(),
+        };
+      }
+      var data = await _userRepository.AddUserAsync(request);
+      return new AddUserResponse()
       {
         Success = true,
         Message = "Thêm người dùng thành công",
         Type = ResponseType.Success,
+        User = data
       };
     }
 
     [HttpPost("{username}")]
-    public Response EditUser(string username, UserRequest request)
+    public async Task<Response> EditUserAsync(string username, [FromBody] UpdateUserRequest request)
     {
-      throw new NotImplementedException();
-    }
-
-    [HttpDelete]
-    public async Task<Response> DeleteUserAsync(string userName)
-    {
-      var user = await _userManager.FindByNameAsync(userName);
-      _userManager.DeleteAsync(user);
-      return new Response()
+      var data = await _userRepository.UpdateUserAsync(username, request);
+      return new UpdateUserResponse()
       {
         Success = true,
-        Message = "Xóa người dùng thành công",
+        Message = "Cập nhật người dùng thành công",
         Type = ResponseType.Success,
+        User = data
       };
+    }
+
+    [HttpDelete("{username}")]
+    public async Task<Response> DeleteUserAsync(string username)
+    {
+      try
+      {
+        _userRepository.DeleteUserAsync(username);
+        return new DeleteUserResponse()
+        {
+          Success = true,
+          Message = "Xóa người dùng thành công",
+          Type = ResponseType.Success,
+        };
+      }
+      catch (Exception ex)
+      {
+        return new DeleteUserResponse()
+        {
+          Success = false,
+          Type = ResponseType.Error,
+          Message = ex.Message,
+        };
+      }
+    }
+
+    [HttpPost("{groupId?}/{username}/{role}")]
+    public async Task<Response> ChangeRole(string userName, string role, string? groupId)
+    {
+      try
+      {
+        var userData = ReadJWTToken();
+        if (groupId == null)
+        {
+          groupId = userData.GroupId;
+        }
+        _userRepository.ChangeRoleAsync(userName, role, groupId);
+        return new DeleteUserResponse()
+        {
+          Success = true,
+          Message = "Xóa người dùng thành công",
+          Type = ResponseType.Success,
+        };
+      }
+      catch (Exception ex)
+      {
+        return new DeleteUserResponse()
+        {
+          Success = false,
+          Type = ResponseType.Error,
+          Message = ex.Message,
+        };
+      }
     }
   }
 }

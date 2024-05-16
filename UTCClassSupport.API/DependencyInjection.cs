@@ -117,6 +117,7 @@ namespace UTCClassSupport.API
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
       services.AddScoped<AccessManager>();
+      services.AddScoped<UserRepository>();
       return services;
     }
   }
