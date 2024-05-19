@@ -3,15 +3,16 @@ using UTCClassSupport.API.Application.AddPostComment;
 using UTCClassSupport.API.Application.ClearTimetable;
 using UTCClassSupport.API.Application.DeleteTimetable;
 using UTCClassSupport.API.Application.GetGroupByUser;
+using UTCClassSupport.API.Application.GetNotification;
 using UTCClassSupport.API.Application.GetUserTimetable;
 using UTCClassSupport.API.Application.ImportExcel;
 using UTCClassSupport.API.Application.ImportTimetable;
 using UTCClassSupport.API.Application.InviteToGroup;
 using UTCClassSupport.API.Application.OutGroup;
 using UTCClassSupport.API.Application.ScheduleTimetableRemind;
+using UTCClassSupport.API.Application.UpdateStateNotification;
 using UTCClassSupport.API.Application.UpdateTimetable;
 using UTCClassSupport.API.Application.UploadNewsToBulletin;
-using UTCClassSupport.API.Authorize.Requests;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Requests;
 using UTCClassSupport.API.Responses.DTOs;
@@ -30,6 +31,7 @@ namespace UTCClassSupport.API.Mapper
         cfg.AddProfile<UserProfile>();
         cfg.AddProfile<GroupProfile>();
         cfg.AddProfile<TimetableProfile>();
+        cfg.AddProfile<NotificationProfile>();
       });
 
       var mapper = config.CreateMapper();
@@ -102,6 +104,15 @@ namespace UTCClassSupport.API.Mapper
       CreateMap<UserData, UpdateRemindTimetableCommand>().ReverseMap();
       CreateMap<UserData, AddEventCommand>().ReverseMap();
       CreateMap<EventRequest, AddEventCommand>().ReverseMap();
+    }
+  }
+
+  public class NotificationProfile : Profile
+  {
+    public NotificationProfile()
+    {
+      CreateMap<UserData, GetNotificationQuery>().ReverseMap();
+      CreateMap<UserData, UpdateStateNotificationCommand>().ReverseMap();
     }
   }
 }

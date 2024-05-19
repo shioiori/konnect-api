@@ -1,6 +1,4 @@
-﻿using UTCClassSupport.API.Responses;
-
-namespace UTCClassSupport.API.Authorize.Responses
+﻿namespace UTCClassSupport.API.Responses
 {
   public class LoginResponse
   {

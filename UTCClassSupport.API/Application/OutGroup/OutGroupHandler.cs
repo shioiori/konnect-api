@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using UTCClassSupport.API.Authorize.Requests;
 using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Infrustructure.Repositories;
 using UTCClassSupport.API.Models;
+using UTCClassSupport.API.Requests;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.OutGroup

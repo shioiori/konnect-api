@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using UTCClassSupport.API.Authorize.Requests;
 using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Infrustructure.Repositories;
@@ -144,6 +143,51 @@ namespace UTCClassSupport.API.Controllers
           Success = false,
           Type = ResponseType.Error,
           Message = ex.Message,
+        };
+      }
+    }
+
+    [HttpGet("check-email-confirmed")]
+    public async Task<bool> CheckEmailConfirmedAsync(string? email)
+    {
+      var userData = ReadJWTToken();
+      if (email == null)
+      {
+        email = userData.Email;
+      }
+      return await _userRepository.IsEmailConfirmedAsync(email);
+    }
+
+    [HttpPost("password/change")]
+    public async Task<Response> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+      var data = ReadJWTToken();
+      var rightPassword = await _userRepository.CheckPassword(data.UserName, request.OldPassword);
+      if (!rightPassword)
+      {
+        return new ChangePasswordResponse()
+        {
+          Success = false,
+          Type = ResponseType.Error,
+          Message = "Mật khẩu cũ không đúng"
+        };
+      }
+      if (await _userRepository.ChangePasswordAsync(data.UserName, request.OldPassword, request.NewPassword))
+      {
+        return new ChangePasswordResponse()
+        {
+          Success = true,
+          Type = ResponseType.Success,
+          Message = "Đổi mật khẩu thành công"
+        };
+      }
+      else
+      {
+        return new ChangePasswordResponse()
+        {
+          Success = false,
+          Type = ResponseType.Error,
+          Message = "Có lỗi trong quá trình thay đổi mật khẩu"
         };
       }
     }

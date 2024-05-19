@@ -4,6 +4,7 @@ using UTCClassSupport.API.Common;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Responses;
+using UTCClassSupport.API.Utilities;
 
 namespace UTCClassSupport.API.Application.ChangeNewsState
 {
@@ -39,6 +40,12 @@ namespace UTCClassSupport.API.Application.ChangeNewsState
       if (request.State == ApproveProcess.Accept && alert)
       {
         // notify to other
+        var group = _dbContext.Groups.Find(request.GroupId);
+        NotificationProvider notificationProvider = new NotificationProvider();
+        var notification = notificationProvider.CreateGroupNotification(request.GroupId, group.Name,
+          request.UserName, request.DisplayName, Common.NotificationAction.AcceptPost, request.PostId);
+        _dbContext.Notifications.Add(notification);
+        _dbContext.SaveChanges();
       }
       return new ChangePostStateResponse()
       {

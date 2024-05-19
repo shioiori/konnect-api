@@ -118,5 +118,25 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
         throw ex;
       }
     }
+
+    public async Task<bool> IsEmailConfirmedAsync(string email)
+    {
+      var user = await _userManager.FindByEmailAsync(email);
+      return await _userManager.IsEmailConfirmedAsync(user);
+    }
+
+    public async Task<bool> CheckPassword(string username, string password)
+    {
+      var user = await _userManager.FindByNameAsync(username);
+      return await _userManager.CheckPasswordAsync(user, password);
+    }
+
+    public async Task<bool> ChangePasswordAsync(string username, string oldPassword, string newPassword)
+    {
+      var user = await _userManager.FindByNameAsync(username);
+      var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+      _dbContext.SaveChanges();
+      return result.Succeeded;
+    }
   }
 }

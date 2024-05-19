@@ -70,6 +70,7 @@ namespace UTCClassSupport.API.Application.ImportTimetable
               Location = local[2],
               Title = row[2].ToString(),
               Description = local[2],
+              Category = EventCategory.Timetable,
             };
             //var availableShift = _dbContext.Shifts.FirstOrDefault(x => x.Code == shift.Code && x.Day == shift.Day
             //                                    && ((x.From >= shift.From && x.From <= shift.To)

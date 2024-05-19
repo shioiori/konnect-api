@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using UTCClassSupport.API.Common;
 
 namespace UTCClassSupport.API.Models
 {
@@ -39,6 +40,7 @@ namespace UTCClassSupport.API.Models
     public string? SubjectClass { get; set; }
     [Column("credit")]
     public int? Credit { get; set; }
+    public EventCategory Category { get; set; } = EventCategory.Unclassified;
     public virtual Timetable Timetable { get; set; }
     public virtual Schedule? Schedule { get; set; }
   }

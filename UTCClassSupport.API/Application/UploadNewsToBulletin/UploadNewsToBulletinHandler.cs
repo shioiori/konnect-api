@@ -7,6 +7,7 @@ using UTCClassSupport.API.Common.Mail;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Responses;
+using UTCClassSupport.API.Utilities;
 
 namespace UTCClassSupport.API.Application.UploadNewsToBulletin
 {
@@ -36,10 +37,22 @@ namespace UTCClassSupport.API.Application.UploadNewsToBulletin
         CreatedDate = DateTime.UtcNow,
         CreatedBy = request.UserName
       };
+      NotificationProvider notificationProvider = new NotificationProvider();
+      var group = _dbContext.Groups.Find(request.GroupId);
       if (request.RoleName == GroupRole.User.ToString())
       {
         news.Approved = (int)ApproveProcess.OnHold;
         // need send notify to manager (send mail/tel/notify in web)
+        var managerRole = await _roleManager.FindByNameAsync(GroupRole.Manager.ToString());
+        var managers = _dbContext.UserGroupRoles.Where(x => x.RoleId == managerRole.Id)
+          .Include(x => x.User).Select(x => x.User).ToList();
+        foreach (var manager in managers)
+        {
+          var noti = notificationProvider.CreateUserNotification(manager.Id, manager.DisplayName,
+            request.UserName, request.DisplayName, Common.NotificationAction.PendingPost, news.Id);
+          _dbContext.Notifications.Add(noti);
+        }
+        _dbContext.SaveChanges();
       }
       if (request.RoleName == GroupRole.Manager.ToString())
       {
@@ -61,6 +74,11 @@ namespace UTCClassSupport.API.Application.UploadNewsToBulletin
         }
       }
       _dbContext.Bulletins.Add(news);
+      // notify in web
+      var notification = notificationProvider.CreateGroupNotification(group.Id, group.Name,
+        request.UserName, request.DisplayName, Common.NotificationAction.NewPost, news.Id);
+      _dbContext.Notifications.Add(notification);
+
       await _dbContext.SaveChangesAsync();
       return new UploadNewsToBulletinResponse()
       {

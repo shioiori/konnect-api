@@ -20,13 +20,12 @@ namespace UTCClassSupport.API.Infrustructure.Data
     public DbSet<Chat> Chats { get; set; }
     public DbSet<MessageFile> MessagesFile { get; set; }
     public DbSet<Schedule> Schedules { get; set; }
-    public DbSet<ShareFile> ShareFiles { get; set; }
-    public DbSet<ShareFolder> ShareFolders { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Timetable> Timetables { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<UserGroupRole> UserGroupRoles { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
@@ -65,26 +64,13 @@ namespace UTCClassSupport.API.Infrustructure.Data
       {
         e.HasKey(e => e.Id);
       });
-      modelBuilder.Entity<ShareFile>(e =>
-      {
-        e.HasKey(e => e.Id);
-        e.HasOne(e => e.Folder)
-        .WithMany(e => e.Files)
-        .HasForeignKey(e => e.FolderId);
-      });
-      modelBuilder.Entity<ShareFolder>(e =>
-      {
-        e.HasKey(e => e.Id);
-        e.HasOne(e => e.Group)
-        .WithMany(e => e.Folders)
-        .HasForeignKey(e => e.GroupId);
-      });
       modelBuilder.Entity<Event>(e =>
       {
         e.HasKey(e => e.Id);
         e.HasOne(e => e.Timetable)
         .WithMany(e => e.Shifts)
         .HasForeignKey(e => e.TimetableId);
+        e.Property(e => e.Category).HasConversion<string>();
       });
       modelBuilder.Entity<Timetable>(e =>
       {
@@ -101,6 +87,18 @@ namespace UTCClassSupport.API.Infrustructure.Data
       modelBuilder.Entity<UserGroupRole>(e =>
       {
         e.HasKey(e => new { e.UserId, e.GroupId, e.RoleId });
+      });
+      modelBuilder.Entity<Notification>(e =>
+      {
+        e.HasKey(e => e.Id);
+        e.HasOne(e => e.Group)
+        .WithMany(e => e.Notifications)
+        .HasForeignKey(e => e.GroupId);
+        e.HasOne(e => e.User)
+        .WithMany(e => e.Notifications)
+        .HasForeignKey(e => e.UserId);
+        e.Property(e => e.Action).HasConversion<string>();
+        e.Property(e => e.Range).HasConversion<string>();
       });
       base.OnModelCreating(modelBuilder);
       foreach (var entityType in modelBuilder.Model.GetEntityTypes())

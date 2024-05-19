@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UTCClassSupport.API.Infrustructure.Data;
 
@@ -10,9 +11,10 @@ using UTCClassSupport.API.Infrustructure.Data;
 namespace UTCClassSupport.API.Migrations
 {
     [DbContext(typeof(EFContext))]
-    partial class EFContextModelSnapshot : ModelSnapshot
+    [Migration("20240518131250_enum")]
+    partial class @enum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -417,52 +419,6 @@ namespace UTCClassSupport.API.Migrations
                     b.ToTable("message_files");
                 });
 
-            modelBuilder.Entity("UTCClassSupport.API.Models.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("GroupId")
-                        .HasColumnType("varchar(95)");
-
-                    b.Property<bool>("IsSeen")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("ObjectId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Range")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(95)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("notifications");
-                });
-
             modelBuilder.Entity("UTCClassSupport.API.Models.Permission", b =>
                 {
                     b.Property<string>("Id")
@@ -529,6 +485,76 @@ namespace UTCClassSupport.API.Migrations
                         .IsUnique();
 
                     b.ToTable("schedules");
+                });
+
+            modelBuilder.Entity("UTCClassSupport.API.Models.ShareFile", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Approved")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("approved");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_date");
+
+                    b.Property<string>("FolderId")
+                        .IsRequired()
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("folder_id");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FolderId");
+
+                    b.ToTable("share_files");
+                });
+
+            modelBuilder.Entity("UTCClassSupport.API.Models.ShareFolder", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_date");
+
+                    b.Property<string>("GroupId")
+                        .IsRequired()
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("group_id");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("share_folders");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.Timetable", b =>
@@ -796,21 +822,6 @@ namespace UTCClassSupport.API.Migrations
                     b.Navigation("File");
                 });
 
-            modelBuilder.Entity("UTCClassSupport.API.Models.Notification", b =>
-                {
-                    b.HasOne("UTCClassSupport.API.Models.Group", "Group")
-                        .WithMany("Notifications")
-                        .HasForeignKey("GroupId");
-
-                    b.HasOne("UTCClassSupport.API.Models.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Group");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("UTCClassSupport.API.Models.Schedule", b =>
                 {
                     b.HasOne("UTCClassSupport.API.Models.Event", "Shift")
@@ -820,6 +831,28 @@ namespace UTCClassSupport.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Shift");
+                });
+
+            modelBuilder.Entity("UTCClassSupport.API.Models.ShareFile", b =>
+                {
+                    b.HasOne("UTCClassSupport.API.Models.ShareFolder", "Folder")
+                        .WithMany("Files")
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Folder");
+                });
+
+            modelBuilder.Entity("UTCClassSupport.API.Models.ShareFolder", b =>
+                {
+                    b.HasOne("UTCClassSupport.API.Models.Group", "Group")
+                        .WithMany("Folders")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.UserGroupRole", b =>
@@ -868,17 +901,17 @@ namespace UTCClassSupport.API.Migrations
                 {
                     b.Navigation("Bulletins");
 
-                    b.Navigation("Notifications");
+                    b.Navigation("Folders");
+                });
+
+            modelBuilder.Entity("UTCClassSupport.API.Models.ShareFolder", b =>
+                {
+                    b.Navigation("Files");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.Timetable", b =>
                 {
                     b.Navigation("Shifts");
-                });
-
-            modelBuilder.Entity("UTCClassSupport.API.Models.User", b =>
-                {
-                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }

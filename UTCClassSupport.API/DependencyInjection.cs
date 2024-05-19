@@ -19,6 +19,7 @@ namespace UTCClassSupport.API
       services.AddIdentity<User, Role>(config =>
       {
         config.SignIn.RequireConfirmedEmail = false;
+        config.User.RequireUniqueEmail = true;
       })
               .AddEntityFrameworkStores<EFContext>()
               .AddDefaultTokenProviders();
@@ -118,6 +119,7 @@ namespace UTCClassSupport.API
     {
       services.AddScoped<AccessManager>();
       services.AddScoped<UserRepository>();
+      services.AddScoped<NotificationManager>();
       return services;
     }
   }

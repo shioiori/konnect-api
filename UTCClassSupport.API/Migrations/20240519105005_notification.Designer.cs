@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UTCClassSupport.API.Infrustructure.Data;
 
@@ -10,9 +11,10 @@ using UTCClassSupport.API.Infrustructure.Data;
 namespace UTCClassSupport.API.Migrations
 {
     [DbContext(typeof(EFContext))]
-    partial class EFContextModelSnapshot : ModelSnapshot
+    [Migration("20240519105005_notification")]
+    partial class notification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -439,19 +441,15 @@ namespace UTCClassSupport.API.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<string>("GroupId")
+                        .IsRequired()
                         .HasColumnType("varchar(95)");
-
-                    b.Property<bool>("IsSeen")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("ObjectId")
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Range")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("varchar(95)");
 
                     b.HasKey("Id");
@@ -800,11 +798,15 @@ namespace UTCClassSupport.API.Migrations
                 {
                     b.HasOne("UTCClassSupport.API.Models.Group", "Group")
                         .WithMany("Notifications")
-                        .HasForeignKey("GroupId");
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("UTCClassSupport.API.Models.User", "User")
                         .WithMany("Notifications")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Group");
 

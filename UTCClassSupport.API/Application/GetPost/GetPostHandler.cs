@@ -9,12 +9,12 @@ using UTCClassSupport.API.Responses.DTOs;
 
 namespace UTCClassSupport.API.Application.GetNews
 {
-  public class GetPostQueryHandler : IRequestHandler<GetPostQuery, GetPostResponse>
+  public class GetPostHandler : IRequestHandler<GetPostQuery, GetPostResponse>
   {
     private readonly EFContext _dbContext;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
-    public GetPostQueryHandler(EFContext dbContext,
+    public GetPostHandler(EFContext dbContext,
       UserManager<User> userManager,
         RoleManager<Role> roleManager)
     {
@@ -33,7 +33,7 @@ namespace UTCClassSupport.API.Application.GetNews
           Posts = CustomMapper.Mapper.Map<IEnumerable<PostDTO>>(query.ToArray())
         };
       }
-      var res = await query.Where(x => x.Approved == (int)request.State)
+      var res = await query.Where(x => x.GroupId == request.GroupId && x.Approved == (int)request.State)
                         .Include(x => x.Comments)
                         .OrderByDescending(x => x.CreatedDate)
                         .ToArrayAsync();

@@ -5,6 +5,7 @@ using UTCClassSupport.API.Mapper;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Responses;
 using UTCClassSupport.API.Responses.DTOs;
+using UTCClassSupport.API.Utilities;
 
 namespace UTCClassSupport.API.Application.AddPostComment
 {
@@ -35,6 +36,16 @@ namespace UTCClassSupport.API.Application.AddPostComment
       _dbContext.SaveChanges();
       var cmt = CustomMapper.Mapper.Map<CommentDTO>(comment);
       cmt.User = CustomMapper.Mapper.Map<UserDTO>(await _userManager.FindByNameAsync(comment.CreatedBy));
+
+      var post = _dbContext.Bulletins.Find(request.PostId);
+      var receiver = await _userManager.FindByNameAsync(post.CreatedBy);
+
+      //notification
+      NotificationProvider notificationProvider = new NotificationProvider();
+      var notification = notificationProvider.CreateUserNotification(receiver.Id, receiver.DisplayName,
+        request.UserName, request.DisplayName, Common.NotificationAction.ReplyPost, request.PostId);
+      _dbContext.Notifications.Add(notification);
+      _dbContext.SaveChanges();
       return new AddPostCommentResponse()
       {
         Success = true,
