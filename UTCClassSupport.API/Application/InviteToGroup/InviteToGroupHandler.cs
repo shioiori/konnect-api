@@ -43,6 +43,11 @@ namespace UTCClassSupport.API.Application.InviteToGroup
             RoleId = (await _roleManager.FindByNameAsync(GroupRole.User.ToString())).Id,
           });
           // notify
+          NotificationProvider notificationProvider = new NotificationProvider();
+          var notification = notificationProvider.CreateUserNotification(guest.Id, guest.DisplayName,
+            request.UserName, request.DisplayName, Common.NotificationAction.InviteToGroup, request.GroupId);
+          _dbContext.Notifications.Add(notification);
+          _dbContext.SaveChanges();
         }
         else
         {

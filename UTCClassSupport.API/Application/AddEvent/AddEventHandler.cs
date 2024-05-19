@@ -42,6 +42,7 @@ namespace UTCClassSupport.API.Application.ScheduleTimetableRemind
         Location = request.Location,
         IsLoopPerDay = false,
         TimetableId = timetable.Id,
+        Category = EventCategory.User,
       };
       _dbContext.Events.Add(shift);
       _dbContext.SaveChanges();

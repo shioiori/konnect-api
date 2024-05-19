@@ -21,6 +21,7 @@ namespace UTCClassSupport.API.Responses
   public class DeleteUserResponse : Response
   {
   }
-
   public class ChangeRoleResponse : Response { }
+
+  public class ChangePasswordResponse: Response { }
 }

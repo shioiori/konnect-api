@@ -9,5 +9,6 @@ namespace UTCClassSupport.API.Models
     public string DisplayName { get; set; }
     public string Avatar { get; set; }
     public virtual ICollection<Chat> Chats { get; set; }
+    public virtual ICollection<Notification> Notifications { get; set; }
   }
 }

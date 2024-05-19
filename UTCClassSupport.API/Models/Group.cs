@@ -11,6 +11,6 @@ namespace UTCClassSupport.API.Models
     [Column("name")]
     public string Name { get; set; }
     public virtual ICollection<Bulletin> Bulletins { get; set; }
-    public virtual ICollection<ShareFolder> Folders { get; set; }
+    public virtual ICollection<Notification> Notifications { get; set; }
   }
 }
