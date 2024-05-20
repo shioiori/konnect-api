@@ -1,11 +1,11 @@
-﻿using MediatR;
+﻿using Konnect.API.Data;
+using MediatR;
 using UTCClassSupport.API.Common.Mail;
-using UTCClassSupport.API.Requests;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.SendEmail
 {
-  public class SendMailCommand : UserData, IRequest<SendMailResponse>
+    public class SendMailCommand : UserInfo, IRequest<SendMailResponse>
   {
     public MailContent Content { get; set; }
   }

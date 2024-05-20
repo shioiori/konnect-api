@@ -1,6 +1,8 @@
-﻿namespace UTCClassSupport.API.Requests
+﻿using Konnect.API.Data;
+
+namespace UTCClassSupport.API.Requests
 {
-  public class UserRequest
+    public class UserRequest
   {
     public string UserName { get; set; }
     public string DisplayName { get; set; }

@@ -232,7 +232,7 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 
     private string GetForgotPasswordMailContent(string displayName, string newPassword)
     {
-      return $"Thân gửi {displayName}, mật khẩu của bạn đã được cập nhật lại. Hiện tại mật khẩu của bạn là \n<b>{newPassword}</b>\nSau khi đăng nhập, bạn có thể vào lại trang cá nhân để thay đổi mật khẩu.";
+      return $"Thân gửi {displayName}, mật khẩu của bạn đã được cập nhật lại. Hiện tại mật khẩu của bạn là <br/><h4>{newPassword}</h4><br/>Sau khi đăng nhập, bạn có thể vào lại trang cá nhân để thay đổi mật khẩu.";
     }
   }
 }

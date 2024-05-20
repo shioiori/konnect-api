@@ -1,11 +1,11 @@
-﻿using MediatR;
+﻿using Konnect.API.Data;
+using MediatR;
 using UTCClassSupport.API.Models;
-using UTCClassSupport.API.Requests;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.UploadNewsToBulletin
 {
-  public class UploadNewsToBulletinCommand : UserData, IRequest<UploadNewsToBulletinResponse>
+    public class UploadNewsToBulletinCommand : UserInfo, IRequest<UploadNewsToBulletinResponse>
   {
     public string Content { get; set; }
 

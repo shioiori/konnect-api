@@ -1,10 +1,10 @@
-﻿using MediatR;
-using UTCClassSupport.API.Requests;
+﻿using Konnect.API.Data;
+using MediatR;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.DeleteTimetable
 {
-  public class DeleteTimetableCommand : UserData, IRequest<DeleteTimetableResponse>
+    public class DeleteTimetableCommand : UserInfo, IRequest<DeleteTimetableResponse>
   {
 
   }

@@ -1,17 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Konnect.API.Data;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UTCClassSupport.API.Common;
-using UTCClassSupport.API.Requests;
 
 namespace UTCClassSupport.API.Controllers
 {
-  public class BaseController : ControllerBase
+    public class BaseController : ControllerBase
   {
     [NonAction]
-    public UserData ReadJWTToken()
+    public UserInfo ReadJWTToken()
     {
       var identity = HttpContext.User.Identity as ClaimsIdentity;
-      return new UserData
+      return new UserInfo
       {
         UserId = identity.FindFirst(ClaimData.UserID).Value,
         UserName = identity.FindFirst(ClaimData.UserName).Value,

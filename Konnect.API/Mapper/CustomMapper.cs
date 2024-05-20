@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Konnect.API.Application.GetCreatedChatData;
+using Konnect.API.Data;
 using UTCClassSupport.API.Application.AddPostComment;
 using UTCClassSupport.API.Application.ClearTimetable;
 using UTCClassSupport.API.Application.DeleteTimetable;
@@ -32,6 +34,7 @@ namespace UTCClassSupport.API.Mapper
         cfg.AddProfile<GroupProfile>();
         cfg.AddProfile<TimetableProfile>();
         cfg.AddProfile<NotificationProfile>();
+        cfg.AddProfile<ChatProfile>();
       });
 
       var mapper = config.CreateMapper();
@@ -49,6 +52,7 @@ namespace UTCClassSupport.API.Mapper
       CreateMap<UserDTO, User>().ReverseMap();
       CreateMap<AddUserRequest, User>().ReverseMap();
       CreateMap<UpdateUserRequest, User>().ReverseMap();
+      CreateMap<UserData, User>().ReverseMap();
 
     }
   }
@@ -58,12 +62,13 @@ namespace UTCClassSupport.API.Mapper
     public GroupProfile()
     {
       CreateMap<Group, GroupDTO>().ReverseMap();
-      CreateMap<UserData, GetGroupByUserQuery>().ReverseMap();
+      CreateMap<UserInfo, GetGroupByUserQuery>().ReverseMap();
 
-      CreateMap<UserData, InviteToGroupCommand>().ReverseMap();
+      CreateMap<UserInfo, InviteToGroupCommand>().ReverseMap();
       CreateMap<InviteToGroupRequest, InviteToGroupCommand>().ReverseMap();
 
-      CreateMap<UserData, OutGroupCommand>().ReverseMap();
+      CreateMap<UserInfo, OutGroupCommand>().ReverseMap();
+      CreateMap<GroupData, Group>().ReverseMap();
     }
   }
 
@@ -72,8 +77,8 @@ namespace UTCClassSupport.API.Mapper
     public BulletinProfile()
     {
       CreateMap<BulletinRequest, UploadNewsToBulletinCommand>().ReverseMap();
-      CreateMap<UserData, UploadNewsToBulletinCommand>().ReverseMap();
-      CreateMap<UserData, AddPostCommentCommand>().ReverseMap();
+      CreateMap<UserInfo, UploadNewsToBulletinCommand>().ReverseMap();
+      CreateMap<UserInfo, AddPostCommentCommand>().ReverseMap();
       CreateMap<CommentRequest, AddPostCommentCommand>().ReverseMap();
 
       CreateMap<Comment, CommentDTO>().ReverseMap();
@@ -86,10 +91,10 @@ namespace UTCClassSupport.API.Mapper
     public ImportProfile()
     {
       CreateMap<ImportUserRequest, ImportUserToDatabaseCommand>().ReverseMap();
-      CreateMap<UserData, ImportUserToDatabaseCommand>().ReverseMap();
+      CreateMap<UserInfo, ImportUserToDatabaseCommand>().ReverseMap();
 
       CreateMap<ImportTimetableRequest, ImportTimetableCommand>().ReverseMap();
-      CreateMap<UserData, ImportTimetableCommand>().ReverseMap();
+      CreateMap<UserInfo, ImportTimetableCommand>().ReverseMap();
     }
   }
 
@@ -98,11 +103,11 @@ namespace UTCClassSupport.API.Mapper
     public TimetableProfile()
     {
       CreateMap<ShiftDTO, Event>().ReverseMap();
-      CreateMap<UserData, GetUserTimetableQuery>().ReverseMap();
-      CreateMap<UserData, DeleteTimetableCommand>().ReverseMap();
-      CreateMap<UserData, SynchronizeTimetableWithGoogleCalendarCommand>().ReverseMap();
-      CreateMap<UserData, UpdateRemindTimetableCommand>().ReverseMap();
-      CreateMap<UserData, AddEventCommand>().ReverseMap();
+      CreateMap<UserInfo, GetUserTimetableQuery>().ReverseMap();
+      CreateMap<UserInfo, DeleteTimetableCommand>().ReverseMap();
+      CreateMap<UserInfo, SynchronizeTimetableWithGoogleCalendarCommand>().ReverseMap();
+      CreateMap<UserInfo, UpdateRemindTimetableCommand>().ReverseMap();
+      CreateMap<UserInfo, AddEventCommand>().ReverseMap();
       CreateMap<EventRequest, AddEventCommand>().ReverseMap();
     }
   }
@@ -111,8 +116,16 @@ namespace UTCClassSupport.API.Mapper
   {
     public NotificationProfile()
     {
-      CreateMap<UserData, GetNotificationQuery>().ReverseMap();
-      CreateMap<UserData, UpdateStateNotificationCommand>().ReverseMap();
+      CreateMap<UserInfo, GetNotificationQuery>().ReverseMap();
+      CreateMap<UserInfo, UpdateStateNotificationCommand>().ReverseMap();
+    }
+  }
+
+  public class ChatProfile : Profile
+  {
+    public ChatProfile()
+    {
+      CreateMap<UserInfo, GetCreateChatDataQuery>().ReverseMap();
     }
   }
 }

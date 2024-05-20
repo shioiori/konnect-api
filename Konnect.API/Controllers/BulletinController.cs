@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Konnect.API.Data;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UTCClassSupport.API.Application.AddPostComment;
@@ -13,7 +14,7 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Controllers
 {
-  [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
   [Route("bulletin")]
   public class BulletinController : BaseController
   {
@@ -28,7 +29,7 @@ namespace UTCClassSupport.API.Controllers
     {
       var data = ReadJWTToken();
       var command = new UploadNewsToBulletinCommand();
-      CustomMapper.Mapper.Map<UserData, UploadNewsToBulletinCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, UploadNewsToBulletinCommand>(data, command);
       CustomMapper.Mapper.Map<BulletinRequest, UploadNewsToBulletinCommand>(bulletin, command);
       return await _mediator.Send(command);
     }
@@ -42,7 +43,7 @@ namespace UTCClassSupport.API.Controllers
         PostId = postId,
         State = process
       };
-      CustomMapper.Mapper.Map<UserData, ChangePostStateCommand>(data, bulletin);
+      CustomMapper.Mapper.Map<UserInfo, ChangePostStateCommand>(data, bulletin);
       return await _mediator.Send(bulletin);
     }
 
@@ -61,7 +62,7 @@ namespace UTCClassSupport.API.Controllers
     {
       var data = ReadJWTToken();
       var command = new AddPostCommentCommand();
-      CustomMapper.Mapper.Map<UserData, AddPostCommentCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, AddPostCommentCommand>(data, command);
       CustomMapper.Mapper.Map<CommentRequest, AddPostCommentCommand>(comment, command);
       command.PostId = id;
       return await _mediator.Send(command);

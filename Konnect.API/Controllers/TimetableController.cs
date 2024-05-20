@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Konnect.API.Data;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -16,7 +17,7 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Controllers
 {
-  [ApiController]
+    [ApiController]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [Route("timetable")]
   public class TimetableController : BaseController
@@ -40,7 +41,7 @@ namespace UTCClassSupport.API.Controllers
     {
       var data = ReadJWTToken();
       var command = new DeleteTimetableCommand();
-      CustomMapper.Mapper.Map<UserData, DeleteTimetableCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, DeleteTimetableCommand>(data, command);
       return await _mediator.Send(command);
     }
 
@@ -49,7 +50,7 @@ namespace UTCClassSupport.API.Controllers
     {
       var data = ReadJWTToken();
       var command = new SynchronizeTimetableWithGoogleCalendarCommand();
-      CustomMapper.Mapper.Map<UserData, SynchronizeTimetableWithGoogleCalendarCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, SynchronizeTimetableWithGoogleCalendarCommand>(data, command);
       command.TimetableId = id;
       return await _mediator.Send(command);
     }
@@ -59,7 +60,7 @@ namespace UTCClassSupport.API.Controllers
     {
       var data = ReadJWTToken();
       var command = new UpdateRemindTimetableCommand();
-      CustomMapper.Mapper.Map<UserData, UpdateRemindTimetableCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, UpdateRemindTimetableCommand>(data, command);
       command.RemindTime = time;
       return await _mediator.Send(command);
     }
@@ -69,7 +70,7 @@ namespace UTCClassSupport.API.Controllers
     {
       var data = ReadJWTToken();
       var command = new AddEventCommand();
-      CustomMapper.Mapper.Map<UserData, AddEventCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, AddEventCommand>(data, command);
       CustomMapper.Mapper.Map<EventRequest, AddEventCommand>(eventRequest, command);
       return await _mediator.Send(command);
     }

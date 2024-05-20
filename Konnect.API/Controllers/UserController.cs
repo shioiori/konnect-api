@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Konnect.API.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ using UTCClassSupport.API.Responses.DTOs;
 
 namespace UTCClassSupport.API.Controllers
 {
-  [Authorize(AuthenticationSchemes = "Bearer", Roles = "Manager")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Manager")]
   [Route("user")]
   public class UserController : BaseController
   {
@@ -24,7 +25,7 @@ namespace UTCClassSupport.API.Controllers
     }
 
     [HttpGet]
-    public UserData GetUserData()
+    public UserInfo GetUserData()
     {
       return ReadJWTToken();
     }

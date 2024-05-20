@@ -1,6 +1,8 @@
-﻿namespace UTCClassSupport.API.Requests
+﻿using Konnect.API.Data;
+
+namespace UTCClassSupport.API.Requests
 {
-  public class MesageRequest : UserData
+    public class MesageRequest : UserInfo
   {
     public string ChatId { get; set; }
     public bool IsFile { get; set; } = false;

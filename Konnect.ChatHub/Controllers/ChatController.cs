@@ -19,41 +19,49 @@ namespace Konnect.ChatHub.Controllers
 
     [HttpPost]
     public async Task<ChatResponse> CreateChat([FromBody]CreateChatRequest request) {
-      string name = "";
-      foreach(var user in request.Users)
+      try
       {
-        name += user.DisplayName + ", ";
-      }
-      var group = await _unitOfWork.Groups.GetAsync(request.GroupData.Id);
-      if (group == default)
-      {
-        group = await _unitOfWork.Groups.CreateAsync(CustomMapper.Mapper.Map<Group>(request.GroupData));
-      }
-      var listUser = new List<User>();
-      User createdBy = null;
-      foreach (var userData in request.Users)
-      {
-        var user = await _unitOfWork.Users.GetAsync(userData.Id);
-        if (user == default)
+        string name = "";
+        foreach (var user in request.Users)
         {
-          user = await _unitOfWork.Users.CreateAsync(CustomMapper.Mapper.Map<User>(userData));
+          name += user.DisplayName + ", ";
         }
-        if (user.Id == request.CreatedBy)
+        name = name.Substring(0, name.Length - 1);
+        var group = await _unitOfWork.Groups.GetAsync(request.GroupData.Id);
+        if (group == default)
         {
-          createdBy = user;
+          group = await _unitOfWork.Groups.CreateAsync(CustomMapper.Mapper.Map<Group>(request.GroupData));
         }
-        listUser.Add(user);
+        var listUser = new List<User>();
+        User createdBy = null;
+        foreach (var userData in request.Users)
+        {
+          var user = await _unitOfWork.Users.GetAsync(userData.Id);
+          if (user == default)
+          {
+            user = await _unitOfWork.Users.CreateAsync(CustomMapper.Mapper.Map<User>(userData));
+          }
+          if (user.Id == request.CreatedBy)
+          {
+            createdBy = user;
+          }
+          listUser.Add(user);
+        }
+        name = name.Substring(0, name.Length - 1);
+        var chat = await _unitOfWork.Chats.CreateAsync(new Chat()
+        {
+          Name = name,
+          CreatedDate = DateTime.Now,
+          CreatedBy = createdBy,
+          Users = listUser,
+          Group = group,
+        });
+        return CustomMapper.Mapper.Map<ChatResponse>(chat);
       }
-      name = name.Substring(0, name.Length - 1);
-      var chat = await _unitOfWork.Chats.CreateAsync(new Chat()
+      catch (Exception ex)
       {
-        Name = name,
-        CreatedDate = DateTime.Now,
-        CreatedBy = createdBy,
-        Users = listUser,
-        Group = group,
-      });
-      return CustomMapper.Mapper.Map<ChatResponse>(chat);
+        throw ex;
+      }
     }
     [HttpGet("{id}")]
     public async Task<ChatResponse> GetChat(string id)

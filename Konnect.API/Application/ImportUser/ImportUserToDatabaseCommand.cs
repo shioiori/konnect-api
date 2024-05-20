@@ -1,10 +1,10 @@
-﻿using MediatR;
-using UTCClassSupport.API.Requests;
+﻿using Konnect.API.Data;
+using MediatR;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.ImportExcel
 {
-    public class ImportUserToDatabaseCommand : UserData, IRequest<ImportUserToDatabaseResponse>
+    public class ImportUserToDatabaseCommand : UserInfo, IRequest<ImportUserToDatabaseResponse>
   {
     public IFormFile File { get; set; }
   }
