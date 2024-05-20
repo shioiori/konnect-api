@@ -1,4 +1,4 @@
-using UTCClassSupport.Chat;
+using Konnect.ChatHub;
 
 var builder = WebApplication.CreateBuilder(args);
 

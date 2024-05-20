@@ -1,4 +1,4 @@
-﻿namespace UTCClassSupport.Chat.Requests
+﻿namespace Konnect.ChatHub.Requests
 {
   public class UserData
   {

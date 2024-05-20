@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace UTCClassSupport.Chat.Controllers
+namespace Konnect.ChatHub.Controllers
 {
   [ApiController]
   [Route("[controller]")]
