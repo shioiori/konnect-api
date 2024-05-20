@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Options;
-using UTCClassSupport.Chat.Models;
+﻿using Konnect.ChatHub.Models;
+using Konnect.ChatHub.Models.Database;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
-namespace UTCClassSupport.Chat.Repositories
+namespace Konnect.ChatHub.Repositories
 {
-  public class BaseRepository<T> : IBaseRepository<T> where T : class
+    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
   {
 
     private readonly IMongoCollection<T> _TCollection;
@@ -24,10 +26,6 @@ namespace UTCClassSupport.Chat.Repositories
         await _TCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
     public async Task<List<T>> GetAllAsync() =>
         await _TCollection.Find(_ => true).ToListAsync();
-
-    public async Task<T> GetAsync(Func<T, bool> expr) => 
-      await _TCollection.Find(expr).ToListAsync();
-
     public async Task CreateAsync(T newT) =>
         await _TCollection.InsertOneAsync(newT);
     public async Task UpdateAsync(string id, T updatedT) =>

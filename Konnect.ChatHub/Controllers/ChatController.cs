@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UTCClassSupport.Chat.Repositories;
 
-namespace UTCClassSupport.Chat.Controllers
+namespace Konnect.ChatHub.Controllers
 {
   public class ChatController : ControllerBase
   {

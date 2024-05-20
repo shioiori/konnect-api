@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTCClassSupport.API", "UTCClassSupport.API\UTCClassSupport.API.csproj", "{A7EA52A8-E218-4102-A2DF-77E9A0104665}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konnect.API", "Konnect.API\Konnect.API.csproj", "{A7EA52A8-E218-4102-A2DF-77E9A0104665}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTCClassSupport.Chat", "UTCClassSupport.Chat\UTCClassSupport.Chat.csproj", "{04A46DA2-017A-4867-8E9B-6CDAECA3B7A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konnect.ChatHub", "Konnect.ChatHub\Konnect.ChatHub.csproj", "{04A46DA2-017A-4867-8E9B-6CDAECA3B7A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
