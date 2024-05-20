@@ -1,10 +1,10 @@
-﻿using MediatR;
-using UTCClassSupport.API.Requests;
+﻿using Konnect.API.Data;
+using MediatR;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.ScheduleTimetableRemind
 {
-  public class AddEventCommand : UserData, IRequest<AddEventResponse>
+    public class AddEventCommand : UserInfo, IRequest<AddEventResponse>
   {
     public string Title { get; set; }
     public string Description { get; set; }

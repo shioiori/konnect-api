@@ -1,10 +1,10 @@
-﻿using MediatR;
-using UTCClassSupport.API.Requests;
+﻿using Konnect.API.Data;
+using MediatR;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Application.GetUserTimetable
 {
-    public class GetUserTimetableQuery : UserData, IRequest<GetUserTimetableResponse>
+    public class GetUserTimetableQuery : UserInfo, IRequest<GetUserTimetableResponse>
     {
     }
 }

@@ -1,4 +1,6 @@
 using Konnect.ChatHub;
+using Konnect.ChatHub.Hubs;
+using Konnect.ChatHub.Models.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,21 +9,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddServices(builder.Configuration);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.Configure<ChatDatabaseSettings>(builder.Configuration.GetSection("ChatDB"));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddSignalR();
+var cors = "UTC_ClassSupport_CORS";
 builder.Services.AddCors(options =>
 {
-  options.AddPolicy("cors",
-                        policy =>
-                        {
-                          policy.WithOrigins("*")
-                                .AllowAnyHeader()
-                                .AllowAnyMethod()
-                                .AllowCredentials();
-                        });
+  options.AddPolicy(cors,
+                    policy =>
+                    {
+                      policy.WithOrigins("*")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
 });
 
 var app = builder.Build();
@@ -36,7 +40,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseCors(cors);
 
 app.MapControllers();
-
+app.MapHub<ChatHub>("/chat-hub");
 app.Run();

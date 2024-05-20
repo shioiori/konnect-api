@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using Konnect.API.Data;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Controllers
 {
-  [Route("group")]
+    [Route("group")]
   [Authorize(AuthenticationSchemes = "Bearer")]
   public class GroupController : BaseController
   {
@@ -52,7 +53,7 @@ namespace UTCClassSupport.API.Controllers
     {
       var data = ReadJWTToken();
       var command = new OutGroupCommand();
-      CustomMapper.Mapper.Map<UserData, OutGroupCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, OutGroupCommand>(data, command);
       command.CurrentGroupId = id;
       return await _mediator.Send(command);
     }
@@ -62,7 +63,7 @@ namespace UTCClassSupport.API.Controllers
     {
       var data = ReadJWTToken();
       var command = new InviteToGroupCommand();
-      CustomMapper.Mapper.Map<UserData, InviteToGroupCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, InviteToGroupCommand>(data, command);
       CustomMapper.Mapper.Map<InviteToGroupRequest, InviteToGroupCommand>(request, command);
       return await _mediator.Send(command);
     }

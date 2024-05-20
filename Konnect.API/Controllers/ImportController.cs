@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Konnect.API.Data;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -11,7 +12,7 @@ using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Controllers
 {
-  [ApiController]
+    [ApiController]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [Route("import")]
   public class ImportController : BaseController
@@ -28,7 +29,7 @@ namespace UTCClassSupport.API.Controllers
 
       var data = ReadJWTToken();
       var command = new ImportUserToDatabaseCommand();
-      CustomMapper.Mapper.Map<UserData, ImportUserToDatabaseCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, ImportUserToDatabaseCommand>(data, command);
       CustomMapper.Mapper.Map<ImportUserRequest, ImportUserToDatabaseCommand>(dto, command);
       return await _mediator.Send(command);
     }
@@ -38,7 +39,7 @@ namespace UTCClassSupport.API.Controllers
     {
       var data = ReadJWTToken();
       var command = new ImportTimetableCommand();
-      CustomMapper.Mapper.Map<UserData, ImportTimetableCommand>(data, command);
+      CustomMapper.Mapper.Map<UserInfo, ImportTimetableCommand>(data, command);
       CustomMapper.Mapper.Map<ImportTimetableRequest, ImportTimetableCommand>(dto, command);
       return await _mediator.Send(command);
     }
