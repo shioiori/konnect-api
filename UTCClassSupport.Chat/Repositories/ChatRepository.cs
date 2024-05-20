@@ -1,4 +1,7 @@
-﻿namespace UTCClassSupport.Chat.Repositories
+﻿using Microsoft.Extensions.Options;
+using UTCClassSupport.Chat.Models;
+
+namespace UTCClassSupport.Chat.Repositories
 {
   public class ChatRepository : BaseRepository<Chat>, IChatRepository
   {
