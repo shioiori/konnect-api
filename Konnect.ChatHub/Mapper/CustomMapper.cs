@@ -29,6 +29,7 @@ namespace Konnect.ChatHub.Mapper
       CreateMap<Chat, ChatResponse>().ReverseMap();
       CreateMap<Message, MessageResponse>().ReverseMap();
       CreateMap<User, UserResponse>().ReverseMap();
+      CreateMap<Group, GroupResponse>().ReverseMap();
       CreateMap<User, UserData>().ReverseMap();
       CreateMap<Group, GroupData>().ReverseMap();
     }

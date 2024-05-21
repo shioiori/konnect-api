@@ -1,5 +1,9 @@
-﻿namespace Konnect.ChatHub.Models
+﻿using Konnect.ChatHub.Attributes;
+
+namespace Konnect.ChatHub.Models
 {
+  [BsonCollection("Chats")]
+
   public class Chat : BaseEntity
   {
     public string Name { get; set; }

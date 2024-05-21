@@ -1,7 +1,10 @@
 ﻿using Konnect.ChatHub.Models;
 using Konnect.ChatHub.Models.Database;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using SharpCompress.Common;
+using System.Reflection.Metadata;
 
 namespace Konnect.ChatHub.Repositories
 {
@@ -23,7 +26,7 @@ namespace Konnect.ChatHub.Repositories
 
 
     public async Task<T> GetAsync(string id) =>
-        await _TCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+        await _TCollection.Find(x => x.Id == Guid.Parse(id)).FirstOrDefaultAsync();
     public async Task<List<T>> GetAllAsync() =>
         await _TCollection.Find(_ => true).ToListAsync();
     public async Task<T> CreateAsync(T newT)
@@ -32,9 +35,9 @@ namespace Konnect.ChatHub.Repositories
       return newT;
     }
     public async Task UpdateAsync(string id, T updatedT) =>
-        await _TCollection.ReplaceOneAsync(x => x.Id == id, updatedT);
+        await _TCollection.ReplaceOneAsync(x => x.Id == Guid.Parse(id), updatedT);
     public async Task RemoveAsync(string id) =>
-        await _TCollection.DeleteOneAsync(x => x.Id == id);
+        await _TCollection.DeleteOneAsync(x => x.Id == Guid.Parse(id));
   }
 
   public interface IBaseRepository<T>

@@ -1,4 +1,5 @@
-﻿using Konnect.ChatHub.Mapper;
+﻿using Konnect.ChatHub.Data;
+using Konnect.ChatHub.Mapper;
 using Konnect.ChatHub.Models;
 using Konnect.ChatHub.Repositories;
 using Konnect.ChatHub.Requests;
@@ -15,6 +16,18 @@ namespace Konnect.ChatHub.Controllers
     public ChatController(IUnitOfWork unitOfWork)
     {
       _unitOfWork = unitOfWork;
+    }
+
+    [HttpGet("exist")]
+    public async Task<ChatResponse> IsChatExistAsync(List<UserData> data)
+    {
+      var users = CustomMapper.Mapper.Map<List<User>>(data);
+      var existChat = await _unitOfWork.Chats.GetChat(users);
+      if (existChat != default)
+      {
+        return CustomMapper.Mapper.Map<ChatResponse>(existChat);
+      }
+      return null;
     }
 
     [HttpPost]
@@ -41,21 +54,22 @@ namespace Konnect.ChatHub.Controllers
           {
             user = await _unitOfWork.Users.CreateAsync(CustomMapper.Mapper.Map<User>(userData));
           }
-          if (user.Id == request.CreatedBy)
+          if (user.Id.ToString() == request.CreatedBy)
           {
             createdBy = user;
           }
           listUser.Add(user);
         }
         name = name.Substring(0, name.Length - 1);
-        var chat = await _unitOfWork.Chats.CreateAsync(new Chat()
+        var chat = new Chat()
         {
           Name = name,
           CreatedDate = DateTime.Now,
           CreatedBy = createdBy,
           Users = listUser,
           Group = group,
-        });
+        };
+        await _unitOfWork.Chats.CreateAsync(chat);
         return CustomMapper.Mapper.Map<ChatResponse>(chat);
       }
       catch (Exception ex)
@@ -72,8 +86,15 @@ namespace Konnect.ChatHub.Controllers
 
     [HttpGet]
     public async Task<List<ChatResponse>> GetChatsAsync(string groupId, string userId, string? name) {
-      var chats = _unitOfWork.Chats.GetChats(groupId, userId);
-      return CustomMapper.Mapper.Map<List<ChatResponse>>(chats);
+      try
+      {
+        var chats = await _unitOfWork.Chats.GetChats(groupId, userId, name);
+        return CustomMapper.Mapper.Map<List<ChatResponse>>(chats);
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
     }
   }
 }
