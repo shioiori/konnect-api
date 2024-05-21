@@ -13,56 +13,25 @@ namespace Konnect.ChatHub.Repositories
   public class UnitOfWork : IUnitOfWork
   {
     private readonly IOptions<ChatDatabaseSettings> _chatDatabaseSetting;
-    public UnitOfWork(IOptions<ChatDatabaseSettings> chatDatabaseSettings)
+    public UnitOfWork(IOptions<ChatDatabaseSettings> chatDatabaseSettings,
+      IChatRepository chatRepository,
+      IUserRepository userRepository,
+      IMessageRepository messageRepository,
+      IGroupRepository groupRepository)
     {
       _chatDatabaseSetting = chatDatabaseSettings;
-    }
-    public IChatRepository Chats
-    {
-      get
-      {
-        if (Chats == null)
-        {
-          return new ChatRepository(_chatDatabaseSetting);
-        }
-        return Chats;
-      }
+      Chats = chatRepository;
+      Users = userRepository;
+      Messages = messageRepository;
+      Groups = groupRepository;
     }
 
-    public IMessageRepository Messages
-    {
-      get
-      {
-        if (Messages == null)
-        {
-          return new MessageRepository(_chatDatabaseSetting);
-        }
-        return Messages;
-      }
-    }
+    public IChatRepository Chats { get; }
 
-    public IUserRepository Users
-    {
-      get
-      {
-        if (Users == null)
-        {
-          return new UserRepository(_chatDatabaseSetting);
-        }
-        return Users;
-      }
-    }
+    public IMessageRepository Messages { get; }
 
-    public IGroupRepository Groups
-    {
-      get
-      {
-        if (Groups == null)
-        {
-          return new GroupRepository(_chatDatabaseSetting);
-        }
-        return Groups;
-      }
-    } 
+    public IUserRepository Users { get; }
+
+    public IGroupRepository Groups { get; }
   }
 }

@@ -1,5 +1,8 @@
-﻿namespace Konnect.ChatHub.Models
+﻿using Konnect.ChatHub.Attributes;
+
+namespace Konnect.ChatHub.Models
 {
+  [BsonCollection("Messages")]
   public class Message : BaseEntity
   {
     public string Text { get; set; }
