@@ -9,7 +9,7 @@ namespace UTCClassSupport.API.Models
     [Column("id")]
     public string Id { get; set; }
     [Column("url")]
-    public string Url { get; set; }
+    public string? Url { get; set; } = String.Empty;
     [Column("created_date")]
     public DateTime CreatedDate { get; set; }
     [Column("created_by")]

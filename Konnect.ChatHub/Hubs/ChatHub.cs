@@ -28,8 +28,9 @@ namespace Konnect.ChatHub.Hubs
       return base.OnDisconnectedAsync(exception);
     }
 
-    public async Task SendMessage(string chatId, AddMessageRequest message)
+    public async Task SendMessage(string chatId, string obj)
     {
+      var message = JsonConvert.DeserializeObject<AddMessageRequest>(obj);
       var chat = await _unitOfWork.Chats.GetAsync(chatId);
       var mess = new Message()
       {

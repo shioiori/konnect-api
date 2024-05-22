@@ -36,11 +36,10 @@ namespace UTCClassSupport.API.Application.ClearTimetable
         }
         request.TimetableId = timetable.Id;
       }
-      var shifts = _dbContext.Events.Where(x => x.TimetableId == request.TimetableId);
-      _dbContext.Events.RemoveRange(shifts);
-
+      //var shifts = _dbContext.Events.Where(x => x.TimetableId == request.TimetableId);
+      //_dbContext.Events.RemoveRange(shifts);
       var timetable2 = _dbContext.Timetables.First(x => x.Id == request.TimetableId);
-      timetable2.IsSynchronize = true;
+      timetable2.IsSynchronize = !timetable2.IsSynchronize;
       _dbContext.SaveChanges();
       
       return Task.FromResult(new SynchronizeTimetableWithGoogleCalendarResponse()

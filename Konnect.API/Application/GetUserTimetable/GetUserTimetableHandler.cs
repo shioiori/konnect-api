@@ -26,6 +26,18 @@ namespace UTCClassSupport.API.Application.GetUserTimetable
       try {
         var timetable = _dbContext.Timetables.FirstOrDefault(x => x.CreatedBy == request.UserName
                                                               && x.GroupId == request.GroupId);
+        if (timetable == default)
+        {
+          timetable = new Timetable() { 
+            GroupId = request.GroupId,
+            IsSynchronize = false,
+            Remind = -1,
+            CreatedDate = DateTime.Now,
+            CreatedBy = request.UserName,
+          };
+          _dbContext.Timetables.Add(timetable);
+          _dbContext.SaveChanges();
+        }
         var shifts = _dbContext.Events.Where(x => x.TimetableId == timetable.Id).ToList();
         DateTime start = DateTime.MaxValue, end = DateTime.MinValue;
         foreach (var shift in shifts)
@@ -39,7 +51,7 @@ namespace UTCClassSupport.API.Application.GetUserTimetable
           To = end,
           IsSynchronize = timetable.IsSynchronize,
           RemindTime = timetable.Remind,
-          Events = CustomMapper.Mapper.Map<List<ShiftDTO>>(shifts)
+          Events = CustomMapper.Mapper.Map<List<EventDTO>>(shifts)
         });
       }
       catch (Exception ex)
