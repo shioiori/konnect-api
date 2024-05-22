@@ -35,8 +35,8 @@ namespace UTCClassSupport.API.Application.ScheduleTimetableRemind
       }
       var shift = new Event()
       {
-        From = request.From,
-        To = request.To,
+        From = request.Start,
+        To = request.End,
         Title = request.Title,
         Description = request.Description,
         Location = request.Location,
