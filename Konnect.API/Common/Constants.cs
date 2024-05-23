@@ -7,4 +7,10 @@
     public const string Warning = "warning";
     public const string Info = "info";
   }
+
+  public class AppSetting
+  {
+    public const string Host = "localhost:7030";
+    public const string AppName = "Konnect";
+  }
 }

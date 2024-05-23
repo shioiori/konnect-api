@@ -50,11 +50,13 @@ namespace UTCClassSupport.API.Controllers
     [HttpGet("{state?}")]
     public async Task<GetPostResponse> GetNewsAsync(ApproveProcess? state)
     {
-      var bulletin = new GetPostQuery()
+      var data = ReadJWTToken();
+      var query = new GetPostQuery()
       {
         State = state
       };
-      return await _mediator.Send(bulletin);
+      CustomMapper.Mapper.Map<UserInfo, GetPostQuery>(data, query);
+      return await _mediator.Send(query);
     }
 
     [HttpPost("{id}/comment")]
