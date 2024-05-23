@@ -108,8 +108,6 @@ namespace UTCClassSupport.API.Utilities
         case NotificationAction.KickFromGroup:
         case NotificationAction.ChangeRole:
           return AttachedType.Group;
-        case NotificationAction.ReplyComment:
-          return AttachedType.Comment;
         default:
           return AttachedType.None;
       }
