@@ -40,7 +40,6 @@
     PendingPost,
     AcceptPost,
     ReplyPost,
-    ReplyComment,
     Mention,
     InviteToGroup,
     KickFromGroup,

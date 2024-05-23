@@ -6,6 +6,5 @@ namespace UTCClassSupport.API.Models
   [Table("roles")]
   public class Role : IdentityRole
   {
-    public virtual ICollection<Permission> Permissions { get; set; }
   }
 }
