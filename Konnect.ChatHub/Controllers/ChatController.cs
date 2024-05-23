@@ -5,6 +5,7 @@ using Konnect.ChatHub.Repositories;
 using Konnect.ChatHub.Requests;
 using Konnect.ChatHub.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Konnect.ChatHub.Controllers
 {
@@ -19,8 +20,9 @@ namespace Konnect.ChatHub.Controllers
     }
 
     [HttpGet("exist")]
-    public async Task<ChatResponse> IsChatExistAsync(List<UserData> data)
+    public async Task<ChatResponse> IsChatExistAsync(string json)
     {
+      var data = JsonConvert.DeserializeObject<List<UserData>>(json);
       var users = CustomMapper.Mapper.Map<List<User>>(data);
       var existChat = await _unitOfWork.Chats.GetChat(users);
       if (existChat != default)

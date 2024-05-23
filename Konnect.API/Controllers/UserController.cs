@@ -59,6 +59,11 @@ namespace UTCClassSupport.API.Controllers
       };
     }
 
+    /// <summary>
+    /// Add user to group
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<Response> AddUserAsync([FromBody] AddUserRequest request)
     {
@@ -72,14 +77,7 @@ namespace UTCClassSupport.API.Controllers
           RoleName = GroupRole.User.ToString(),
         };
       }
-      var data = await _userRepository.AddUserAsync(request);
-      return new AddUserResponse()
-      {
-        Success = true,
-        Message = "Thêm người dùng thành công",
-        Type = ResponseType.Success,
-        User = data
-      };
+      return await _userRepository.AddUserAsync(request);
     }
 
     [HttpPost("{username}")]
@@ -95,12 +93,17 @@ namespace UTCClassSupport.API.Controllers
       };
     }
 
+    /// <summary>
+    /// Delete account
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
     [HttpDelete("{username}")]
     public async Task<Response> DeleteUserAsync(string username)
     {
       try
       {
-        _userRepository.DeleteUserAsync(username);
+        await _userRepository.DeleteUserAsync(username);
         return new DeleteUserResponse()
         {
           Success = true,
@@ -119,21 +122,36 @@ namespace UTCClassSupport.API.Controllers
       }
     }
 
-    [HttpPost("{groupId?}/{username}/{role}")]
-    public async Task<Response> ChangeRole(string userName, string role, string? groupId)
+    [HttpDelete("{username}/kick")]
+    public async Task<Response> KickUserFromGroup(string username)
     {
       try
       {
         var userData = ReadJWTToken();
-        if (groupId == null)
+        return await _userRepository.KickUserFromGroupAsync(username, userData.GroupId, userData.UserName);
+      }
+      catch (Exception ex)
+      {
+        return new Response()
         {
-          groupId = userData.GroupId;
-        }
-        _userRepository.ChangeRoleAsync(userName, role, groupId);
-        return new DeleteUserResponse()
+          Success = false,
+          Type = ResponseType.Error,
+          Message = ex.Message,
+        };
+      }
+    }
+
+    [HttpPost("{userName}/{role}")]
+    public async Task<Response> ChangeRole(string userName, string role)
+    {
+      try
+      {
+        var userData = ReadJWTToken();
+        await _userRepository.ChangeRoleAsync(userName, role, userData.GroupId);
+        return new Response()
         {
           Success = true,
-          Message = "Xóa người dùng thành công",
+          Message = "Thay đổi role thành công",
           Type = ResponseType.Success,
         };
       }

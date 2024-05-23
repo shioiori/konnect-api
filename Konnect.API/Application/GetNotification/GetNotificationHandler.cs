@@ -20,9 +20,9 @@ namespace UTCClassSupport.API.Application.GetNotification
     {
       _notificationManager = notificationManager;
     }
-    public Task<GetNotificationResponse> Handle(GetNotificationQuery request, CancellationToken cancellationToken)
+    public async Task<GetNotificationResponse> Handle(GetNotificationQuery request, CancellationToken cancellationToken)
     {
-      var notifications = _notificationManager.GetNotification(request.GroupId, request.UserId, request.PaginationData);
+      var notifications = await _notificationManager.GetNotificationAsync(request.GroupId, request.UserId, request.PaginationData);
       List<NotificationDTO> list = new List<NotificationDTO>();
       foreach (var notification in notifications)
       {
@@ -38,10 +38,10 @@ namespace UTCClassSupport.API.Application.GetNotification
         };
         list.Add(dto);
       }
-      return Task.FromResult(new GetNotificationResponse()
+      return new GetNotificationResponse()
       {
         Notifications = list
-      });
+      };
       
     }
   }

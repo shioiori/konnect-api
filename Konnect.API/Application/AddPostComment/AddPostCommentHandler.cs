@@ -37,15 +37,17 @@ namespace UTCClassSupport.API.Application.AddPostComment
       var cmt = CustomMapper.Mapper.Map<CommentDTO>(comment);
       cmt.User = CustomMapper.Mapper.Map<UserDTO>(await _userManager.FindByNameAsync(comment.CreatedBy));
 
-      var post = _dbContext.Bulletins.Find(request.PostId);
-      var receiver = await _userManager.FindByNameAsync(post.CreatedBy);
-
       //notification
-      NotificationProvider notificationProvider = new NotificationProvider();
-      var notification = notificationProvider.CreateUserNotification(receiver.Id, receiver.DisplayName,
-        request.UserName, request.DisplayName, Common.NotificationAction.ReplyPost, request.PostId);
-      _dbContext.Notifications.Add(notification);
-      _dbContext.SaveChanges();
+      var post = _dbContext.Bulletins.Find(request.PostId);
+      if (request.UserName == post.CreatedBy)
+      {
+        var receiver = await _userManager.FindByNameAsync(post.CreatedBy);
+        NotificationProvider notificationProvider = new NotificationProvider();
+        var notification = notificationProvider.CreateUserNotification(receiver.Id, receiver.DisplayName,
+          request.UserName, request.DisplayName, Common.NotificationAction.ReplyPost, request.PostId);
+        _dbContext.Notifications.Add(notification);
+        _dbContext.SaveChanges();
+      }
       return new AddPostCommentResponse()
       {
         Success = true,

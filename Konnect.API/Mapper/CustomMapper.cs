@@ -5,6 +5,7 @@ using UTCClassSupport.API.Application.AddPostComment;
 using UTCClassSupport.API.Application.ClearTimetable;
 using UTCClassSupport.API.Application.DeleteTimetable;
 using UTCClassSupport.API.Application.GetGroupByUser;
+using UTCClassSupport.API.Application.GetNews;
 using UTCClassSupport.API.Application.GetNotification;
 using UTCClassSupport.API.Application.GetUserTimetable;
 using UTCClassSupport.API.Application.ImportExcel;
@@ -79,6 +80,7 @@ namespace UTCClassSupport.API.Mapper
       CreateMap<BulletinRequest, UploadNewsToBulletinCommand>().ReverseMap();
       CreateMap<UserInfo, UploadNewsToBulletinCommand>().ReverseMap();
       CreateMap<UserInfo, AddPostCommentCommand>().ReverseMap();
+      CreateMap<UserInfo, GetPostQuery>().ReverseMap();
       CreateMap<CommentRequest, AddPostCommentCommand>().ReverseMap();
 
       CreateMap<Comment, CommentDTO>().ReverseMap();

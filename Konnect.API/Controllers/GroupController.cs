@@ -62,6 +62,15 @@ namespace UTCClassSupport.API.Controllers
     public async Task<Response> InvitePeople(InviteToGroupRequest request)
     {
       var data = ReadJWTToken();
+      if (request.Guest == data.UserName)
+      {
+        return new InviteToGroupResponse()
+        {
+          Success = false,
+          Type = ResponseType.Error,
+          Message = "Bạn đã ở trong group"
+        };
+      }
       var command = new InviteToGroupCommand();
       CustomMapper.Mapper.Map<UserInfo, InviteToGroupCommand>(data, command);
       CustomMapper.Mapper.Map<InviteToGroupRequest, InviteToGroupCommand>(request, command);

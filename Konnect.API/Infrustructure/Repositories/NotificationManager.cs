@@ -35,10 +35,12 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
       _notificationProvider = new NotificationProvider();
     }
 
-    public List<Notification> GetNotification(string groupId, string userId, PaginationData paginationData)
+    public async Task<List<Notification>> GetNotificationAsync(string groupId, string userId, PaginationData paginationData)
     {
+      var user = await _userManager.FindByIdAsync(userId);
       var notifications = _dbContext.Notifications.Where(x => x.Range == NotificationRange.All
-                                   || (x.Range == NotificationRange.Group && x.GroupId == groupId)
+                                   || (x.Range == NotificationRange.Group && x.GroupId == groupId 
+                                                  && (user == default || x.CreatedBy != user.Id))
                                    || (x.Range == NotificationRange.User && x.UserId == userId))
                                    .OrderByDescending(x => x.CreatedDate);
       if (paginationData == null)

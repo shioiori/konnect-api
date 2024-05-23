@@ -51,7 +51,7 @@ namespace UTCClassSupport.API.Utilities
           {
             Content = $"Có một tin chờ duyệt đến từ {createdName}",
             Action = action,
-            Range = NotificationRange.Group,
+            Range = NotificationRange.User,
             ObjectId = id,
             UserId = receiverId,
             CreatedDate = DateTime.Now,
@@ -62,7 +62,29 @@ namespace UTCClassSupport.API.Utilities
           {
             Content = $"{createdName} đã duyệt tin của bạn",
             Action = action,
-            Range = NotificationRange.Group,
+            Range = NotificationRange.User,
+            ObjectId = id,
+            UserId = receiverId,
+            CreatedDate = DateTime.Now,
+            CreatedBy = createdBy,
+          };
+        case NotificationAction.KickFromGroup:
+          return new Notification()
+          {
+            Content = $"Bạn đã rời khỏi group {id}",
+            Action = action,
+            Range = NotificationRange.User,
+            ObjectId = id,
+            UserId = receiverId,
+            CreatedDate = DateTime.Now,
+            CreatedBy = createdBy,
+          };
+        case NotificationAction.InviteToGroup:
+          return new Notification()
+          {
+            Content = $"Bạn được mời vào group {id}",
+            Action = action,
+            Range = NotificationRange.User,
             ObjectId = id,
             UserId = receiverId,
             CreatedDate = DateTime.Now,

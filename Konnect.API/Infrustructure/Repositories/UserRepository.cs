@@ -6,7 +6,9 @@ using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Mapper;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Requests;
+using UTCClassSupport.API.Responses;
 using UTCClassSupport.API.Responses.DTOs;
+using UTCClassSupport.API.Utilities;
 
 namespace UTCClassSupport.API.Infrustructure.Repositories
 {
@@ -55,27 +57,58 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
       return dto;
     }
 
-    public async Task<UserDTO> AddUserAsync(AddUserRequest request)
+    public async Task<Response> AddUserAsync(AddUserRequest request)
     {
-      var user = CustomMapper.Mapper.Map<User>(request);
-      await _userManager.CreateAsync(user);
-      _userManager.AddPasswordAsync(user, request.UserName);
-      _dbContext.SaveChanges();
-      if (request.UserGroupData.RoleName == default)
+      try
       {
-        request.UserGroupData.RoleName = GroupRole.User.ToString();
+        if (await _userManager.FindByNameAsync(request.UserName) != default)
+        {
+          return new AddUserResponse()
+          {
+            Success = false,
+            Type = ResponseType.Error,
+            Message = "Người dùng này đã tồn tại",
+          };
+        }
+        if (_userManager.Users.FirstOrDefault(x => x.Email == request.Email) != default)
+        {
+          return new AddUserResponse()
+          {
+            Success = false,
+            Type = ResponseType.Error,
+            Message = "Email này đã được đăng ký"
+          };
+        }
+        var user = CustomMapper.Mapper.Map<User>(request);
+        await _userManager.CreateAsync(user);
+        await _userManager.AddPasswordAsync(user, request.UserName);
+        _dbContext.SaveChanges();
+        if (request.UserGroupData.RoleName == default)
+        {
+          request.UserGroupData.RoleName = GroupRole.User.ToString();
+        }
+        _dbContext.UserGroupRoles.Add(new UserGroupRole()
+        {
+          GroupId = request.UserGroupData.GroupId,
+          UserId = user.Id,
+          RoleId = (await _roleManager.FindByNameAsync(request.UserGroupData.RoleName)).Id
+        });
+        _dbContext.SaveChanges();
+        var dto = CustomMapper.Mapper.Map<UserDTO>(user);
+        dto.RoleName = request.UserGroupData.RoleName;
+        dto.GroupId = request.UserGroupData.GroupId;
+        return new AddUserResponse()
+        {
+          Success = true,
+          Type = ResponseType.Success,
+          Message = "Thêm người dùng thành công",
+          User = dto
+        };
       }
-      _dbContext.UserGroupRoles.Add(new UserGroupRole()
+      catch (Exception ex)
       {
-        GroupId = request.UserGroupData.GroupId,
-        UserId = user.Id,
-        RoleId = (await _roleManager.FindByNameAsync(request.UserGroupData.RoleName)).Id
-      });
-      _dbContext.SaveChanges();
-      var dto = CustomMapper.Mapper.Map<UserDTO>(user);
-      dto.RoleName = request.UserGroupData.RoleName;
-      dto.GroupId = request.UserGroupData.GroupId;
-      return dto;
+        throw ex;
+      }
     }
 
     public async Task<UserDTO> UpdateUserAsync(string userName, UpdateUserRequest request)
@@ -92,9 +125,50 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
       try
       {
         var user = await _userManager.FindByNameAsync(userName);
-        _userManager.DeleteAsync(user);
+        await _userManager.DeleteAsync(user);
         _dbContext.SaveChanges();
         return true;
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+    }
+
+    public async Task<Response> KickUserFromGroupAsync(string userName, string groupId, string createdBy)
+    {
+      try
+      {
+        var user = await _userManager.FindByNameAsync(userName);
+        var link = _dbContext.UserGroupRoles.FirstOrDefault(x => x.UserId == user.Id && x.GroupId == groupId);
+        if (link == default)
+        {
+          return new Response()
+          {
+            Success = false,
+            Message = "Người dùng này không có ở trong nhóm",
+            Type = ResponseType.Error,
+          };
+        }
+        _dbContext.UserGroupRoles.Remove(link);
+        _dbContext.SaveChanges();
+
+        // notify
+        if (user.UserName != createdBy)
+        {
+          var createdAuthor = await _userManager.FindByNameAsync(createdBy);
+          NotificationProvider notificationProvider = new NotificationProvider();
+          var notification = notificationProvider.CreateUserNotification(user.Id, user.DisplayName,
+            createdAuthor.UserName, createdAuthor.DisplayName, NotificationAction.KickFromGroup, groupId);
+          _dbContext.Notifications.Add(notification);
+          _dbContext.SaveChanges();
+        }
+        return new Response()
+        {
+          Success = true,
+          Message = "Người dùng đã rời khỏi nhóm",
+          Type = ResponseType.Success,
+        };
       }
       catch (Exception ex)
       {
@@ -109,7 +183,15 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
         var role = await _roleManager.FindByNameAsync(roleName);
         var user = await _userManager.FindByNameAsync(userName);
         var link = _dbContext.UserGroupRoles.First(x => x.UserId == user.Id && x.GroupId == groupId);
-        link.RoleId = role.Id;
+        _dbContext.UserGroupRoles.Remove(link);
+        _dbContext.SaveChanges();
+        var newLink = new UserGroupRole()
+        {
+          UserId = user.Id,
+          GroupId = groupId,
+          RoleId = role.Id
+        };
+        _dbContext.UserGroupRoles.Add(newLink);
         _dbContext.SaveChanges();
         return true;
       }
