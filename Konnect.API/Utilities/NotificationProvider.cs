@@ -38,7 +38,7 @@ namespace UTCClassSupport.API.Utilities
         case NotificationAction.ReplyPost:
           return new Notification()
           {
-            Content = $"{receiverName} vừa trả lời bài đăng của bạn",
+            Content = $"{createdName} vừa trả lời bài đăng của bạn",
             Action = action,
             Range = NotificationRange.User,
             ObjectId = id,

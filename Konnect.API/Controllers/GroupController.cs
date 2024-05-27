@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using Konnect.API.Application.AddGroup;
 using Konnect.API.Data;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +38,18 @@ namespace UTCClassSupport.API.Controllers
       });
     }
 
+    [HttpPost]
+    public async Task<Response> AddGroup([FromBody] AddGroupRequest request)
+    {
+      var identity = HttpContext.User.Identity as ClaimsIdentity;
+      var userId = identity.FindFirst(ClaimData.UserID).Value;
+      return await _mediator.Send(new AddGroupCommand()
+      {
+        Group = request,
+        UserId = userId
+      }) ;
+    }
+
     [HttpPost("join/{id}")]
     public async Task<Response> JoinGroup(string id)
     {
@@ -55,6 +68,10 @@ namespace UTCClassSupport.API.Controllers
       var command = new OutGroupCommand();
       CustomMapper.Mapper.Map<UserInfo, OutGroupCommand>(data, command);
       command.CurrentGroupId = id;
+      if (id == default)
+      {
+        command.CurrentGroupId = command.GroupId;
+      }
       return await _mediator.Send(command);
     }
 

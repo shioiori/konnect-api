@@ -11,9 +11,13 @@ namespace UTCClassSupport.API.Responses
   public class ChangePostStateResponse : Response
   {
   }
-  public class GetPostResponse : Response
+  public class GetPostsResponse : Response
   {
     public IEnumerable<PostDTO> Posts { get; set; }
+  }
+  public class GetPostResponse : Response
+  {
+    public PostDTO Post { get; set; }
   }
   public class UploadNewsToBulletinResponse : Response
   {

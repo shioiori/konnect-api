@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Konnect.API.Infrustructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -117,7 +118,9 @@ namespace UTCClassSupport.API
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
       services.AddScoped<AccessManager>();
-      services.AddScoped<UserRepository>();
+      services.AddScoped<IUserRepository, UserRepository>();
+      services.AddScoped<IPostRepository, PostRepository>();
+      services.AddScoped<IGroupRepository, GroupRepository>();
       services.AddScoped<NotificationManager>();
       return services;
     }

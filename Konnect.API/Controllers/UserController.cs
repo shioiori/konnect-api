@@ -18,8 +18,8 @@ namespace UTCClassSupport.API.Controllers
   [Route("user")]
   public class UserController : BaseController
   {
-    private readonly UserRepository _userRepository;
-    public UserController(UserRepository userRepository)
+    private readonly IUserRepository _userRepository;
+    public UserController(IUserRepository userRepository)
     {
       _userRepository = userRepository;
     }

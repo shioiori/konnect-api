@@ -1,12 +1,11 @@
-﻿using UTCClassSupport.API.Responses;
+﻿using Konnect.API.Data;
 using MediatR;
-using UTCClassSupport.API.Common;
-using Konnect.API.Data;
+using UTCClassSupport.API.Responses;
 
-namespace UTCClassSupport.API.Application.GetNews
+namespace Konnect.API.Application.GetPost
 {
-    public class GetPostQuery : UserInfo, IRequest<GetPostResponse>
+  public class GetPostQuery : UserInfo, IRequest<GetPostResponse>
   {
-    public ApproveProcess? State { get; set; }
+    public string PostId { get; set; }
   }
 }

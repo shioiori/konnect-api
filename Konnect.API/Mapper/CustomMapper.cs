@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Konnect.API.Application.AddGroup;
 using Konnect.API.Application.GetCreatedChatData;
+using Konnect.API.Application.GetPost;
 using Konnect.API.Data;
 using UTCClassSupport.API.Application.AddPostComment;
 using UTCClassSupport.API.Application.ClearTimetable;
@@ -70,6 +72,9 @@ namespace UTCClassSupport.API.Mapper
 
       CreateMap<UserInfo, OutGroupCommand>().ReverseMap();
       CreateMap<GroupData, Group>().ReverseMap();
+
+      //CreateMap<UserInfo, AddGroupCommand>().ReverseMap();
+      CreateMap<AddGroupRequest, Group>().ReverseMap();
     }
   }
 
@@ -80,6 +85,7 @@ namespace UTCClassSupport.API.Mapper
       CreateMap<BulletinRequest, UploadNewsToBulletinCommand>().ReverseMap();
       CreateMap<UserInfo, UploadNewsToBulletinCommand>().ReverseMap();
       CreateMap<UserInfo, AddPostCommentCommand>().ReverseMap();
+      CreateMap<UserInfo, GetPostsQuery>().ReverseMap();
       CreateMap<UserInfo, GetPostQuery>().ReverseMap();
       CreateMap<CommentRequest, AddPostCommentCommand>().ReverseMap();
 

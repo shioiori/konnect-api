@@ -12,7 +12,21 @@ using UTCClassSupport.API.Utilities;
 
 namespace UTCClassSupport.API.Infrustructure.Repositories
 {
-  public class UserRepository
+  public interface IUserRepository
+  {
+    Task<Response> AddUserAsync(AddUserRequest request);
+    Task<bool> ChangePasswordAsync(string username, string oldPassword, string newPassword);
+    Task<bool> ChangeRoleAsync(string userName, string roleName, string groupId);
+    Task<bool> CheckPassword(string username, string password);
+    Task<bool> DeleteUserAsync(string userName);
+    Task<UserDTO> GetUserAsync(string userName);
+    List<UserDTO> GetUsers(string groupId);
+    Task<bool> IsEmailConfirmedAsync(string email);
+    Task<Response> KickUserFromGroupAsync(string userName, string groupId, string createdBy);
+    Task<UserDTO> UpdateUserAsync(string userName, UpdateUserRequest request);
+  }
+
+  public class UserRepository : IUserRepository
   {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;

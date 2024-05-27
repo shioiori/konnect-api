@@ -1,4 +1,5 @@
-﻿using Konnect.API.Data;
+﻿using Konnect.API.Application.GetPost;
+using Konnect.API.Data;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,13 +48,25 @@ namespace UTCClassSupport.API.Controllers
       return await _mediator.Send(bulletin);
     }
 
-    [HttpGet("{state?}")]
-    public async Task<GetPostResponse> GetNewsAsync(ApproveProcess? state)
+    [HttpGet]
+    public async Task<GetPostsResponse> GetPostsAsync(ApproveProcess? state)
+    {
+      var data = ReadJWTToken();
+      var query = new GetPostsQuery()
+      {
+        State = state
+      };
+      CustomMapper.Mapper.Map<UserInfo, GetPostsQuery>(data, query);
+      return await _mediator.Send(query);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<GetPostResponse> GetPostAsync(string id)
     {
       var data = ReadJWTToken();
       var query = new GetPostQuery()
       {
-        State = state
+        PostId = id
       };
       CustomMapper.Mapper.Map<UserInfo, GetPostQuery>(data, query);
       return await _mediator.Send(query);
