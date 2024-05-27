@@ -40,7 +40,7 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
       var user = await _userManager.FindByIdAsync(userId);
       var notifications = _dbContext.Notifications.Where(x => x.Range == NotificationRange.All
                                    || (x.Range == NotificationRange.Group && x.GroupId == groupId 
-                                                  && (user == default || x.CreatedBy != user.Id))
+                                                  && (user == default || x.CreatedBy != user.UserName))
                                    || (x.Range == NotificationRange.User && x.UserId == userId))
                                    .OrderByDescending(x => x.CreatedDate);
       if (paginationData == null)

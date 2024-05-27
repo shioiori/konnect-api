@@ -45,6 +45,12 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
     {
       var userId = identity.FindFirst(ClaimData.UserID).Value;
       var userName = identity.FindFirst(ClaimData.UserName).Value;
+      var request = await GetLoginToken(new LoginRequest()
+      {
+        Username = userName,
+        IsLogin = true,
+      });
+      var token = new JwtSecurityTokenHandler().ReadJwtToken(((AuthenticationResponse)request).AccessToken);
       var data = _dbContext.UserGroupRoles.FirstOrDefault(x => x.UserId == userId && x.GroupId == groupId);
       if (data == default)
       {
@@ -55,19 +61,19 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
           StatusCode = StatusCodes.Status400BadRequest
         };
       }
-      var claims = identity.Claims.ToList();
+      var claims = token.Claims.ToList();
       claims.Add(new Claim(ClaimData.GroupID, data.GroupId));
       var role = await _roleManager.FindByIdAsync(data.RoleId);
       claims.Add(new Claim(ClaimData.RoleID, data.RoleId));
       claims.Add(new Claim(ClaimData.RoleName, role.Name));
       claims.Add(new Claim(ClaimTypes.Role, role.Name));
-      var token = GetToken(claims);
+      var newToken = GetToken(claims);
 
       return new AuthenticationResponse()
       {
         Success = true,
         Message = "Dịch chuyển tới group " + groupId + "...",
-        AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+        AccessToken = new JwtSecurityTokenHandler().WriteToken(newToken),
         StatusCode = StatusCodes.Status200OK,
       };
     }

@@ -39,7 +39,7 @@ namespace UTCClassSupport.API.Application.AddPostComment
 
       //notification
       var post = _dbContext.Bulletins.Find(request.PostId);
-      if (request.UserName == post.CreatedBy)
+      if (request.UserName != post.CreatedBy)
       {
         var receiver = await _userManager.FindByNameAsync(post.CreatedBy);
         NotificationProvider notificationProvider = new NotificationProvider();

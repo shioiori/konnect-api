@@ -39,7 +39,8 @@ namespace UTCClassSupport.API.Application.OutGroup
       return await _accessManager.GetLoginToken(new LoginRequest()
       {
         Username = user.UserName,
-      });
+        IsLogin = true
+      });;
     }
   }
 }
