@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Vml.Office;
+using Konnect.API.Utilities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -16,10 +17,6 @@ namespace UTCClassSupport.API.Infrustructure.Data
     public DbSet<Bulletin> Bulletins { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Group> Groups { get; set; }
-    public DbSet<Message> Messages { get; set; }
-    public DbSet<Chat> Chats { get; set; }
-    public DbSet<MessageFile> MessagesFile { get; set; }
-    public DbSet<Schedule> Schedules { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Timetable> Timetables { get; set; }
     public DbSet<User> Users { get; set; }
@@ -47,23 +44,6 @@ namespace UTCClassSupport.API.Infrustructure.Data
       {
         e.HasKey(e => e.Id);
       });
-      modelBuilder.Entity<Message>(e =>
-      {
-        e.HasKey(e => e.Id);
-        e.HasOne(e => e.Chat)
-        .WithMany(e => e.Messages)
-        .HasForeignKey(e => e.ChatId);
-      });
-      modelBuilder.Entity<Chat>(e =>
-      {
-        e.HasKey(e => e.Id);
-        e.HasMany(e => e.Joinners)
-        .WithMany(e => e.Chats);
-      });
-      modelBuilder.Entity<MessageFile>(e =>
-      {
-        e.HasKey(e => e.Id);
-      });
       modelBuilder.Entity<Event>(e =>
       {
         e.HasKey(e => e.Id);
@@ -75,14 +55,6 @@ namespace UTCClassSupport.API.Infrustructure.Data
       modelBuilder.Entity<Timetable>(e =>
       {
         e.HasKey(e => e.Id);
-      });
-      modelBuilder.Entity<Schedule>(e =>
-      {
-        e.HasKey(e => e.Id);
-        e.HasOne(e => e.Shift)
-        .WithOne(e => e.Schedule)
-        .HasForeignKey<Schedule>(e => e.ShiftId)
-        .IsRequired();
       });
       modelBuilder.Entity<UserGroupRole>(e =>
       {
@@ -107,6 +79,11 @@ namespace UTCClassSupport.API.Infrustructure.Data
         if (tableName.StartsWith("AspNet"))
         {
           entityType.SetTableName(tableName.Substring(6));
+        }
+        foreach (var property in entityType.GetProperties())
+        {
+          // Convert column name to camelCase
+          property.SetColumnName(StringHelper.ToCamelCase(property.Name));
         }
       }
     }

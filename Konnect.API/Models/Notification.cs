@@ -3,7 +3,6 @@ using UTCClassSupport.API.Common;
 
 namespace UTCClassSupport.API.Models
 {
-  [Table("notifications")]
   public class Notification
   {
 

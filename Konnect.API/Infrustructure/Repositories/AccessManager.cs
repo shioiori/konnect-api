@@ -166,7 +166,7 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
       {
         var group = new Group()
         {
-          Name = Guid.NewGuid().ToString(),
+          Name = "Default group",
         };
         _dbContext.Groups.Add(group);
         _dbContext.SaveChanges();
