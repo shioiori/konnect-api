@@ -8,11 +8,11 @@ using UTCClassSupport.API.Infrustructure.Data;
 
 #nullable disable
 
-namespace UTCClassSupport.API.Migrations
+namespace Konnect.API.Migrations
 {
     [DbContext(typeof(EFContext))]
-    [Migration("20240523153320_removeper")]
-    partial class removeper
+    [Migration("20240530183212_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,36 +21,25 @@ namespace UTCClassSupport.API.Migrations
                 .HasAnnotation("ProductVersion", "6.0.24")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("ChatUser", b =>
-                {
-                    b.Property<string>("ChatsId")
-                        .HasColumnType("varchar(95)");
-
-                    b.Property<string>("JoinnersId")
-                        .HasColumnType("varchar(95)");
-
-                    b.HasKey("ChatsId", "JoinnersId");
-
-                    b.HasIndex("JoinnersId");
-
-                    b.ToTable("ChatUser");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("claimType");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("claimValue");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("roleId");
 
                     b.HasKey("Id");
 
@@ -63,17 +52,21 @@ namespace UTCClassSupport.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("claimType");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("claimValue");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("userId");
 
                     b.HasKey("Id");
 
@@ -85,17 +78,21 @@ namespace UTCClassSupport.API.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("loginProvider");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("providerKey");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("providerDisplayName");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("userId");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -107,10 +104,12 @@ namespace UTCClassSupport.API.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("userId");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("roleId");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -122,16 +121,20 @@ namespace UTCClassSupport.API.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("userId");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("loginProvider");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("name");
 
                     b.Property<string>("Value")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("value");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -157,60 +160,30 @@ namespace UTCClassSupport.API.Migrations
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("created_by");
+                        .HasColumnName("createdBy");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime")
-                        .HasColumnName("created_date");
+                        .HasColumnName("createdDate");
 
                     b.Property<string>("GroupId")
                         .IsRequired()
                         .HasColumnType("varchar(95)")
-                        .HasColumnName("group_id");
+                        .HasColumnName("groupId");
 
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("longtext")
-                        .HasColumnName("last_modified_by");
+                        .HasColumnName("lastModifiedBy");
 
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("datetime")
-                        .HasColumnName("last_modified_date");
+                        .HasColumnName("lastModifiedDate");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("bulletins");
-                });
-
-            modelBuilder.Entity("UTCClassSupport.API.Models.Chat", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(95)")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Avatar")
-                        .HasColumnType("longtext")
-                        .HasColumnName("avatar");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("created_by");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime")
-                        .HasColumnName("created_date");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("chats");
+                    b.ToTable("Bulletins");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.Comment", b =>
@@ -228,22 +201,22 @@ namespace UTCClassSupport.API.Migrations
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("created_by");
+                        .HasColumnName("createdBy");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime")
-                        .HasColumnName("created_date");
+                        .HasColumnName("createdDate");
 
                     b.Property<string>("PostId")
                         .IsRequired()
                         .HasColumnType("varchar(95)")
-                        .HasColumnName("post_id");
+                        .HasColumnName("postId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("comments");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.Event", b =>
@@ -255,7 +228,8 @@ namespace UTCClassSupport.API.Migrations
 
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("category");
 
                     b.Property<int?>("Credit")
                         .HasColumnType("int")
@@ -275,7 +249,7 @@ namespace UTCClassSupport.API.Migrations
 
                     b.Property<bool>("IsLoopPerDay")
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_loop_per_day");
+                        .HasColumnName("isLoopPerDay");
 
                     b.Property<string>("Location")
                         .HasColumnType("longtext")
@@ -283,11 +257,11 @@ namespace UTCClassSupport.API.Migrations
 
                     b.Property<TimeSpan?>("PeriodEnd")
                         .HasColumnType("time")
-                        .HasColumnName("period_end");
+                        .HasColumnName("periodEnd");
 
                     b.Property<TimeSpan?>("PeriodStart")
                         .HasColumnType("time")
-                        .HasColumnName("period_start");
+                        .HasColumnName("periodStart");
 
                     b.Property<string>("Subject")
                         .HasColumnType("longtext")
@@ -295,16 +269,16 @@ namespace UTCClassSupport.API.Migrations
 
                     b.Property<string>("SubjectClass")
                         .HasColumnType("longtext")
-                        .HasColumnName("subject_class");
+                        .HasColumnName("subjectClass");
 
                     b.Property<string>("SubjectCode")
                         .HasColumnType("longtext")
-                        .HasColumnName("subject_code");
+                        .HasColumnName("subjectCode");
 
                     b.Property<string>("TimetableId")
                         .IsRequired()
                         .HasColumnType("varchar(95)")
-                        .HasColumnName("timetable_id");
+                        .HasColumnName("timetableId");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -319,7 +293,7 @@ namespace UTCClassSupport.API.Migrations
 
                     b.HasIndex("TimetableId");
 
-                    b.ToTable("events");
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.Group", b =>
@@ -329,6 +303,14 @@ namespace UTCClassSupport.API.Migrations
                         .HasColumnType("varchar(95)")
                         .HasColumnName("id");
 
+                    b.Property<bool>("AllowInvite")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("allowInvite");
+
+                    b.Property<bool>("AllowOut")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("allowOut");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -336,20 +318,20 @@ namespace UTCClassSupport.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("groups");
+                    b.ToTable("Groups");
                 });
 
-            modelBuilder.Entity("UTCClassSupport.API.Models.Message", b =>
+            modelBuilder.Entity("UTCClassSupport.API.Models.Notification", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(95)")
+                        .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<string>("ChatId")
+                    b.Property<string>("Action")
                         .IsRequired()
-                        .HasColumnType("varchar(95)")
-                        .HasColumnName("chat_id");
+                        .HasColumnType("longtext")
+                        .HasColumnName("action");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -359,86 +341,32 @@ namespace UTCClassSupport.API.Migrations
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("created_by");
+                        .HasColumnName("createdBy");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime")
-                        .HasColumnName("created_date");
-
-                    b.Property<string>("FileId")
-                        .HasColumnType("varchar(95)")
-                        .HasColumnName("file_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.HasIndex("FileId");
-
-                    b.ToTable("messages");
-                });
-
-            modelBuilder.Entity("UTCClassSupport.API.Models.MessageFile", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(95)")
-                        .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("created_by");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime")
-                        .HasColumnName("created_date");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("longtext")
-                        .HasColumnName("url");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("message_files");
-                });
-
-            modelBuilder.Entity("UTCClassSupport.API.Models.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime");
+                        .HasColumnName("createdDate");
 
                     b.Property<string>("GroupId")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("groupId");
 
                     b.Property<bool>("IsSeen")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("isSeen");
 
                     b.Property<string>("ObjectId")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("objectId");
 
                     b.Property<string>("Range")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("range");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("userId");
 
                     b.HasKey("Id");
 
@@ -446,25 +374,29 @@ namespace UTCClassSupport.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("notifications");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.Role", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("id");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("concurrencyStamp");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("name");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("normalizedName");
 
                     b.HasKey("Id");
 
@@ -473,34 +405,6 @@ namespace UTCClassSupport.API.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("Roles", (string)null);
-                });
-
-            modelBuilder.Entity("UTCClassSupport.API.Models.Schedule", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(95)")
-                        .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("created_by");
-
-                    b.Property<int>("SendBeforeMinutes")
-                        .HasColumnType("int")
-                        .HasColumnName("send_before_minutes");
-
-                    b.Property<int>("ShiftId")
-                        .HasColumnType("int")
-                        .HasColumnName("shift_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShiftId")
-                        .IsUnique();
-
-                    b.ToTable("schedules");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.Timetable", b =>
@@ -513,24 +417,24 @@ namespace UTCClassSupport.API.Migrations
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("created_by");
+                        .HasColumnName("createdBy");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime")
-                        .HasColumnName("created_date");
+                        .HasColumnName("createdDate");
 
                     b.Property<string>("GroupId")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("group_id");
+                        .HasColumnName("groupId");
 
                     b.Property<bool>("IsSynchronize")
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_synchronize");
+                        .HasColumnName("isSynchronize");
 
                     b.Property<int>("Remind")
                         .HasColumnType("int")
-                        .HasColumnName("remind_time");
+                        .HasColumnName("remind");
 
                     b.Property<string>("Url")
                         .HasColumnType("longtext")
@@ -538,68 +442,85 @@ namespace UTCClassSupport.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("timetables");
+                    b.ToTable("Timetables");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.User", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(95)")
+                        .HasColumnName("id");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("accessFailedCount");
 
                     b.Property<string>("Avatar")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("avatar");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("concurrencyStamp");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("displayName");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("emailConfirmed");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("lockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime")
+                        .HasColumnName("lockoutEnd");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("normalizedEmail");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("normalizedUserName");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("passwordHash");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("phoneNumber");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("phoneNumberConfirmed");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("securityStamp");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("twoFactorEnabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("userName");
 
                     b.HasKey("Id");
 
@@ -617,15 +538,15 @@ namespace UTCClassSupport.API.Migrations
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("varchar(95)")
-                        .HasColumnName("user_id");
+                        .HasColumnName("userId");
 
                     b.Property<string>("GroupId")
                         .HasColumnType("varchar(95)")
-                        .HasColumnName("group_id");
+                        .HasColumnName("groupId");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("varchar(95)")
-                        .HasColumnName("role_id");
+                        .HasColumnName("roleId");
 
                     b.HasKey("UserId", "GroupId", "RoleId");
 
@@ -633,22 +554,7 @@ namespace UTCClassSupport.API.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("users_groups_roles");
-                });
-
-            modelBuilder.Entity("ChatUser", b =>
-                {
-                    b.HasOne("UTCClassSupport.API.Models.Chat", null)
-                        .WithMany()
-                        .HasForeignKey("ChatsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UTCClassSupport.API.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("JoinnersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("UserGroupRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -735,23 +641,6 @@ namespace UTCClassSupport.API.Migrations
                     b.Navigation("Timetable");
                 });
 
-            modelBuilder.Entity("UTCClassSupport.API.Models.Message", b =>
-                {
-                    b.HasOne("UTCClassSupport.API.Models.Chat", "Chat")
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UTCClassSupport.API.Models.MessageFile", "File")
-                        .WithMany()
-                        .HasForeignKey("FileId");
-
-                    b.Navigation("Chat");
-
-                    b.Navigation("File");
-                });
-
             modelBuilder.Entity("UTCClassSupport.API.Models.Notification", b =>
                 {
                     b.HasOne("UTCClassSupport.API.Models.Group", "Group")
@@ -765,17 +654,6 @@ namespace UTCClassSupport.API.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("UTCClassSupport.API.Models.Schedule", b =>
-                {
-                    b.HasOne("UTCClassSupport.API.Models.Event", "Shift")
-                        .WithOne("Schedule")
-                        .HasForeignKey("UTCClassSupport.API.Models.Schedule", "ShiftId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Shift");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.UserGroupRole", b =>
@@ -808,16 +686,6 @@ namespace UTCClassSupport.API.Migrations
             modelBuilder.Entity("UTCClassSupport.API.Models.Bulletin", b =>
                 {
                     b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("UTCClassSupport.API.Models.Chat", b =>
-                {
-                    b.Navigation("Messages");
-                });
-
-            modelBuilder.Entity("UTCClassSupport.API.Models.Event", b =>
-                {
-                    b.Navigation("Schedule");
                 });
 
             modelBuilder.Entity("UTCClassSupport.API.Models.Group", b =>
