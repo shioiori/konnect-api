@@ -7,6 +7,6 @@ namespace UTCClassSupport.API.Application.GetNews
 {
     public class GetPostsQuery : UserInfo, IRequest<GetPostsResponse>
   {
-    public ApproveProcess? State { get; set; }
+    public ApproveState? State { get; set; }
   }
 }

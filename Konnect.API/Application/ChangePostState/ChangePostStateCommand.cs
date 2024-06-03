@@ -8,6 +8,7 @@ namespace UTCClassSupport.API.Application.ChangeNewsState
     public class ChangePostStateCommand : UserInfo, IRequest<ChangePostStateResponse>
   {
     public string PostId { get; set; }
-    public ApproveProcess State { get; set; }
+    public string? Message { get; set; }
+    public ApproveState State { get; set; }
   }
 }

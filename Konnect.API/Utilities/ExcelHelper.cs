@@ -56,7 +56,7 @@ namespace UTCClassSupport.API.Common
         dataTable.Columns.Add(headerCell.ToString());
       }
 
-      // write the rest
+      // write the record
       for (int i = 1; i < sheet.PhysicalNumberOfRows; i++)
       {
         var sheetRow = sheet.GetRow(i);
@@ -64,7 +64,8 @@ namespace UTCClassSupport.API.Common
         var dtRow = dataTable.NewRow();
         dtRow.ItemArray = dataTable.Columns
             .Cast<DataColumn>()
-            .Select(c => sheetRow.GetCell(c.Ordinal, MissingCellPolicy.CREATE_NULL_AS_BLANK)?.ToString() ?? String.Empty)
+            .Select(c => sheetRow.GetCell(c.Ordinal, 
+            MissingCellPolicy.CREATE_NULL_AS_BLANK)?.ToString() ?? String.Empty)
             ?.ToArray();
         dataTable.Rows.Add(dtRow);
       }

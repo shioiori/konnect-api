@@ -1,17 +1,30 @@
 ﻿using MailKit.Security;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using UTCClassSupport.API.Infrustructure.Data;
+using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Responses;
 
 namespace UTCClassSupport.API.Common.Mail
 {
-  public class MailHandler
+  public interface IMailHandler
+  {
+    Task<SendMailResponse> Send(MailContent mailContent);
+  }
+
+  public class MailHandler : IMailHandler
   {
     private readonly MailSettings _mailSettings;
 
     public MailHandler(MailSettings mailSettings)
     {
       _mailSettings = mailSettings;
+    }
+
+    public MailHandler(IOptions<MailSettings> mailSettings)
+    {
+      _mailSettings = mailSettings.Value;
     }
 
     public async Task<SendMailResponse> Send(MailContent mailContent)

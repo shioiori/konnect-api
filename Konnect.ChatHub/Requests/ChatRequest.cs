@@ -8,4 +8,10 @@ namespace Konnect.ChatHub.Requests
     public List<UserData> Users { get; set; }
     public string CreatedBy { get; set; }
   }
+
+  public class AddUsersToChatParam
+  {
+    public string Id { get; set; }
+    public List<UserData> Users { get; set; }
+  }
 }

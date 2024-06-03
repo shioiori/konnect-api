@@ -41,14 +41,15 @@ namespace Konnect.ChatHub.Hubs
         CreatedBy = await _unitOfWork.Users.GetAsync(message.CreatedBy),
         IsDeleted = false
       };
-      _unitOfWork.Messages.CreateAsync(mess);
+      _ = _unitOfWork.Messages.CreateAsync(mess);
       if (chat.Messages == null)
       {
         chat.Messages = new List<Message>();
       }
       chat.Messages.Add(mess);
-      _unitOfWork.Chats.UpdateAsync(chatId, chat);
-      await Clients.Group(chatId).SendAsync(ChatAction.ReceiveMessage, JsonHelper.SerializeObjectCamelCase(mess));
+      _ = _unitOfWork.Chats.UpdateAsync(chatId, chat);
+      await Clients.Group(chatId).SendAsync(ChatAction.ReceiveMessage, 
+        JsonHelper.SerializeObjectCamelCase(mess));
     }
     public async Task AddToChat(string chatId)
     {

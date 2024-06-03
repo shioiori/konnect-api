@@ -22,21 +22,46 @@ namespace Konnect.ChatHub.Repositories
       return Task.FromResult(res);
     }
 
-    public Task<Chat> GetChat(List<User> users)
+    public Chat GetChat(List<User> users)
     {
-      var query = _TCollection.Find(x => x.Users.Count() == users.Count());
+      var chats = _TCollection.Find(x => x.Users.Count() == users.Count()).ToList();
+      var userNames = users.Select(x => x.UserName).ToList();
+      foreach (var chat in chats)
+      {
+        bool flag = true;
+        var usersInChat = chat.Users.Select(x => x.UserName);
+        foreach (var userName in usersInChat)
+        {
+          if (userNames.Contains(userName)) continue;
+          else
+          {
+            flag = false;
+            break;
+          }
+        }
+        if (flag) return chat;
+      }
+      return null;
+    }
+
+    public async Task AddUsersToChatAsync(string chatId, List<User> users)
+    {
+      var chat = await GetAsync(chatId);
+      var usersInChat = chat.Users.Select(x => x.UserName).ToList();
       foreach (var user in users)
       {
-        query = _TCollection.Find(x => x.Users.Contains(user));
+        if (usersInChat.Contains(user.UserName)) continue;
+        chat.Users.Add(user);
       }
-      return Task.FromResult(query.FirstOrDefault());
+      await UpdateAsync(chatId, chat);
     }
   }
 
   public interface IChatRepository : IBaseRepository<Chat>
   {
     Task<List<Chat>> GetChats(string groupId, string userId, string? search);
-    Task<Chat> GetChat(List<User> users);
+    Chat GetChat(List<User> users);
+    Task AddUsersToChatAsync(string chatId, List<User> users);
   }
 
 }

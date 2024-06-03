@@ -31,7 +31,7 @@ namespace UTCClassSupport.API.Utilities
     }
 
     public Notification CreateUserNotification(string receiverId, string receiverName,
-      string createdBy, string createdName, NotificationAction action, string? id)
+      string createdBy, string createdName, NotificationAction action, string? id, string message = "")
     {
       switch (action)
       {
@@ -61,6 +61,17 @@ namespace UTCClassSupport.API.Utilities
           return new Notification()
           {
             Content = $"{createdName} đã duyệt tin của bạn",
+            Action = action,
+            Range = NotificationRange.User,
+            ObjectId = id,
+            UserId = receiverId,
+            CreatedDate = DateTime.Now,
+            CreatedBy = createdBy,
+          };
+        case NotificationAction.RejectPost:
+          return new Notification()
+          {
+            Content = $"{createdName} đã từ chối tin của bạn với lý do: {message}",
             Action = action,
             Range = NotificationRange.User,
             ObjectId = id,
@@ -103,6 +114,7 @@ namespace UTCClassSupport.API.Utilities
         case NotificationAction.PendingPost:
         case NotificationAction.AcceptPost:
         case NotificationAction.ReplyPost:
+        case NotificationAction.RejectPost:
           return AttachedType.Post;
         case NotificationAction.InviteToGroup:
         case NotificationAction.KickFromGroup:

@@ -35,21 +35,18 @@ namespace UTCClassSupport.API.Controllers
       return await _mediator.Send(command);
     }
 
-    [HttpPost("{postId}/state/{process}")]
-    public async Task<ChangePostStateResponse> ChangeNewState(string postId, ApproveProcess process)
+    [HttpPost("{postId}/state")]
+    public async Task<ChangePostStateResponse> ChangeNewState([FromBody] ChangePostStateRequest request)
     {
       var data = ReadJWTToken();
-      var bulletin = new ChangePostStateCommand()
-      {
-        PostId = postId,
-        State = process
-      };
-      CustomMapper.Mapper.Map<UserInfo, ChangePostStateCommand>(data, bulletin);
-      return await _mediator.Send(bulletin);
+      var command = new ChangePostStateCommand();
+      CustomMapper.Mapper.Map<UserInfo, ChangePostStateCommand>(data, command);
+      CustomMapper.Mapper.Map<ChangePostStateRequest, ChangePostStateCommand>(request, command);
+      return await _mediator.Send(command);
     }
 
     [HttpGet]
-    public async Task<GetPostsResponse> GetPostsAsync(ApproveProcess? state)
+    public async Task<GetPostsResponse> GetPostsAsync(ApproveState? state)
     {
       var data = ReadJWTToken();
       var query = new GetPostsQuery()

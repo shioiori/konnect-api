@@ -6,10 +6,10 @@
     Manager = 2,
   }
 
-  public enum ApproveProcess
+  public enum ApproveState
   {
-    OnHold = -1,
-    Deny = 0,
+    Pending = -1,
+    Reject = 0,
     Accept = 1,
   }
 
@@ -39,6 +39,7 @@
     NewPost,
     PendingPost,
     AcceptPost,
+    RejectPost,
     ReplyPost,
     Mention,
     InviteToGroup,

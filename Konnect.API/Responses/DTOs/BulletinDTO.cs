@@ -11,6 +11,7 @@
     public string? LastModifiedBy { get; set; }
     public string GroupId { get; set; }
     public int ReplyCount { get; set; }
+    public int Approved { get; set; }
     public List<CommentDTO> Comments { get; set; }
     public UserDTO User { get; set; }
   }
