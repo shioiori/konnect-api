@@ -4,6 +4,7 @@ using Konnect.API.Application.GetCreatedChatData;
 using Konnect.API.Application.GetPost;
 using Konnect.API.Data;
 using UTCClassSupport.API.Application.AddPostComment;
+using UTCClassSupport.API.Application.ChangeNewsState;
 using UTCClassSupport.API.Application.ClearTimetable;
 using UTCClassSupport.API.Application.DeleteTimetable;
 using UTCClassSupport.API.Application.GetGroupByUser;
@@ -88,6 +89,8 @@ namespace UTCClassSupport.API.Mapper
       CreateMap<UserInfo, GetPostsQuery>().ReverseMap();
       CreateMap<UserInfo, GetPostQuery>().ReverseMap();
       CreateMap<CommentRequest, AddPostCommentCommand>().ReverseMap();
+      CreateMap<ChangePostStateRequest, ChangePostStateCommand>().ReverseMap();
+      CreateMap<UserInfo, ChangePostStateCommand>().ReverseMap();
 
       CreateMap<Comment, CommentDTO>().ReverseMap();
       CreateMap<Bulletin, PostDTO>().ReverseMap();

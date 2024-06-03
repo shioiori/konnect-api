@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Data.Common;
 using System.Text;
+using UTCClassSupport.API.Common.Mail;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Infrustructure.Repositories;
 using UTCClassSupport.API.Models;
@@ -122,6 +123,7 @@ namespace UTCClassSupport.API
       services.AddScoped<IPostRepository, PostRepository>();
       services.AddScoped<IGroupRepository, GroupRepository>();
       services.AddScoped<NotificationManager>();
+      services.AddSingleton<IMailHandler, MailHandler>();
       return services;
     }
   }

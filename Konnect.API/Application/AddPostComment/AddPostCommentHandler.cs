@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using Konnect.API.Data;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using UTCClassSupport.API.Infrustructure.Data;
+using UTCClassSupport.API.Infrustructure.Repositories;
 using UTCClassSupport.API.Mapper;
 using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Responses;
@@ -14,13 +16,16 @@ namespace UTCClassSupport.API.Application.AddPostComment
     private readonly EFContext _dbContext;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
+    private readonly NotificationManager _notificationManager;
     public AddPostCommentHandler(EFContext dbContext,
       UserManager<User> userManager,
-        RoleManager<Role> roleManager)
+        RoleManager<Role> roleManager,
+        NotificationManager notificationManager)
     {
       _dbContext = dbContext;
       _userManager = userManager;
       _roleManager = roleManager;
+      _notificationManager = notificationManager;
     }
 
     public async Task<AddPostCommentResponse> Handle(AddPostCommentCommand request, CancellationToken cancellationToken)
@@ -39,15 +44,7 @@ namespace UTCClassSupport.API.Application.AddPostComment
 
       //notification
       var post = _dbContext.Bulletins.Find(request.PostId);
-      if (request.UserName != post.CreatedBy)
-      {
-        var receiver = await _userManager.FindByNameAsync(post.CreatedBy);
-        NotificationProvider notificationProvider = new NotificationProvider();
-        var notification = notificationProvider.CreateUserNotification(receiver.Id, receiver.DisplayName,
-          request.UserName, request.DisplayName, Common.NotificationAction.ReplyPost, request.PostId);
-        _dbContext.Notifications.Add(notification);
-        _dbContext.SaveChanges();
-      }
+      _notificationManager.NotifyNewCommentAsync(post, request);
       return new AddPostCommentResponse()
       {
         Success = true,

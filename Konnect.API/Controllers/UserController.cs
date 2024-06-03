@@ -14,7 +14,7 @@ using UTCClassSupport.API.Responses.DTOs;
 
 namespace UTCClassSupport.API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Manager")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
   [Route("user")]
   public class UserController : BaseController
   {

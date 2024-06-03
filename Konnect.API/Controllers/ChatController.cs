@@ -1,4 +1,5 @@
 ﻿using Konnect.API.Application.GetCreatedChatData;
+using Konnect.API.Application.GetUsersData;
 using Konnect.API.Data;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -25,13 +26,21 @@ namespace UTCClassSupport.API.Controllers
       _mediator = mediator;
     }
 
-    [HttpGet("user/data")]
+    [HttpGet("data")]
     public async Task<GetCreateChatData> GetCreateChatDataAsync(string[] name)
     {
       var data = ReadJWTToken();
       var query = new GetCreateChatDataQuery();
       CustomMapper.Mapper.Map<UserInfo, GetCreateChatDataQuery>(data, query);
       query.UserNames = name;
+      return await _mediator.Send(query);
+    }
+
+    [HttpGet("user/data")]
+    public async Task<List<UserData>> GetUsersDataAsync(string[] userName)
+    {
+      var query = new GetUsersDataQuery();
+      query.UserNames = userName;
       return await _mediator.Send(query);
     }
 

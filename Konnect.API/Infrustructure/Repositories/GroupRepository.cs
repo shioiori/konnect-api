@@ -9,6 +9,7 @@ namespace Konnect.API.Infrustructure.Repositories
 {
   public interface IGroupRepository
   {
+    Group GetGroup(string groupId);
     void AddGroup(AddGroupRequest request, string userId);
   }
 
@@ -29,6 +30,11 @@ namespace Konnect.API.Infrustructure.Repositories
       _roleManager = roleManager;
       _configuration = configuration;
       _dbContext = dbContext;
+    }
+
+    public Group GetGroup(string groupId)
+    {
+      return _dbContext.Groups.FirstOrDefault(x => x.Id == groupId);
     }
 
     public void AddGroup(AddGroupRequest request, string userId)

@@ -20,11 +20,11 @@ namespace Konnect.ChatHub.Controllers
     }
 
     [HttpGet("exist")]
-    public async Task<ChatResponse> IsChatExistAsync(string json)
+    public ChatResponse IsChatExistAsync(string json)
     {
       var data = JsonConvert.DeserializeObject<List<UserData>>(json);
       var users = CustomMapper.Mapper.Map<List<User>>(data);
-      var existChat = await _unitOfWork.Chats.GetChat(users);
+      var existChat = _unitOfWork.Chats.GetChat(users);
       if (existChat != default)
       {
         return CustomMapper.Mapper.Map<ChatResponse>(existChat);
@@ -97,6 +97,17 @@ namespace Konnect.ChatHub.Controllers
       {
         throw ex;
       }
+    }
+
+    [HttpPost("join")]
+    public void AddUsersToChatAsync([FromBody]AddUsersToChatParam param)
+    {
+      var users = new List<User>();
+      foreach (var user in param.Users)
+      {
+        users.Add(CustomMapper.Mapper.Map<User>(user));
+      }
+      _unitOfWork.Chats.AddUsersToChatAsync(param.Id, users);
     }
   }
 }
