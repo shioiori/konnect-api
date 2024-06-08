@@ -176,5 +176,17 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 			}
 			_dbContext.SaveChanges();
 		}
+
+		public async Task NotifyMention(Comment comment, UserDTO receiver)
+		{
+			if (receiver.UserName != comment.CreatedBy)
+			{
+				var creator = await _userManager.FindByNameAsync(comment.CreatedBy);
+				var notification = _notificationProvider.CreateUserNotification(receiver.Id, receiver.DisplayName,
+				  creator.UserName, creator.DisplayName, Common.NotificationAction.Mention, comment.Id);
+				_dbContext.Notifications.Add(notification);
+				_dbContext.SaveChanges();
+			}
+		}
 	}
 }

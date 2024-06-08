@@ -108,6 +108,19 @@ namespace UTCClassSupport.API.Controllers
 			};
 		}
 
+		[HttpPost("avatar")]
+		public async Task<Response> UpdateAvatar(string url)
+		{
+			var userData = ReadJWTToken();
+			await _userRepository.UpdateAvatar(userData.UserName, url);
+			return new Response()
+			{
+				Success = true,
+				Type = ResponseType.Success,
+				Message = "Cập nhật thành công"
+			};
+		}
+
 		/// <summary>
 		/// Delete account
 		/// </summary>

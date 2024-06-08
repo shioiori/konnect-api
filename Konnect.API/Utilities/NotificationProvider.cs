@@ -128,6 +128,17 @@ namespace UTCClassSupport.API.Utilities
 						CreatedDate = DateTime.Now,
 						CreatedBy = createdBy,
 					};
+				case NotificationAction.Mention:
+					return new Notification()
+					{
+						Content = $"{createdName} đã nhắc tới bạn trong một bình luận",
+						Action = action,
+						Range = NotificationRange.User,
+						ObjectId = id,
+						UserId = receiverId,
+						CreatedDate = DateTime.Now,
+						CreatedBy = createdBy,
+					};
 				default:
 					return null;
 			}
@@ -147,6 +158,8 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.KickFromGroup:
 				case NotificationAction.ChangeRole:
 					return AttachedType.Group;
+				case NotificationAction.Mention:
+					return AttachedType.Comment;
 				default:
 					return AttachedType.None;
 			}

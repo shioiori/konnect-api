@@ -1,4 +1,5 @@
-﻿using Konnect.API.Infrustructure.Interfaces;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using Konnect.API.Infrustructure.Interfaces;
 using Konnect.API.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,11 +31,10 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 		Task<UserDTO> UpdateUserAsync(string userName, UpdateUserRequest request);
 		Task<RoleDTO> GetGroupRoleAsync(string groupId, string userId);
 		int GetTotalUser(string groupId);
+		Task UpdateAvatar(string userName, string url);
 	}
 
-	public class UserRepository : IUserRepository, 
-		IMapperSupport<User, UserDTO>, 
-		IMapperSupport<Role, RoleDTO>
+	public class UserRepository : IUserRepository
 	{
 		private readonly UserManager<User> _userManager;
 		private readonly RoleManager<Role> _roleManager;
@@ -75,7 +75,7 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 		public async Task<UserDTO> GetUserAsync(string userName)
 		{
 			var user = await _userManager.FindByNameAsync(userName);
-			return Mapper(user);
+			return CustomMapper.Mapper.Map<UserDTO>(user);
 		}
 
 		public async Task<Response> AddUserAsync(AddUserRequest request)
@@ -275,7 +275,14 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 				return null;
 			}
 			var role = await _roleManager.FindByIdAsync(link.RoleId);
-			return Mapper(role);
+			return CustomMapper.Mapper.Map<RoleDTO>(role);
+		}
+
+		public async Task UpdateAvatar(string userName, string url)
+		{
+			var user = await _userManager.FindByNameAsync(userName);
+			user.Avatar = url;
+			_dbContext.SaveChanges();
 		}
 
 		public int GetTotalUser(string groupId)
@@ -283,24 +290,5 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 			return _dbContext.UserGroupRoles.Count(x => x.GroupId == groupId);
 		}
 
-		public RoleDTO Mapper(Role source)
-		{
-			return CustomMapper.Mapper.Map<RoleDTO>(source);
-		}
-
-		public IEnumerable<RoleDTO> Mapper(IEnumerable<Role> source)
-		{
-			return CustomMapper.Mapper.Map<IEnumerable<RoleDTO>>(source);
-		}
-
-		public UserDTO Mapper(User source)
-		{
-			return CustomMapper.Mapper.Map<UserDTO>(source);
-		}
-
-		public IEnumerable<UserDTO> Mapper(IEnumerable<User> source)
-		{
-			return CustomMapper.Mapper.Map<IEnumerable<UserDTO>>(source);
-		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace UTCClassSupport.API.Utilities
+﻿using System.Text.RegularExpressions;
+
+namespace UTCClassSupport.API.Utilities
 {
 	public class StringHelper
 	{
@@ -28,6 +30,18 @@
 				chars[i] = alphabet[rng.Next(alphabet.Length)];
 			}
 			return new string(chars);
+		}
+
+		public static List<string> ExtractStringsFollowingAtSymbol(string input)
+		{
+			List<string> results = new List<string>();
+			string pattern = @"@(\w+)";
+			MatchCollection matches = Regex.Matches(input, pattern);
+			foreach (Match match in matches)
+			{
+				results.Add(match.Groups[1].Value);
+			}
+			return results;
 		}
 	}
 }

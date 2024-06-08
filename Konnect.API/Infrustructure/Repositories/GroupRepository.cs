@@ -62,6 +62,7 @@ namespace Konnect.API.Infrustructure.Repositories
 		public void EditGroup(string groupId, GroupDTO model)
 		{
 			var group = _dbContext.Groups.FirstOrDefault(x => x.Id == groupId);
+			model.Id = groupId;
 			CustomMapper.Mapper.Map<GroupDTO, Group>(model, group);
 			_dbContext.SaveChanges();
 		}
