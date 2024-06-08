@@ -212,7 +212,7 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
         {
           return false;
         }
-        var newPassword = RandomUtility.GenerateString();
+        var newPassword = StringHelper.GenerateString();
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         _userManager.ResetPasswordAsync(user, token, newPassword);
         _dbContext.SaveChangesAsync();

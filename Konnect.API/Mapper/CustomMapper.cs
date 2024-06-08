@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Konnect.API.Application.AddGroup;
+using Konnect.API.Application.DeleteGroup;
+using Konnect.API.Application.EditGroup;
 using Konnect.API.Application.GetCreatedChatData;
+using Konnect.API.Application.GetGroup;
 using Konnect.API.Application.GetPost;
 using Konnect.API.Data;
 using UTCClassSupport.API.Application.AddPostComment;
@@ -25,118 +28,123 @@ using UTCClassSupport.API.Responses.DTOs;
 
 namespace UTCClassSupport.API.Mapper
 {
-    public class CustomMapper
-  {
-    private static readonly Lazy<IMapper> Lazy = new Lazy<IMapper>(() =>
-    {
-      var config = new MapperConfiguration(cfg =>
-      {
-        cfg.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
-        cfg.AddProfile<BulletinProfile>();
-        cfg.AddProfile<ImportProfile>();
-        cfg.AddProfile<UserProfile>();
-        cfg.AddProfile<GroupProfile>();
-        cfg.AddProfile<TimetableProfile>();
-        cfg.AddProfile<NotificationProfile>();
-        cfg.AddProfile<ChatProfile>();
-      });
+	public class CustomMapper
+	{
+		private static readonly Lazy<IMapper> Lazy = new Lazy<IMapper>(() =>
+		{
+			var config = new MapperConfiguration(cfg =>
+		{
+			  cfg.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
+			  cfg.AddProfile<BulletinProfile>();
+			  cfg.AddProfile<ImportProfile>();
+			  cfg.AddProfile<UserProfile>();
+			  cfg.AddProfile<GroupProfile>();
+			  cfg.AddProfile<TimetableProfile>();
+			  cfg.AddProfile<NotificationProfile>();
+			  cfg.AddProfile<ChatProfile>();
+		  });
 
-      var mapper = config.CreateMapper();
-      return mapper;
-    });
+			var mapper = config.CreateMapper();
+			return mapper;
+		});
 
-    public static IMapper Mapper => Lazy.Value;
-  }
+		public static IMapper Mapper => Lazy.Value;
+	}
 
-  public class UserProfile : Profile
-  {
-    public UserProfile()
-    {
-      CreateMap<RegisterRequest, User>().ReverseMap();
-      CreateMap<UserDTO, User>().ReverseMap();
-      CreateMap<AddUserRequest, User>().ReverseMap();
-      CreateMap<UpdateUserRequest, User>().ReverseMap();
-      CreateMap<UserData, User>().ReverseMap();
+	public class UserProfile : Profile
+	{
+		public UserProfile()
+		{
+			CreateMap<RegisterRequest, User>().ReverseMap();
+			CreateMap<UserDTO, User>().ReverseMap();
+			CreateMap<AddUserRequest, User>().ReverseMap();
+			CreateMap<UpdateUserRequest, User>().ReverseMap();
+			CreateMap<UserData, User>().ReverseMap();
+			CreateMap<RoleDTO, Role>().ReverseMap();
 
-    }
-  }
+		}
+	}
 
-  public class GroupProfile : Profile
-  {
-    public GroupProfile()
-    {
-      CreateMap<Group, GroupDTO>().ReverseMap();
-      CreateMap<UserInfo, GetGroupByUserQuery>().ReverseMap();
+	public class GroupProfile : Profile
+	{
+		public GroupProfile()
+		{
+			CreateMap<Group, GroupDTO>().ReverseMap();
+			CreateMap<UserInfo, GetGroupByUserQuery>().ReverseMap();
 
-      CreateMap<UserInfo, InviteToGroupCommand>().ReverseMap();
-      CreateMap<InviteToGroupRequest, InviteToGroupCommand>().ReverseMap();
+			CreateMap<UserInfo, InviteToGroupCommand>().ReverseMap();
+			CreateMap<InviteToGroupRequest, InviteToGroupCommand>().ReverseMap();
 
-      CreateMap<UserInfo, OutGroupCommand>().ReverseMap();
-      CreateMap<GroupData, Group>().ReverseMap();
+			CreateMap<UserInfo, OutGroupCommand>().ReverseMap();
+			CreateMap<GroupData, Group>().ReverseMap();
 
-      //CreateMap<UserInfo, AddGroupCommand>().ReverseMap();
-      CreateMap<AddGroupRequest, Group>().ReverseMap();
-    }
-  }
+			//CreateMap<UserInfo, AddGroupCommand>().ReverseMap();
+			CreateMap<AddGroupRequest, Group>().ReverseMap();
 
-  public class BulletinProfile : Profile
-  {
-    public BulletinProfile()
-    {
-      CreateMap<BulletinRequest, UploadNewsToBulletinCommand>().ReverseMap();
-      CreateMap<UserInfo, UploadNewsToBulletinCommand>().ReverseMap();
-      CreateMap<UserInfo, AddPostCommentCommand>().ReverseMap();
-      CreateMap<UserInfo, GetPostsQuery>().ReverseMap();
-      CreateMap<UserInfo, GetPostQuery>().ReverseMap();
-      CreateMap<CommentRequest, AddPostCommentCommand>().ReverseMap();
-      CreateMap<ChangePostStateRequest, ChangePostStateCommand>().ReverseMap();
-      CreateMap<UserInfo, ChangePostStateCommand>().ReverseMap();
+			CreateMap<UserInfo, DeleteGroupCommand>().ReverseMap();
+			CreateMap<UserInfo, GetGroupQuery>().ReverseMap();
+			CreateMap<UserInfo, EditGroupCommand>().ReverseMap();
+		}
+	}
 
-      CreateMap<Comment, CommentDTO>().ReverseMap();
-      CreateMap<Bulletin, PostDTO>().ReverseMap();
-    }
-  }
+	public class BulletinProfile : Profile
+	{
+		public BulletinProfile()
+		{
+			CreateMap<BulletinRequest, UploadNewsToBulletinCommand>().ReverseMap();
+			CreateMap<UserInfo, UploadNewsToBulletinCommand>().ReverseMap();
+			CreateMap<UserInfo, AddPostCommentCommand>().ReverseMap();
+			CreateMap<UserInfo, GetPostsQuery>().ReverseMap();
+			CreateMap<UserInfo, GetPostQuery>().ReverseMap();
+			CreateMap<CommentRequest, AddPostCommentCommand>().ReverseMap();
+			CreateMap<ChangePostStateRequest, ChangePostStateCommand>().ReverseMap();
+			CreateMap<UserInfo, ChangePostStateCommand>().ReverseMap();
 
-  public class ImportProfile : Profile
-  {
-    public ImportProfile()
-    {
-      CreateMap<ImportUserRequest, ImportUserToDatabaseCommand>().ReverseMap();
-      CreateMap<UserInfo, ImportUserToDatabaseCommand>().ReverseMap();
+			CreateMap<Comment, CommentDTO>().ReverseMap();
+			CreateMap<Bulletin, PostDTO>().ReverseMap();
+		}
+	}
 
-      CreateMap<ImportTimetableRequest, ImportTimetableCommand>().ReverseMap();
-      CreateMap<UserInfo, ImportTimetableCommand>().ReverseMap();
-    }
-  }
+	public class ImportProfile : Profile
+	{
+		public ImportProfile()
+		{
+			CreateMap<ImportUserRequest, ImportUserToDatabaseCommand>().ReverseMap();
+			CreateMap<UserInfo, ImportUserToDatabaseCommand>().ReverseMap();
 
-  public class TimetableProfile : Profile
-  {
-    public TimetableProfile()
-    {
-      CreateMap<EventDTO, Event>().ReverseMap();
-      CreateMap<UserInfo, GetUserTimetableQuery>().ReverseMap();
-      CreateMap<UserInfo, DeleteTimetableCommand>().ReverseMap();
-      CreateMap<UserInfo, SynchronizeTimetableWithGoogleCalendarCommand>().ReverseMap();
-      CreateMap<UserInfo, UpdateRemindTimetableCommand>().ReverseMap();
-      CreateMap<UserInfo, AddEventCommand>().ReverseMap();
-      CreateMap<EventRequest, AddEventCommand>().ReverseMap();
-    }
-  }
+			CreateMap<ImportTimetableRequest, ImportTimetableCommand>().ReverseMap();
+			CreateMap<UserInfo, ImportTimetableCommand>().ReverseMap();
+		}
+	}
 
-  public class NotificationProfile : Profile
-  {
-    public NotificationProfile()
-    {
-      CreateMap<UserInfo, GetNotificationQuery>().ReverseMap();
-      CreateMap<UserInfo, UpdateStateNotificationCommand>().ReverseMap();
-    }
-  }
+	public class TimetableProfile : Profile
+	{
+		public TimetableProfile()
+		{
+			CreateMap<EventDTO, Event>().ReverseMap();
+			CreateMap<UserInfo, GetUserTimetableQuery>().ReverseMap();
+			CreateMap<UserInfo, DeleteTimetableCommand>().ReverseMap();
+			CreateMap<UserInfo, SynchronizeTimetableWithGoogleCalendarCommand>().ReverseMap();
+			CreateMap<UserInfo, UpdateRemindTimetableCommand>().ReverseMap();
+			CreateMap<UserInfo, AddEventCommand>().ReverseMap();
+			CreateMap<EventRequest, AddEventCommand>().ReverseMap();
+		}
+	}
 
-  public class ChatProfile : Profile
-  {
-    public ChatProfile()
-    {
-      CreateMap<UserInfo, GetCreateChatDataQuery>().ReverseMap();
-    }
-  }
+	public class NotificationProfile : Profile
+	{
+		public NotificationProfile()
+		{
+			CreateMap<UserInfo, GetNotificationQuery>().ReverseMap();
+			CreateMap<UserInfo, UpdateStateNotificationCommand>().ReverseMap();
+		}
+	}
+
+	public class ChatProfile : Profile
+	{
+		public ChatProfile()
+		{
+			CreateMap<UserInfo, GetCreateChatDataQuery>().ReverseMap();
+		}
+	}
 }

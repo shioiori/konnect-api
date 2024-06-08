@@ -11,4 +11,10 @@
     public string? GroupId { get; set; }
     public string Avatar { get; set; }
   }
+
+    public class RoleDTO
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
 }
