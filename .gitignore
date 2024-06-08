@@ -482,3 +482,7 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+/Konnect.API/appsettings.json
+/Konnect.API/appsettings.Development.json
+/Konnect.ChatHub/appsettings.json
+/Konnect.ChatHub/appsettings.Development.json
