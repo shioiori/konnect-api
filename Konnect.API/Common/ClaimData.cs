@@ -10,6 +10,6 @@
     public const string RoleID = "Role";
     public const string RoleName = "RoleName";
     public const string Email = "Email";
-    public const string Tel = "Phone";
+    public const string PhoneNumber = "Phone";
   }
 }

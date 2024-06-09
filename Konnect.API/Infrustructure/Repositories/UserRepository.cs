@@ -20,14 +20,15 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 	{
 		Task<Response> AddUserAsync(AddUserRequest request);
 		Task<bool> ChangePasswordAsync(string username, string oldPassword, string newPassword);
-		Task<bool> ChangeRoleAsync(string userName, string roleName, string groupId);
+		Task<bool> UpdateRoleAsync(string userName, string roleName, string groupId);
 		Task<bool> CheckPassword(string username, string password);
 		Task<bool> DeleteUserAsync(string userName);
 		Task<UserDTO> GetUserAsync(string userName);
+		Task<UserDTO> GetUserByEmailAsync(string email);
 		List<UserDTO> GetUsers(string groupId);
 		List<UserDTO> GetUsers(string groupId, PaginationData pagination);
 		Task<bool> IsEmailConfirmedAsync(string email);
-		Task<Response> KickUserFromGroupAsync(string userName, string groupId, string createdBy);
+		Task<bool> RemoveRoleFromGroupAsync(string userName, string groupId);
 		Task<UserDTO> UpdateUserAsync(string userName, UpdateUserRequest request);
 		Task<RoleDTO> GetGroupRoleAsync(string groupId, string userId);
 		int GetTotalUser(string groupId);
@@ -156,56 +157,28 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 			}
 		}
 
-		public async Task<Response> KickUserFromGroupAsync(string userName, string groupId, string createdBy)
+		public async Task<bool> RemoveRoleFromGroupAsync(string userName, string groupId)
 		{
-			try
-			{
-				var user = await _userManager.FindByNameAsync(userName);
-				var link = _dbContext.UserGroupRoles.FirstOrDefault(x => x.UserId == user.Id && x.GroupId == groupId);
-				if (link == default)
-				{
-					return new Response()
-					{
-						Success = false,
-						Message = "Người dùng này không có ở trong nhóm",
-						Type = ResponseType.Error,
-					};
-				}
-				_dbContext.UserGroupRoles.Remove(link);
-				_dbContext.SaveChanges();
-
-				// notify
-				if (user.UserName != createdBy)
-				{
-					var createdAuthor = await _userManager.FindByNameAsync(createdBy);
-					NotificationProvider notificationProvider = new NotificationProvider();
-					var notification = notificationProvider.CreateUserNotification(user.Id, user.DisplayName,
-					  createdAuthor.UserName, createdAuthor.DisplayName, NotificationAction.KickFromGroup, groupId);
-					_dbContext.Notifications.Add(notification);
-					_dbContext.SaveChanges();
-				}
-				return new Response()
-				{
-					Success = true,
-					Message = "Người dùng đã rời khỏi nhóm",
-					Type = ResponseType.Success,
-				};
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
+			var user = await _userManager.FindByNameAsync(userName);
+			var link = _dbContext.UserGroupRoles.Where(x => x.UserId == user.Id && x.GroupId == groupId);
+			if (link == default) return false;
+			_dbContext.UserGroupRoles.RemoveRange(link);
+			_dbContext.SaveChanges();
+			return true;
 		}
 
-		public async Task<bool> ChangeRoleAsync(string userName, string roleName, string groupId)
+		public async Task<bool> UpdateRoleAsync(string userName, string roleName, string groupId)
 		{
 			try
 			{
 				var role = await _roleManager.FindByNameAsync(roleName);
 				var user = await _userManager.FindByNameAsync(userName);
-				var link = _dbContext.UserGroupRoles.First(x => x.UserId == user.Id && x.GroupId == groupId);
-				_dbContext.UserGroupRoles.Remove(link);
-				_dbContext.SaveChanges();
+				var link = _dbContext.UserGroupRoles.FirstOrDefault(x => x.UserId == user.Id && x.GroupId == groupId);
+				if (link != null)
+				{
+					_dbContext.UserGroupRoles.Remove(link);
+					_dbContext.SaveChanges();
+				}
 				var newLink = new UserGroupRole()
 				{
 					UserId = user.Id,
@@ -290,5 +263,10 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 			return _dbContext.UserGroupRoles.Count(x => x.GroupId == groupId);
 		}
 
+		public async Task<UserDTO> GetUserByEmailAsync(string email)
+		{
+			var user = await _userManager.FindByEmailAsync(email);
+			return CustomMapper.Mapper.Map<UserDTO>(user);
+		}
 	}
 }

@@ -41,7 +41,7 @@ namespace UTCClassSupport.API.Application.AddPostComment
 				{
 					var user = await _userRepository.GetUserAsync(userName);
 					if (user == null) continue;
-					request.Content = request.Content.Replace("@" + userName + " ", "@" + user.DisplayName + " ");
+					request.Content = request.Content.Replace("@" + userName + " ", "<a class='cmt-mention'>@" + user.DisplayName + "</a> ");
 					userDic[userName] = user;
 				}
 

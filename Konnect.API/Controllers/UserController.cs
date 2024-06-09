@@ -28,9 +28,13 @@ namespace UTCClassSupport.API.Controllers
 		}
 
 		[HttpGet]
-		public UserInfo GetUserData()
+		public async Task<UserDTO> GetUserDataAsync()
 		{
-			return ReadJWTToken();
+			var data = ReadJWTToken();
+			var user = await _userRepository.GetUserAsync(data.UserName);
+			user.RoleName = data.RoleName;
+			user.GroupId = data.GroupId;
+			return user;
 		}
 
 		[HttpGet("/{username}")]
@@ -150,32 +154,13 @@ namespace UTCClassSupport.API.Controllers
 			}
 		}
 
-		[HttpDelete("{username}/kick")]
-		public async Task<Response> KickUserFromGroup(string username)
-		{
-			try
-			{
-				var userData = ReadJWTToken();
-				return await _userRepository.KickUserFromGroupAsync(username, userData.GroupId, userData.UserName);
-			}
-			catch (Exception ex)
-			{
-				return new Response()
-				{
-					Success = false,
-					Type = ResponseType.Error,
-					Message = ex.Message,
-				};
-			}
-		}
-
 		[HttpPost("{userName}/{role}")]
 		public async Task<Response> ChangeRole(string userName, string role)
 		{
 			try
 			{
 				var userData = ReadJWTToken();
-				await _userRepository.ChangeRoleAsync(userName, role, userData.GroupId);
+				await _userRepository.UpdateRoleAsync(userName, role, userData.GroupId);
 				return new Response()
 				{
 					Success = true,

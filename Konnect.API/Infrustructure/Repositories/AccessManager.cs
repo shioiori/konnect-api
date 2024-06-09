@@ -91,7 +91,7 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
           claims.Add(new Claim(ClaimData.DisplayName, user.DisplayName));
           claims.Add(new Claim(ClaimData.Email, user.Email));
           claims.Add(new Claim(ClaimData.Avatar, user.Avatar));
-          claims.Add(new Claim(ClaimData.Tel, user.PhoneNumber ?? String.Empty));
+          claims.Add(new Claim(ClaimData.PhoneNumber, user.PhoneNumber ?? String.Empty));
           claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
           var token = GetToken(claims);
 

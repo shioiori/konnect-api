@@ -5,6 +5,7 @@ using Konnect.API.Application.EditGroup;
 using Konnect.API.Application.GetCreatedChatData;
 using Konnect.API.Application.GetGroup;
 using Konnect.API.Application.GetPost;
+using Konnect.API.Application.KickFromGroup;
 using Konnect.API.Data;
 using UTCClassSupport.API.Application.AddPostComment;
 using UTCClassSupport.API.Application.ChangeNewsState;
@@ -84,6 +85,7 @@ namespace UTCClassSupport.API.Mapper
 			CreateMap<UserInfo, DeleteGroupCommand>().ReverseMap();
 			CreateMap<UserInfo, GetGroupQuery>().ReverseMap();
 			CreateMap<UserInfo, EditGroupCommand>().ReverseMap();
+			CreateMap<UserInfo, KickFromGroupCommand>().ReverseMap();
 		}
 	}
 

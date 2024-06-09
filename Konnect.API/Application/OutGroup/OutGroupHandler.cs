@@ -47,7 +47,7 @@ namespace UTCClassSupport.API.Application.OutGroup
 				{
 					var users = _userRepository.GetUsers(request.CurrentGroupId);
 					var user = RandomUtilitiy<UserDTO>.Random(users);
-					_userRepository.ChangeRoleAsync(user.UserName, GroupRole.Manager.ToString(), request.CurrentGroupId);
+					_userRepository.UpdateRoleAsync(user.UserName, GroupRole.Manager.ToString(), request.CurrentGroupId);
 					var group = _groupRepository.GetGroup(request.CurrentGroupId);
 					_notificationManager.NotifyChangeRole(GroupRole.Manager, group, null, request);
 				}

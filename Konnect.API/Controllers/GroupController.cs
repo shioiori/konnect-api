@@ -3,6 +3,7 @@ using Konnect.API.Application.AddGroup;
 using Konnect.API.Application.DeleteGroup;
 using Konnect.API.Application.EditGroup;
 using Konnect.API.Application.GetGroup;
+using Konnect.API.Application.KickFromGroup;
 using Konnect.API.Data;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -142,6 +143,30 @@ namespace UTCClassSupport.API.Controllers
 				command.GroupId = groupId;
 			}
 			return await _mediator.Send(command);
+		}
+
+
+
+		[HttpDelete("kick/{username}")]
+		public async Task<Response> KickUserFromGroup(string username)
+		{
+			try
+			{
+				var data = ReadJWTToken();
+				var command = new KickFromGroupCommand();
+				CustomMapper.Mapper.Map<UserInfo, KickFromGroupCommand>(data, command);
+				command.UserKicked = username;
+				return await _mediator.Send(command);
+			}
+			catch (Exception ex)
+			{
+				return new Response()
+				{
+					Success = false,
+					Type = ResponseType.Error,
+					Message = ex.Message,
+				};
+			}
 		}
 	}
 }

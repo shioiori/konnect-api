@@ -13,7 +13,7 @@ namespace UTCClassSupport.API.Application.UpdateStateNotification
     }
     public Task<UpdateStateNotificationResponse> Handle(UpdateStateNotificationCommand request, CancellationToken cancellationToken)
     {
-      _notificationManager.UpdateStateNotification(request.GroupId, request.UserId);
+      _notificationManager.UpdateStateNotification(request.GroupId, request.UserId, request.NotificationId);
       return Task.FromResult(new UpdateStateNotificationResponse()); 
     }
   }

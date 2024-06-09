@@ -57,8 +57,16 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 			return notis.ToList();
 		}
 
-		public void UpdateStateNotification(string groupId, string userId)
+		public void UpdateStateNotification(string groupId, string userId, int? notificationId)
 		{
+			if (notificationId != null)
+			{
+				var notify = _dbContext.Notifications.FirstOrDefault(x => x.Id == notificationId);
+				if (notify == null) return;
+				notify.IsSeen = true;
+				_dbContext.SaveChanges();
+				return;
+			}
 			var notifications = _dbContext.Notifications.Where(x => x.IsSeen == false)
 									.Where(x => x.Range == NotificationRange.All
 									|| (x.Range == NotificationRange.Group && x.GroupId == groupId)
@@ -184,6 +192,28 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 				var creator = await _userManager.FindByNameAsync(comment.CreatedBy);
 				var notification = _notificationProvider.CreateUserNotification(receiver.Id, receiver.DisplayName,
 				  creator.UserName, creator.DisplayName, Common.NotificationAction.Mention, comment.Id);
+				_dbContext.Notifications.Add(notification);
+				_dbContext.SaveChanges();
+			}
+		}
+
+		public async Task NotifyInviteToGroup(Group group, UserDTO guest, UserInfo request)
+		{
+			if (guest.UserName != request.UserName)
+			{
+				var notification = _notificationProvider.CreateUserNotification(guest.Id, guest.DisplayName,
+			  request.UserName, request.DisplayName, Common.NotificationAction.InviteToGroup, request.GroupId, group.Name);
+				_dbContext.Notifications.Add(notification);
+				_dbContext.SaveChanges();
+			}
+		}
+
+		public async Task NotifyKickFromGroup(Group group, UserDTO guest, UserInfo request)
+		{
+			if (guest.UserName != request.UserName)
+			{
+				var notification = _notificationProvider.CreateUserNotification(guest.Id, guest.DisplayName,
+			  request.UserName, request.DisplayName, Common.NotificationAction.KickFromGroup, request.GroupId, group.Name);
 				_dbContext.Notifications.Add(notification);
 				_dbContext.SaveChanges();
 			}

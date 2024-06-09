@@ -17,7 +17,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.NewPost:
 					return new Notification()
 					{
-						Content = $"{createdName} vừa đăng một tin mới",
+						Content = $"<a class='comment-mention'>{createdName}</a> vừa đăng một tin mới",
 						Action = action,
 						Range = NotificationRange.Group,
 						ObjectId = id,
@@ -28,7 +28,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.ChangeRole:
 					return new Notification()
 					{
-						Content = $"{createdName} đã trở thành Quản lý của nhóm {groupName}",
+						Content = $"<a class='comment-mention'>{createdName}</a> đã trở thành Quản lý của nhóm <a class='comment-mention'>{groupName}</a>",
 						Action = action,
 						Range = NotificationRange.Group,
 						ObjectId = id,
@@ -54,7 +54,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.ReplyPost:
 					return new Notification()
 					{
-						Content = $"{createdName} vừa trả lời bài đăng của bạn",
+						Content = $"<a class='comment-mention'>{createdName}</a> vừa trả lời bài đăng của bạn",
 						Action = action,
 						Range = NotificationRange.User,
 						ObjectId = id,
@@ -65,7 +65,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.PendingPost:
 					return new Notification()
 					{
-						Content = $"Có một tin chờ duyệt đến từ {createdName}",
+						Content = $"Có một tin chờ duyệt đến từ <a class='comment-mention'>{createdName}</a>",
 						Action = action,
 						Range = NotificationRange.User,
 						ObjectId = id,
@@ -76,7 +76,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.AcceptPost:
 					return new Notification()
 					{
-						Content = $"{createdName} đã duyệt tin của bạn",
+						Content = $"<a class='comment-mention'>{createdName}</a> đã duyệt tin của bạn",
 						Action = action,
 						Range = NotificationRange.User,
 						ObjectId = id,
@@ -87,7 +87,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.RejectPost:
 					return new Notification()
 					{
-						Content = $"{createdName} đã từ chối tin của bạn với lý do: {message}",
+						Content = $"<a class='comment-mention'>{createdName}</a> đã từ chối tin của bạn với lý do: {message}",
 						Action = action,
 						Range = NotificationRange.User,
 						ObjectId = id,
@@ -98,7 +98,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.KickFromGroup:
 					return new Notification()
 					{
-						Content = $"Bạn đã rời khỏi group {id}",
+						Content = $"Bạn đã rời khỏi group {message}",
 						Action = action,
 						Range = NotificationRange.User,
 						ObjectId = id,
@@ -109,7 +109,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.InviteToGroup:
 					return new Notification()
 					{
-						Content = $"Bạn được mời vào group {id}",
+						Content = $"Bạn được mời vào group {message}",
 						Action = action,
 						Range = NotificationRange.User,
 						ObjectId = id,
@@ -120,7 +120,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.ChangeRole:
 					return new Notification()
 					{
-						Content = $"{createdName} thay đổi chức vụ của bạn thành {message}",
+						Content = $"<a class='comment-mention'>{createdName}</a> thay đổi chức vụ của bạn thành {message}",
 						Action = action,
 						Range = NotificationRange.User,
 						ObjectId = id,
@@ -131,7 +131,7 @@ namespace UTCClassSupport.API.Utilities
 				case NotificationAction.Mention:
 					return new Notification()
 					{
-						Content = $"{createdName} đã nhắc tới bạn trong một bình luận",
+						Content = $"<a class='comment-mention'>{createdName}</a> đã nhắc tới bạn trong một bình luận",
 						Action = action,
 						Range = NotificationRange.User,
 						ObjectId = id,

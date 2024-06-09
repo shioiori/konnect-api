@@ -18,7 +18,7 @@ namespace UTCClassSupport.API.Controllers
         DisplayName = identity.FindFirst(ClaimData.DisplayName)?.Value,
         GroupId = identity.FindFirst(ClaimData.GroupID)?.Value,
         Email = identity.FindFirst(ClaimData.Email)?.Value,
-        Tel = identity.FindFirst(ClaimData.Tel)?.Value,
+        PhoneNumber = identity.FindFirst(ClaimData.PhoneNumber)?.Value,
         RoleId = identity.FindFirst(ClaimData.RoleID)?.Value,
         RoleName = identity.FindFirst(ClaimData.RoleName)?.Value,
         Avatar = identity.FindFirst(ClaimData.Avatar)?.Value,
