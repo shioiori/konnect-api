@@ -129,7 +129,12 @@ namespace UTCClassSupport.API.Mapper
 			CreateMap<UserInfo, SynchronizeTimetableWithGoogleCalendarCommand>().ReverseMap();
 			CreateMap<UserInfo, UpdateRemindTimetableCommand>().ReverseMap();
 			CreateMap<UserInfo, AddEventCommand>().ReverseMap();
-			CreateMap<EventRequest, AddEventCommand>().ReverseMap();
+			CreateMap<AddEventRequest, AddEventCommand>()
+				.ForMember(x => x.Start, y => y.MapFrom(x => DateTime.Parse(x.Start)))
+				.ForMember(x => x.End, y => y.MapFrom(x => DateTime.Parse(x.End))); ;
+			CreateMap<UpdateEventRequest, Event>()
+				.ForMember(x => x.From, y => y.MapFrom(x => DateTime.Parse(x.From)))
+				.ForMember(x => x.To, y => y.MapFrom(x => DateTime.Parse(x.To)));
 		}
 	}
 

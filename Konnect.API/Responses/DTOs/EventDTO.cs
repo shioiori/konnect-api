@@ -4,6 +4,7 @@ namespace UTCClassSupport.API.Responses.DTOs
 {
     public class EventDTO
     {
+        public int Id { get; set; }
         public int Code { get; set; }
         public int Day { get; set; }
         public DateTime From { get; set; }

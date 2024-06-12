@@ -122,7 +122,8 @@ namespace UTCClassSupport.API
       services.AddScoped<IUserRepository, UserRepository>();
       services.AddScoped<IPostRepository, PostRepository>();
       services.AddScoped<IGroupRepository, GroupRepository>();
-      services.AddScoped<IBulletinRepository, BulletinRepository>();
+      services.AddScoped<ITimetableRepository, TimetableRepository>();
+			services.AddScoped<IBulletinRepository, BulletinRepository>();
 			services.AddScoped<NotificationManager>();
       services.AddSingleton<IMailHandler, MailHandler>();
       return services;

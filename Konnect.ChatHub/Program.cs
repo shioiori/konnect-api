@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
   options.AddPolicy(cors,
                     policy =>
                     {
-                      policy.WithOrigins("http://localhost:5173")
+                      policy.WithOrigins("http://localhost:5173").WithOrigins("http://192.168.1.3:5173").WithOrigins("http://konnect.com:5173")
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                                     .AllowCredentials(); ;

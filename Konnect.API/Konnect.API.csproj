@@ -52,6 +52,8 @@
 
   <ItemGroup>
     <Folder Include="Application\DeletePost\" />
+    <Folder Include="Application\DeleteEvent\" />
+    <Folder Include="Application\UpdateEvent\" />
     <Folder Include="Application\UpdatePost\" />
     <Folder Include="Application\UploadFile\" />
     <Folder Include="Domain\" />
