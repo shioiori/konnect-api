@@ -7,10 +7,10 @@ namespace UTCClassSupport.API.Responses.DTOs
         public int Id { get; set; }
         public int Code { get; set; }
         public int Day { get; set; }
-        public DateTime From { get; set; }
-        public DateTime To { get; set; }
-        public TimeSpan? PeriodStart { get; set; }
-        public TimeSpan? PeriodEnd { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
+        public string? PeriodStart { get; set; }
+        public string? PeriodEnd { get; set; }
         public string Location { get; set; }
         public string SubjectClass { get; set; }
         public string Title { get; set; }

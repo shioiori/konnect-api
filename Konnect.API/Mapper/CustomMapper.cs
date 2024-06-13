@@ -123,7 +123,9 @@ namespace UTCClassSupport.API.Mapper
 	{
 		public TimetableProfile()
 		{
-			CreateMap<EventDTO, Event>().ReverseMap();
+			CreateMap<EventDTO, Event>()
+				.ForMember(x => x.From, y => y.MapFrom(x => DateTime.Parse(x.From)))
+				.ForMember(x => x.To, y => y.MapFrom(x => DateTime.Parse(x.To)));
 			CreateMap<UserInfo, GetUserTimetableQuery>().ReverseMap();
 			CreateMap<UserInfo, DeleteTimetableCommand>().ReverseMap();
 			CreateMap<UserInfo, SynchronizeTimetableWithGoogleCalendarCommand>().ReverseMap();
@@ -131,10 +133,13 @@ namespace UTCClassSupport.API.Mapper
 			CreateMap<UserInfo, AddEventCommand>().ReverseMap();
 			CreateMap<AddEventRequest, AddEventCommand>()
 				.ForMember(x => x.Start, y => y.MapFrom(x => DateTime.Parse(x.Start)))
-				.ForMember(x => x.End, y => y.MapFrom(x => DateTime.Parse(x.End))); ;
+				.ForMember(x => x.End, y => y.MapFrom(x => DateTime.Parse(x.End)));
 			CreateMap<UpdateEventRequest, Event>()
 				.ForMember(x => x.From, y => y.MapFrom(x => DateTime.Parse(x.From)))
 				.ForMember(x => x.To, y => y.MapFrom(x => DateTime.Parse(x.To)));
+			CreateMap<Event, EventDTO>()
+				.ForMember(x => x.From, y => y.MapFrom(x => x.From.ToString("yyyy-MM-dd HH:mm:ss")))
+				.ForMember(x => x.To, y => y.MapFrom(x => x.To.ToString("yyyy-MM-dd HH:mm:ss")));
 		}
 	}
 
