@@ -25,7 +25,7 @@ namespace UTCClassSupport.API.Application.ClearTimetable
     {
       if (request.TimetableId == null)
       {
-        var timetable = _dbContext.Timetables.FirstOrDefault(x => x.CreatedBy == request.UserName && x.GroupId == request.GroupId);
+        var timetable = _dbContext.Timetables.FirstOrDefault(x => x.CreatedBy == request.UserName);
         if (timetable == null)
         {
           return Task.FromResult(new SynchronizeTimetableWithGoogleCalendarResponse()

@@ -24,15 +24,12 @@ namespace UTCClassSupport.API.Application.GetUserTimetable
     public Task<GetUserTimetableResponse> Handle(GetUserTimetableQuery request, CancellationToken cancellationToken)
     {
       try {
-        var timetable = _dbContext.Timetables.FirstOrDefault(x => x.CreatedBy == request.UserName
-                                                              && x.GroupId == request.GroupId);
+        var timetable = _dbContext.Timetables.FirstOrDefault(x => x.CreatedBy == request.UserName);
         if (timetable == default)
         {
           timetable = new Timetable() { 
-            GroupId = request.GroupId,
             IsSynchronize = false,
             Remind = -1,
-            CreatedDate = DateTime.Now,
             CreatedBy = request.UserName,
           };
           _dbContext.Timetables.Add(timetable);

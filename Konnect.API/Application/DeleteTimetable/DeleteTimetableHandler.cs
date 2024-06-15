@@ -23,7 +23,7 @@ namespace UTCClassSupport.API.Application.DeleteTimetable
 
     public Task<DeleteTimetableResponse> Handle(DeleteTimetableCommand request, CancellationToken cancellationToken)
     {
-      var timetable = _dbContext.Timetables.FirstOrDefault(x => x.GroupId == request.GroupId && x.CreatedBy == request.UserName);
+      var timetable = _dbContext.Timetables.FirstOrDefault(x => x.CreatedBy == request.UserName);
       if (timetable == null)
       {
         return Task.FromResult(new DeleteTimetableResponse()

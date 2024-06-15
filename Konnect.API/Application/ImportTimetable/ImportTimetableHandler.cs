@@ -32,21 +32,20 @@ namespace UTCClassSupport.API.Application.ImportTimetable
 				{
 					var datatable = ExcelHelper.ConvertExcelToDataTable(request.File, FileTemplate.Timetable);
 					var timetable = _dbContext.Timetables
-					  .Where(x => x.GroupId == request.GroupId && x.CreatedBy == request.UserName)
+					  .Where(x => x.CreatedBy == request.UserName)
 					  .FirstOrDefault();
 					if (timetable == null)
 					{
 						timetable = new Timetable()
 						{
-							GroupId = request.GroupId,
-							Url = "temp",
-							CreatedDate = DateTime.Now,
-							CreatedBy = request.UserName
+							CreatedBy = request.UserName,
+							Remind = -1,
+							IsSynchronize = false,
 						};
 						_dbContext.Timetables.Add(timetable);
 					}
 					List<Event> events = new List<Event>();
-
+					int create = 0, ignore = 0;
 					// datatable: stt - mahocphan - tenhocphan - so tinchi - lophocphan - ghe - thoigiandiadiem - hocphi
 
 					foreach (DataRow row in datatable.Rows)
@@ -89,6 +88,14 @@ namespace UTCClassSupport.API.Application.ImportTimetable
 								//  _dbContext.Shifts.Remove(availableShift);
 								//}
 								index++;
+								if (!timetable.IsSynchronize && _dbContext.Events.Count(x => x.TimetableId == timetable.Id
+									&& x.Category == shift.Category
+									&& x.From == shift.From && x.To == shift.To && x.Day == shift.Day) == 0)
+								{
+									events.Add(shift);
+									create++;
+								}
+								else ignore++;
 							}
 						}
 					}
@@ -112,7 +119,7 @@ namespace UTCClassSupport.API.Application.ImportTimetable
 					{
 						Success = true,
 						Type = ResponseType.Success,
-						Message = "Import thành công"
+						Message = $"Import thành công. Thêm mới {create} sự kiện và bỏ qua {ignore} sự kiện"
 					};
 				}
 				catch (Exception ex)

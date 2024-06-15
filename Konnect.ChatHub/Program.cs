@@ -16,17 +16,17 @@ builder.Services.Configure<ChatDatabaseSettings>(builder.Configuration.GetSectio
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+
 var cors = "UTC_ClassSupport_CORS";
 builder.Services.AddCors(options =>
 {
-  options.AddPolicy(cors,
-                    policy =>
-                    {
-                      policy.WithOrigins("http://localhost:5173").WithOrigins("http://192.168.1.3:5173").WithOrigins("http://konnect.com:5173")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod()
-                                    .AllowCredentials(); ;
-                    });
+	options.AddPolicy(cors,
+					  policy =>
+					  {
+						  policy.WithOrigins("*")
+							  .AllowAnyHeader()
+							  .AllowAnyMethod();
+					  });
 });
 
 var app = builder.Build();
