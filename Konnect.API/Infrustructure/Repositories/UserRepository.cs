@@ -26,7 +26,7 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 		Task<UserDTO> GetUserAsync(string userName);
 		Task<UserDTO> GetUserByEmailAsync(string email);
 		List<UserDTO> GetUsers(string groupId);
-		List<UserDTO> GetUsers(string groupId, PaginationData pagination);
+		List<UserDTO> GetUsers(string groupId, PaginationData pagination, bool isPaging);
 		Task<bool> IsEmailConfirmedAsync(string email);
 		Task<bool> RemoveRoleFromGroupAsync(string userName, string groupId);
 		Task<UserDTO> UpdateUserAsync(string userName, UpdateUserRequest request);
@@ -215,9 +215,9 @@ namespace UTCClassSupport.API.Infrustructure.Repositories
 			return result.Succeeded;
 		}
 
-		public List<UserDTO> GetUsers(string groupId, PaginationData pagination)
+		public List<UserDTO> GetUsers(string groupId, PaginationData pagination, bool isPaging)
 		{
-			if (pagination == null)
+			if (!isPaging)
 			{
 				return GetUsers(groupId);
 			}

@@ -50,17 +50,15 @@ namespace UTCClassSupport.API.Controllers
 		}
 
 		[HttpGet("group")]
-		public Response GetUsers(string? groupId, [FromQuery] PaginationData? pagination)
+		public Response GetUsers(string? groupId, [FromQuery] PaginationData? pagination, bool isPaging = true)
 		{
 			var userData = ReadJWTToken();
 			if (groupId == null)
 			{
 				groupId = userData.GroupId;
 			}
-			var data = _userRepository.GetUsers(groupId, pagination).OrderBy(x => x.UserName).ToList();
 			int total = _userRepository.GetTotalUser(groupId);
-
-			if (pagination == null)
+			if (isPaging && pagination == null)
 			{
 				pagination = new PaginationData()
 				{
@@ -68,6 +66,7 @@ namespace UTCClassSupport.API.Controllers
 					PageSize = total
 				};
 			}
+			var data = _userRepository.GetUsers(groupId, pagination, isPaging).OrderBy(x => x.UserName).ToList();
 			return new GetUsersResponse()
 			{
 				Success = true,
