@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using UTCClassSupport.API.Common;
-using UTCClassSupport.API.Common.Mail;
 using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Infrustructure.Repositories;
 using UTCClassSupport.API.Models;

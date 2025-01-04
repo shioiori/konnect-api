@@ -1,14 +1,9 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using Konnect.API.Infrustructure.Repositories;
+﻿using Konnect.API.Infrustructure.Repositories;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
+using MimeKit;
 using Newtonsoft.Json;
 using UTCClassSupport.API.Common;
-using UTCClassSupport.API.Common.Mail;
-using UTCClassSupport.API.Infrustructure.Data;
 using UTCClassSupport.API.Infrustructure.Repositories;
-using UTCClassSupport.API.Models;
 using UTCClassSupport.API.Requests;
 using UTCClassSupport.API.Responses;
 using UTCClassSupport.API.Utilities;
@@ -21,16 +16,16 @@ namespace UTCClassSupport.API.Application.InviteToGroup
 		private readonly IGroupRepository _groupRepository;
 		private readonly NotificationManager _notificationManager;
 
-		private readonly IMailHandler _mailHandler;
+		private readonly IMessagePublisher _publisher;
 		public InviteToGroupHandler(IUserRepository userRepository,
 			IGroupRepository groupRepository,
 			NotificationManager notificationManager,
-			IMailHandler mailHandler)
+            IMessagePublisher messagePublisher)
 		{
 			_userRepository = userRepository;
 			_groupRepository = groupRepository;
 			_notificationManager = notificationManager;
-			_mailHandler = mailHandler;
+			_publisher = messagePublisher;
 		}
 		public async Task<InviteToGroupResponse> Handle(InviteToGroupCommand request, CancellationToken cancellationToken)
 		{
@@ -78,12 +73,11 @@ namespace UTCClassSupport.API.Application.InviteToGroup
 					var key = AesOperation.GenerateKey();
 					var encryptText = AesOperation.EncryptString(key, JsonConvert.SerializeObject(joinRequest));
 					var token = AesOperation.GenerateToken(key, encryptText);
-					_mailHandler.Send(new MailContent()
-					{
-						To = request.Guest,
-						Subject = GetInviteMailSubject(request.DisplayName),
-						Body = GetInviteMailContent(request.DisplayName, group.Name, token)
-					});
+					var message = new MimeMessage();
+                    message.To.Add(MailboxAddress.Parse(request.Guest));
+					message.Subject = GetInviteMailSubject(request.DisplayName);
+					message.Body = GetInviteMailContent(request.DisplayName, group.Name, token);
+                    _publisher.Send(message);
 				}
 			}
 			return new InviteToGroupResponse()
@@ -99,9 +93,12 @@ namespace UTCClassSupport.API.Application.InviteToGroup
 			return "Bạn có một lời mời từ " + sender;
 		}
 
-		private string GetInviteMailContent(string sender, string groupName, string accessCode)
+		private MimeEntity GetInviteMailContent(string sender, string groupName, string accessCode)
 		{
-			return $"Thân mến,\n{sender} mời bạn tham gia group {groupName}. Nếu bạn đồng ý, nhấn vào đường link dưới đây\n {accessCode}\n để nhận lời mời.";
-		}
+			string body = $"Thân mến,\n{sender} mời bạn tham gia group {groupName}. Nếu bạn đồng ý, nhấn vào đường link dưới đây\n {accessCode}\n để nhận lời mời.";
+            BodyBuilder builder = new BodyBuilder();
+            builder.HtmlBody = body;
+            return builder.ToMessageBody();
+        }
 	}
 }

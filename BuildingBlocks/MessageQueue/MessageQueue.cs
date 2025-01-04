@@ -13,11 +13,7 @@ namespace BuildingBlocks.MessageQueue
 
     public interface IMessageConsumer
     {
-        void Consume<T>(string queue, Action<T> messageHandler);
+        void Consume();
     }
 
-    public interface IMessageQueueConfiguration
-    {
-
-    }
 }

@@ -9,6 +9,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Application\DeleteEvent\**" />
+    <Compile Remove="Application\DeletePost\**" />
+    <Compile Remove="Application\UpdateEvent\**" />
+    <Compile Remove="Application\UpdatePost\**" />
+    <Compile Remove="Application\UploadFile\**" />
+    <Compile Remove="Domain\**" />
+    <Content Remove="Application\DeleteEvent\**" />
+    <Content Remove="Application\DeletePost\**" />
+    <Content Remove="Application\UpdateEvent\**" />
+    <Content Remove="Application\UpdatePost\**" />
+    <Content Remove="Application\UploadFile\**" />
+    <Content Remove="Domain\**" />
+    <EmbeddedResource Remove="Application\DeleteEvent\**" />
+    <EmbeddedResource Remove="Application\DeletePost\**" />
+    <EmbeddedResource Remove="Application\UpdateEvent\**" />
+    <EmbeddedResource Remove="Application\UpdatePost\**" />
+    <EmbeddedResource Remove="Application\UploadFile\**" />
+    <EmbeddedResource Remove="Domain\**" />
+    <None Remove="Application\DeleteEvent\**" />
+    <None Remove="Application\DeletePost\**" />
+    <None Remove="Application\UpdateEvent\**" />
+    <None Remove="Application\UpdatePost\**" />
+    <None Remove="Application\UploadFile\**" />
+    <None Remove="Domain\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <COMReference Include="Microsoft.Office.Interop.Excel">
       <WrapperTool>tlbimp</WrapperTool>
       <VersionMinor>9</VersionMinor>
@@ -46,17 +73,9 @@
     <PackageReference Include="MimeKit" Version="4.4.0" />
     <PackageReference Include="NPOI" Version="2.7.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Application\DeletePost\" />
-    <Folder Include="Application\DeleteEvent\" />
-    <Folder Include="Application\UpdateEvent\" />
-    <Folder Include="Application\UpdatePost\" />
-    <Folder Include="Application\UploadFile\" />
-    <Folder Include="Domain\" />
   </ItemGroup>
 
 </Project>
