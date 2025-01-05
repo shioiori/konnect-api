@@ -1,4 +1,5 @@
-﻿using Konnect.API.Infrustructure.Repositories;
+﻿using BuildingBlocks.MessageQueue;
+using Konnect.API.Infrustructure.Repositories;
 using MediatR;
 using MimeKit;
 using Newtonsoft.Json;
@@ -77,7 +78,7 @@ namespace UTCClassSupport.API.Application.InviteToGroup
                     message.To.Add(MailboxAddress.Parse(request.Guest));
 					message.Subject = GetInviteMailSubject(request.DisplayName);
 					message.Body = GetInviteMailContent(request.DisplayName, group.Name, token);
-                    _publisher.Send(message);
+                    _publisher.PublishAsync(message);
 				}
 			}
 			return new InviteToGroupResponse()

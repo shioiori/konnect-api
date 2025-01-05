@@ -1,0 +1,8 @@
+{
+  "RabbitMQ": {
+    "hostName": "localhost",
+    "port": 5673,
+    "username": "admin",
+    "password": "123456"
+  }
+}

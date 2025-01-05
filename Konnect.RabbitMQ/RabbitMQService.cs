@@ -19,9 +19,13 @@ namespace Konnect.RabbitMQ
     {
         private RabbitMQFactory _factory;
         private ConnectionFactory _connectionFactory;
-        private RabbitMQConsumerData _consumer;
         protected IChannel _channel;
         protected IConnection _connection;
+
+        public RabbitMQService()
+        {
+            _factory = new RabbitMQFactory();
+        }
         public RabbitMQService(RabbitMQFactory factory)
         {
             _factory = factory;

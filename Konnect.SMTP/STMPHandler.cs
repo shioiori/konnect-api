@@ -6,16 +6,16 @@ namespace Konnect.SMTP
 {
     public class STMPHandler
     {
-        private MailSettings _mailSettings;
+        private STMPSettings _mailSettings;
         private SmtpClient _smtpClient;
         public STMPHandler()
         {
-            _mailSettings = new MailSettings()
+            _mailSettings = new STMPSettings()
             {
 
             };
         }
-        public STMPHandler(MailSettings mailSettings)
+        public STMPHandler(STMPSettings mailSettings)
         {
             _mailSettings = mailSettings;
         }

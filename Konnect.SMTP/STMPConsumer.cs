@@ -27,9 +27,9 @@ namespace Konnect.SMTP
             _queueName = queueName;
         }
 
-        public void Consume()
+        public async Task ConsumeAsync()
         {
-            ConsumeInternalAsync();
+            await ConsumeInternalAsync();
         }
 
         private int _retryTime = 0;

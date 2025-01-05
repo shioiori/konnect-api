@@ -8,12 +8,12 @@ namespace BuildingBlocks.MessageQueue
 {
     public interface IMessagePublisher
     {
-        void Publish<T>(T message);
+        Task PublishAsync<T>(T message);
     }
 
     public interface IMessageConsumer
     {
-        void Consume();
+        Task ConsumeAsync();
     }
 
 }

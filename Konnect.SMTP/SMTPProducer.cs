@@ -14,18 +14,14 @@ namespace Konnect.SMTP
     public class SMTPProducer : RabbitMQService, IMessagePublisher
     {
         private SMTPPublishData _data;
-        public SMTPProducer(RabbitMQFactory factory) : base(factory) 
-        {
-        }
-
         public void DeclareProducer(string exchangeName, string routingKey)
         {
             _data = new SMTPPublishData(exchangeName, routingKey);
         }
 
-        public void Publish<T>(T message)
+        public async Task PublishAsync<T>(T message)
         {
-            PublishInternal(message);
+            await PublishInternal(message);
         }
 
         private int _retryTime = 0;
