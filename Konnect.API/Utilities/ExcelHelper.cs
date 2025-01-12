@@ -4,8 +4,6 @@ using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
-using UTCClassSupport.API.Models;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace UTCClassSupport.API.Common
 {
