@@ -1,0 +1,23 @@
+name: Test .NET build
+on: 
+    push: 
+        branches: [master]
+jobs:
+    build: 
+        runs-on: ubuntu-latest
+        steps: 
+            - uses: actions/checkout@v4
+            - name: Setup dotnet
+              uses: actions/setup-dotnet@v3
+              with: 
+                dotnet-version: '6.0.x'
+            - name: Install dependence
+              run: dotnet restore
+            - name: Build 
+              run: dotnet build --configuration Development
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: development-net-build
+                path: ${{ github.workspace }}/bin/dev
+
